@@ -1,0 +1,19 @@
+package product_service.service.client;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import product_service.dto.customer.CustomerAdminDto;
+import product_service.dto.employee.EmployeeAdminDto;
+
+@FeignClient(name = "people-service", url = "http://localhost:9001/api/v1")
+public interface PeopleFeignClient {
+
+    @GetMapping("/employee/{id}")
+    ResponseEntity<EmployeeAdminDto> getEmployeeById(@PathVariable Long id);
+
+    @GetMapping("/customer/{id}")
+    ResponseEntity<CustomerAdminDto> getCustomerById(@PathVariable Long id);
+
+}
