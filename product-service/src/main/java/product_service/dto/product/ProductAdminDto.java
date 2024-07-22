@@ -3,6 +3,8 @@ package product_service.dto.product;
 import product_service.model.Product;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public record ProductAdminDto (
         Long id,
@@ -13,8 +15,8 @@ public record ProductAdminDto (
         String imagePath
 ) {
     public static ProductAdminDto fromProduct(Product product) {
-        DecimalFormat df = new DecimalFormat("#.000");
-        String price = df.format(product.getPrice());
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.GERMANY);
+        String price = numberFormat.format(product.getPrice());
 
         return new ProductAdminDto(
                 product.getId(),

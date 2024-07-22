@@ -17,12 +17,12 @@ public class Product {
     @Column(unique = true)
     private String name;
     private String description;
-    private Double price;
+    private Long price;
     private Integer quantity;
     private Boolean status = true;
     private String imagePath;
 
-    public Product(String name, String description, double price, int quantity) {
+    public Product(String name, String description, Long price, int quantity) {
         this.name = name;
         this.description = description;
         this.price = price;

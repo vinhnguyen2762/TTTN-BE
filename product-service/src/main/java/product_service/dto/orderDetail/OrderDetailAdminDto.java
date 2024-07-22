@@ -10,7 +10,7 @@ public record OrderDetailAdminDto (
         String productName,
         String price,
         String quantity
-
+        // to do thêm tổng tiền ?
 ) {
     public static OrderDetailAdminDto fromOderDetail(OrderDetail orderDetail, String productName) {
         DecimalFormat df = new DecimalFormat("#.000");

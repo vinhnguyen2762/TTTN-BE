@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_TAKEN, productAddDto.name()));
         }
 
-        Double price = Double.parseDouble(productAddDto.price());
+        Long price = Long.parseLong(productAddDto.price());
         Integer quantity = Integer.parseInt(productAddDto.quantity());
 
         Product productAdd = new Product(
@@ -57,7 +57,7 @@ public class ProductServiceImpl implements ProductService {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id));
         }
 
-        Double price = Double.parseDouble(productUpdateDto.price());
+        Long price = Long.parseLong(productUpdateDto.price());
         Integer quantity = Integer.parseInt(productUpdateDto.quantity());
 
         product.setDescription(productUpdateDto.description());
