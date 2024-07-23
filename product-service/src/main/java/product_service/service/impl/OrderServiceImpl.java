@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (OrderDetailAddDto orderDetailAddDto : orderAddDto.list()) {
 
-            Double price = Double.parseDouble(orderDetailAddDto.price());
+            Long price = Long.parseLong(orderDetailAddDto.price());
             Integer quantity = Integer.parseInt(orderDetailAddDto.quantity());
 
             OrderDetail orderDetail = new OrderDetail(
@@ -121,7 +121,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderDetailAddDto orderDetailAddDto : orderUpdateDto.list()) {
 
-            Double price = Double.parseDouble(orderDetailAddDto.price());
+            Long price = Long.parseLong(orderDetailAddDto.price());;
             Integer quantity = Integer.parseInt(orderDetailAddDto.quantity());
 
             OrderDetail orderDetail = new OrderDetail(

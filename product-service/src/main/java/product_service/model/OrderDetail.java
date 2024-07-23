@@ -18,13 +18,11 @@ public class OrderDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-
     private Long productId;
-
-    private Double price;
+    private Long price;
     private Integer quantity;
 
-    public OrderDetail(Order order, Long productId, Double price, Integer quantity) {
+    public OrderDetail(Order order, Long productId, Long price, Integer quantity) {
         this.order = order;
         this.productId = productId;
         this.price = price;
