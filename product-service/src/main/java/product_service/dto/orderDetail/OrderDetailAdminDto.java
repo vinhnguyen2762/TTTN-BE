@@ -14,14 +14,12 @@ public record OrderDetailAdminDto (
         // to do thêm tổng tiền ?
 ) {
     public static OrderDetailAdminDto fromOderDetail(OrderDetail orderDetail, String productName) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.GERMANY);
-        String price = numberFormat.format(orderDetail.getPrice());
 
         return new OrderDetailAdminDto(
                 orderDetail.getId(),
                 orderDetail.getProductId(),
                 productName,
-                price,
+                orderDetail.getPrice().toString(),
                 orderDetail.getQuantity().toString()
         );
     }

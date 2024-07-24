@@ -15,14 +15,12 @@ public record ProductAdminDto (
         String imagePath
 ) {
     public static ProductAdminDto fromProduct(Product product) {
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.GERMANY);
-        String price = numberFormat.format(product.getPrice());
 
         return new ProductAdminDto(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
-                price,
+                product.getPrice().toString(),
                 product.getQuantity().toString(),
                 product.getImagePath()
         );

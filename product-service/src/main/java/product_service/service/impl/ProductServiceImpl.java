@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import product_service.dto.product.ProductAddDto;
 import product_service.dto.product.ProductAdminDto;
+import product_service.dto.product.ProductSearchDto;
 import product_service.dto.product.ProductUpdateDto;
 import product_service.exception.DuplicateException;
 import product_service.exception.NotFoundException;
@@ -91,5 +92,18 @@ public class ProductServiceImpl implements ProductService {
         product.setImagePath(imagePath);
         productRepository.saveAndFlush(product);
         return ProductAdminDto.fromProduct(product);
+    }
+
+    public ProductSearchDto findByName(String name) {
+        Product product = productRepository.findByName(name).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND_NAME, name)));
+        if (product.getStatus() == false) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND_NAME, name));
+        }
+
+        return new ProductSearchDto(
+                product.getPrice().toString(),
+                product.getQuantity().toString()
+        );
     }
 }

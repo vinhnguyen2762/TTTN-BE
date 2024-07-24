@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerSearchDto;
 import people_service.dto.customer.CustomerUpdateDto;
 import people_service.model.Customer;
 import people_service.service.CustomerService;
@@ -50,5 +51,11 @@ public class CustomerController {
     public ResponseEntity<CustomerAdminDto> getById(@PathVariable Long id) {
         CustomerAdminDto customerAdminDto = customerService.findById(id);
         return ResponseEntity.ok().body(customerAdminDto);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<CustomerSearchDto> searchByPhoneNumber(@RequestParam("phoneNumber") String phoneNumber) {
+        CustomerSearchDto customerSearchDto = customerService.findByPhoneNumber(phoneNumber);
+        return ResponseEntity.ok().body(customerSearchDto);
     }
 }

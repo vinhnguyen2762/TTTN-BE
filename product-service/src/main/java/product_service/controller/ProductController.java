@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import product_service.dto.product.ProductAddDto;
 import product_service.dto.product.ProductAdminDto;
+import product_service.dto.product.ProductSearchDto;
 import product_service.dto.product.ProductUpdateDto;
 import product_service.service.CloudinaryService;
 import product_service.service.ProductService;
@@ -52,5 +53,11 @@ public class ProductController {
     public ResponseEntity<ProductAdminDto> uploadFileByProductId(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
         ProductAdminDto productAdminDto = productService.uploadImageById(id, file);
         return ResponseEntity.ok().body(productAdminDto);
+    }
+
+    @GetMapping ("/search")
+    public ResponseEntity<ProductSearchDto> searchByName(@RequestParam("productName") String name) {
+        ProductSearchDto productSearchDto = productService.findByName(name);
+        return ResponseEntity.ok().body(productSearchDto);
     }
 }

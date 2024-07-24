@@ -11,6 +11,7 @@ import product_service.dto.orderDetail.OrderDetailAddDto;
 import product_service.dto.orderDetail.OrderDetailAdminDto;
 import product_service.dto.product.ProductAdminDto;
 import product_service.enums.OrderStatus;
+import product_service.exception.EmptyException;
 import product_service.exception.FailedException;
 import product_service.exception.NotFoundException;
 import product_service.model.Order;
@@ -67,6 +68,9 @@ public class OrderServiceImpl implements OrderService {
 
 
     public OrderAdminDto addOrder(OrderAddDto orderAddDto) {
+        if (orderAddDto.list().isEmpty()) {
+            throw new EmptyException("List order detail is null");
+        }
         LocalDate orderDate = LocalDate.now();
         Order orderAdd = new Order(
                 orderDate,
@@ -111,10 +115,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
+        if (orderUpdateDto.list().isEmpty()) {
+            throw new EmptyException("List order detail is null");
+        }
         Order order = orderRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.ORDER_NOT_FOUND, id)));
-
-        order.setCustomerId(orderUpdateDto.customerId());
+        if (order.getStatus().name().equals("DELETED")) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.ORDER_NOT_FOUND, id));
+        }
 
         List<OrderDetail> updateList = order.getOrderDetails();
         updateList.clear();
@@ -141,9 +149,9 @@ public class OrderServiceImpl implements OrderService {
         String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
         List<OrderDetailAdminDto> list = updateList.stream().map(od -> {
             Product product = productRepository.findById(od.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
+                    () -> new FailedException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
             if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
+                throw new FailedException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
             }
             String productName = product.getName();
             return OrderDetailAdminDto.fromOderDetail(od, productName);
@@ -179,7 +187,7 @@ public class OrderServiceImpl implements OrderService {
             }
             int quantity = product.getQuantity() - o.getQuantity();
             if (quantity < 0) {
-                throw new FailedException(String.format(Constants.ErrorMessage.PRODUCT_NOT_ENOUGH, o.getProductId()));
+                throw new EmptyException(String.format(Constants.ErrorMessage.PRODUCT_NOT_ENOUGH, o.getProductId()));
             } else {
                 product.setQuantity(quantity);
             }

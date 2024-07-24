@@ -4,6 +4,7 @@ package people_service.service.impl;
 import org.springframework.stereotype.Service;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerSearchDto;
 import people_service.dto.customer.CustomerUpdateDto;
 import people_service.enums.Gender;
 import people_service.exception.NotFoundException;
@@ -88,6 +89,16 @@ public class CustomerServiceImpl implements CustomerService {
             throw new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id));
         }
         return CustomerAdminDto.fromCustomer(customer);
+    }
+
+    public CustomerSearchDto findByPhoneNumber(String phoneNumber) {
+        Customer customer = customerRepository.findByPhoneNumberSearch(phoneNumber).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_PHONE_NUMBER, phoneNumber)));
+        String fullName = customer.getFirstName() + " " + customer.getLastName();
+        return new CustomerSearchDto(
+                customer.getId().toString(),
+                fullName
+        );
     }
 
 }
