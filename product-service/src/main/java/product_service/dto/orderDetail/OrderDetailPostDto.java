@@ -1,6 +1,6 @@
 package product_service.dto.orderDetail;
 
-public record OrderDetailAddDto (
+public record OrderDetailPostDto(
         Long productId,
         String price,
         String quantity

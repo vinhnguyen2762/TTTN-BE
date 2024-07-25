@@ -3,10 +3,8 @@ package product_service.dto.order;
 import product_service.dto.orderDetail.OrderDetailAdminDto;
 import product_service.model.Order;
 
-import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 public record OrderAdminDto(
         Long id,

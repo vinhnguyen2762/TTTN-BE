@@ -1,15 +1,13 @@
 package product_service.service.impl;
 
-import org.aspectj.weaver.ast.Or;
 import org.springframework.stereotype.Service;
 import product_service.dto.customer.CustomerAdminDto;
 import product_service.dto.employee.EmployeeAdminDto;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
-import product_service.dto.orderDetail.OrderDetailAddDto;
+import product_service.dto.orderDetail.OrderDetailPostDto;
 import product_service.dto.orderDetail.OrderDetailAdminDto;
-import product_service.dto.product.ProductAdminDto;
 import product_service.enums.OrderStatus;
 import product_service.exception.EmptyException;
 import product_service.exception.FailedException;
@@ -80,14 +78,14 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.saveAndFlush(orderAdd);
 
         List<OrderDetail> orderDetailList = new ArrayList<>();
-        for (OrderDetailAddDto orderDetailAddDto : orderAddDto.list()) {
+        for (OrderDetailPostDto orderDetailPostDto : orderAddDto.list()) {
 
-            Long price = Long.parseLong(orderDetailAddDto.price());
-            Integer quantity = Integer.parseInt(orderDetailAddDto.quantity());
+            Long price = Long.parseLong(orderDetailPostDto.price());
+            Integer quantity = Integer.parseInt(orderDetailPostDto.quantity());
 
             OrderDetail orderDetail = new OrderDetail(
                     orderAdd,
-                    orderDetailAddDto.productId(),
+                    orderDetailPostDto.productId(),
                     price,
                     quantity
             );
@@ -127,14 +125,14 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> updateList = order.getOrderDetails();
         updateList.clear();
 
-        for (OrderDetailAddDto orderDetailAddDto : orderUpdateDto.list()) {
+        for (OrderDetailPostDto orderDetailPostDto : orderUpdateDto.list()) {
 
-            Long price = Long.parseLong(orderDetailAddDto.price());;
-            Integer quantity = Integer.parseInt(orderDetailAddDto.quantity());
+            Long price = Long.parseLong(orderDetailPostDto.price());;
+            Integer quantity = Integer.parseInt(orderDetailPostDto.quantity());
 
             OrderDetail orderDetail = new OrderDetail(
                     order,
-                    orderDetailAddDto.productId(),
+                    orderDetailPostDto.productId(),
                     price,
                     quantity
             );
