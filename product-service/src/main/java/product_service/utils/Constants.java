@@ -10,7 +10,8 @@ public class Constants {
         public static final String ORDER_NOT_FOUND = "Order with id: %s not found";
         public static final String PRODUCT_NOT_ENOUGH = "Product with id: %s not enough";
         public static final String ORDER_ALREADY_PAID = "Order with id: %s already paid";
-        public static final String PROMOTION_NOT_FOUND = "Promotion with id: %s already paid";
+        public static final String PROMOTION_NOT_FOUND = "Promotion with id: %s not found";
+        public static final String PROMOTION_ALREADY_ACTIVE = "Promotion with id: %s already active";
 
 
     }

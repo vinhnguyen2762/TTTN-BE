@@ -14,4 +14,5 @@ public interface PromotionService {
     public PromotionAdminDto addPromotion(PromotionPostDto promotionPostDto);
     public PromotionAdminDto updatePromotion(Long id, PromotionPostDto promotionPostDto);
     public Long deletePromotion(Long id);
+    public Long activePromotion(Long id);
 }

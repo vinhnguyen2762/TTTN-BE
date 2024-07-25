@@ -44,4 +44,10 @@ public class PromotionController {
         Long deleteId = promotionService.deletePromotion(id);
         return ResponseEntity.ok().body(deleteId);
     }
+
+    @PostMapping ("/active/{id}")
+    public ResponseEntity<Long> activePromotion(@PathVariable Long id) {
+        Long activeId = promotionService.activePromotion(id);
+        return ResponseEntity.ok().body(activeId);
+    }
 }

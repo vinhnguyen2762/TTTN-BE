@@ -186,4 +186,17 @@ public class PromotionServiceImpl implements PromotionService {
         promotionRepository.saveAndFlush(promotion);
         return id;
     }
+
+    public Long activePromotion(Long id) {
+        Promotion promotion = promotionRepository.findById(id).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id)));
+        if (promotion.getStatus().name().equals("DELETED")) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id));
+        } else if (promotion.getStatus().name().equals("ACTIVE")) {
+            throw new FailedException(String.format(Constants.ErrorMessage.PROMOTION_ALREADY_ACTIVE, id));
+        }
+        promotion.setStatus(PromotionStatus.ACTIVE);
+        promotionRepository.saveAndFlush(promotion);
+        return id;
+    }
 }
