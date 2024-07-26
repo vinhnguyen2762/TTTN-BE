@@ -1,19 +1,17 @@
 package product_service.service;
 
 import org.springframework.web.multipart.MultipartFile;
-import product_service.dto.product.ProductAddDto;
-import product_service.dto.product.ProductAdminDto;
-import product_service.dto.product.ProductSearchDto;
-import product_service.dto.product.ProductUpdateDto;
+import product_service.dto.product.*;
 
 import java.util.List;
 
 public interface ProductService {
     public List<ProductAdminDto> getAllProductAdmin();
-    public ProductAdminDto addProduct(ProductAddDto productAddDto);
-    public ProductAdminDto updateProduct(Long id, ProductUpdateDto productUpdateDto);
-    public ProductAdminDto deleteProduct(Long id);
-    public ProductAdminDto uploadImageById(Long id, MultipartFile file);
+    public List<ProductNoPromotionDto> getAllProductNoPromotion();
+    public Long addProduct(ProductAddDto productAddDto);
+    public Long updateProduct(Long id, ProductUpdateDto productUpdateDto);
+    public Long deleteProduct(Long id);
+    public Long uploadImageById(Long id, MultipartFile file);
     public ProductSearchDto findByName(String name);
 
 }

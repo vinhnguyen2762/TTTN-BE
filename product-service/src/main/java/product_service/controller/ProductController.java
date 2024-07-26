@@ -4,10 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import product_service.dto.product.ProductAddDto;
-import product_service.dto.product.ProductAdminDto;
-import product_service.dto.product.ProductSearchDto;
-import product_service.dto.product.ProductUpdateDto;
+import product_service.dto.product.*;
 import product_service.service.CloudinaryService;
 import product_service.service.ProductService;
 
@@ -31,28 +28,34 @@ public class ProductController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/get-all-no-promotion")
+    public ResponseEntity<List<ProductNoPromotionDto>> getAllNoPromotionProduct() {
+        List<ProductNoPromotionDto> list = productService.getAllProductNoPromotion();
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<ProductAdminDto> addProduct(@RequestBody ProductAddDto productAddDto) {
-        ProductAdminDto productAdminDto = productService.addProduct(productAddDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productAdminDto);
+    public ResponseEntity<Long> addProduct(@RequestBody ProductAddDto productAddDto) {
+        Long rs = productService.addProduct(productAddDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<ProductAdminDto> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateDto productUpdateDto) {
-        ProductAdminDto productAdminDto = productService.updateProduct(id, productUpdateDto);
-        return ResponseEntity.ok().body(productAdminDto);
+    public ResponseEntity<Long> updateProduct(@PathVariable Long id, @RequestBody ProductUpdateDto productUpdateDto) {
+        Long rs = productService.updateProduct(id, productUpdateDto);
+        return ResponseEntity.ok().body(rs);
     }
 
     @DeleteMapping ("/delete/{id}")
-    public ResponseEntity<ProductAdminDto> deleteProduct(@PathVariable Long id) {
-        ProductAdminDto productAdminDto = productService.deleteProduct(id);
-        return ResponseEntity.ok().body(productAdminDto);
+    public ResponseEntity<Long> deleteProduct(@PathVariable Long id) {
+        Long rs = productService.deleteProduct(id);
+        return ResponseEntity.ok().body(rs);
     }
 
     @PostMapping("/upload-file/{id}")
-    public ResponseEntity<ProductAdminDto> uploadFileByProductId(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
-        ProductAdminDto productAdminDto = productService.uploadImageById(id, file);
-        return ResponseEntity.ok().body(productAdminDto);
+    public ResponseEntity<Long> uploadFileByProductId(@PathVariable("id") Long id, @RequestParam("image") MultipartFile file) {
+        Long rs = productService.uploadImageById(id, file);
+        return ResponseEntity.ok().body(rs);
     }
 
     @GetMapping ("/search")

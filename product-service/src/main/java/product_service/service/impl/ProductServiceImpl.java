@@ -2,18 +2,21 @@ package product_service.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import product_service.dto.product.ProductAddDto;
-import product_service.dto.product.ProductAdminDto;
-import product_service.dto.product.ProductSearchDto;
-import product_service.dto.product.ProductUpdateDto;
+import product_service.dto.product.*;
 import product_service.exception.DuplicateException;
 import product_service.exception.NotFoundException;
 import product_service.model.Product;
+import product_service.model.Promotion;
+import product_service.model.PromotionProduct;
 import product_service.repository.ProductRepository;
+import product_service.repository.PromotionProductRepository;
+import product_service.repository.PromotionRepository;
 import product_service.service.CloudinaryService;
 import product_service.service.ProductService;
 import product_service.utils.Constants;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,18 +25,66 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CloudinaryService cloudinaryService;
+    private final PromotionProductRepository promotionProductRepository;
+    private final PromotionRepository promotionRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, CloudinaryService cloudinaryService) {
+    public ProductServiceImpl(ProductRepository productRepository, CloudinaryService cloudinaryService, PromotionProductRepository promotionProductRepository, PromotionRepository promotionRepository) {
         this.productRepository = productRepository;
         this.cloudinaryService = cloudinaryService;
+        this.promotionProductRepository = promotionProductRepository;
+        this.promotionRepository = promotionRepository;
     }
 
     public List<ProductAdminDto> getAllProductAdmin() {
+        LocalDate today = LocalDate.now();
         List<Product> list = productRepository.findAll();
-        return list.stream().map(ProductAdminDto::fromProduct).toList();
+        List<PromotionProduct> promotionProductList = promotionProductRepository.findAll();
+        return list.stream().map(p -> {
+            for (PromotionProduct pd : promotionProductList) {;
+                if (pd.getProductId() == p.getId()) {
+                    Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
+                            () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
+                    if (promotion.getStatus().name().equals("ACTIVE") && !promotion.getEndDate().isBefore(today)) {
+                        String promotionName = promotion.getName();
+                        Long originalPrice = p.getPrice();
+                        Long discountedPrice;
+                        if (promotion.getType().name().equals("PERCENTAGE")) {
+                            discountedPrice = originalPrice -  (originalPrice * promotion.getValue()/100);
+                        } else {
+                            discountedPrice = originalPrice - promotion.getValue();
+                        }
+                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString());
+                    }
+                }
+            }
+            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString());
+        }).toList();
     }
 
-    public ProductAdminDto addProduct(ProductAddDto productAddDto) {
+    public List<ProductNoPromotionDto> getAllProductNoPromotion() {
+        LocalDate today = LocalDate.now();
+        List<Product> list = productRepository.findAll();
+        List<Product> result = new ArrayList<>();
+        List<PromotionProduct> promotionProductList = promotionProductRepository.findAll();
+        for (Product p : list) {
+            Boolean noContain = false;
+            for (PromotionProduct pd : promotionProductList) {
+                if (pd.getProductId() == p.getId()) {
+                    Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
+                            () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
+                    if (promotion.getStatus().name().equals("ACTIVE") && !promotion.getEndDate().isBefore(today)) {
+                        noContain = true;
+                    }
+                }
+            }
+            if (noContain == false) {
+                result.add(p);
+            }
+        }
+        return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName())).toList();
+    }
+
+    public Long addProduct(ProductAddDto productAddDto) {
         Boolean isExist = productRepository.findByName(productAddDto.name()).isPresent();
         if (isExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_TAKEN, productAddDto.name()));
@@ -48,10 +99,10 @@ public class ProductServiceImpl implements ProductService {
                 price,
                 quantity);
         productRepository.saveAndFlush(productAdd);
-        return ProductAdminDto.fromProduct(productAdd);
+        return productAdd.getId();
     }
 
-    public ProductAdminDto updateProduct(Long id, ProductUpdateDto productUpdateDto) {
+    public Long updateProduct(Long id, ProductUpdateDto productUpdateDto) {
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id)));
         if (product.getStatus() == false) {
@@ -65,10 +116,10 @@ public class ProductServiceImpl implements ProductService {
         product.setPrice(price);
         product.setQuantity(quantity);
         productRepository.saveAndFlush(product);
-        return ProductAdminDto.fromProduct(product);
+        return product.getId();
     }
 
-    public ProductAdminDto deleteProduct(Long id) {
+    public Long deleteProduct(Long id) {
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id)));
         if (product.getStatus() == false) {
@@ -76,10 +127,10 @@ public class ProductServiceImpl implements ProductService {
         }
         product.setStatus(false);
         productRepository.saveAndFlush(product);
-        return ProductAdminDto.fromProduct(product);
+        return product.getId();
     }
 
-    public ProductAdminDto uploadImageById(Long id, MultipartFile file) {
+    public Long uploadImageById(Long id, MultipartFile file) {
         Map<String, Object> result = cloudinaryService.uploadFile(file);
         String imagePath = (String) result.get("url");
 
@@ -91,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
 
         product.setImagePath(imagePath);
         productRepository.saveAndFlush(product);
-        return ProductAdminDto.fromProduct(product);
+        return product.getId();
     }
 
     public ProductSearchDto findByName(String name) {
