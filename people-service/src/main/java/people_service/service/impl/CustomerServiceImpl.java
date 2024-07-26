@@ -91,7 +91,7 @@ public class CustomerServiceImpl implements CustomerService {
         return CustomerAdminDto.fromCustomer(customer);
     }
 
-    public CustomerSearchDto findByPhoneNumber(String phoneNumber) {
+    public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber) {
         Customer customer = customerRepository.findByPhoneNumberSearch(phoneNumber).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_PHONE_NUMBER, phoneNumber)));
         String fullName = customer.getFirstName() + " " + customer.getLastName();

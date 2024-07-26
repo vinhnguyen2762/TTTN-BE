@@ -13,5 +13,5 @@ public interface CustomerService {
     public CustomerAdminDto updateCustomer(Long id, CustomerUpdateDto customerUpdateDto);
     public CustomerAdminDto deleteCustomer(Long id);
     public CustomerAdminDto findById(Long id);
-    public CustomerSearchDto findByPhoneNumber(String phoneNumber);
+    public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber);
 }

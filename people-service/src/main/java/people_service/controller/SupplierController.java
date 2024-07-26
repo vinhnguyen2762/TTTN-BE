@@ -5,9 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerSearchDto;
 import people_service.dto.customer.CustomerUpdateDto;
+import people_service.dto.employee.EmployeeAdminDto;
 import people_service.dto.supplier.SupplierAddDto;
 import people_service.dto.supplier.SupplierAdminDto;
+import people_service.dto.supplier.SupplierSearchDto;
 import people_service.dto.supplier.SupplierUpdateDto;
 import people_service.model.Supplier;
 import people_service.service.SupplierService;
@@ -46,5 +49,17 @@ public class SupplierController {
     public ResponseEntity<SupplierAdminDto> deleteSupplier(@PathVariable Long id) {
         SupplierAdminDto supplierAdminDto = supplierService.deleteSupplier(id);
         return ResponseEntity.ok().body(supplierAdminDto);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<SupplierAdminDto> getById(@PathVariable Long id) {
+        SupplierAdminDto supplierAdminDto = supplierService.findById(id);
+        return ResponseEntity.ok().body(supplierAdminDto);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<SupplierSearchDto> searchByPhoneTaxId(@RequestParam("taxId") String taxId) {
+        SupplierSearchDto supplierSearchDto = supplierService.findByTaxIdSearch(taxId);
+        return ResponseEntity.ok().body(supplierSearchDto);
     }
 }

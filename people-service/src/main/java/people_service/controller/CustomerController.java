@@ -55,7 +55,7 @@ public class CustomerController {
 
     @GetMapping("/search")
     public ResponseEntity<CustomerSearchDto> searchByPhoneNumber(@RequestParam("phoneNumber") String phoneNumber) {
-        CustomerSearchDto customerSearchDto = customerService.findByPhoneNumber(phoneNumber);
+        CustomerSearchDto customerSearchDto = customerService.findByPhoneNumberSearch(phoneNumber);
         return ResponseEntity.ok().body(customerSearchDto);
     }
 }

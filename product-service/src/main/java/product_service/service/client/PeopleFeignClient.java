@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import product_service.dto.customer.CustomerAdminDto;
 import product_service.dto.employee.EmployeeAdminDto;
+import product_service.dto.supplier.SupplierAdminDto;
 
 @FeignClient(name = "people-service", url = "http://localhost:9001/api/v1")
 public interface PeopleFeignClient {
@@ -15,5 +16,8 @@ public interface PeopleFeignClient {
 
     @GetMapping("/customer/{id}")
     ResponseEntity<CustomerAdminDto> getCustomerById(@PathVariable Long id);
+
+    @GetMapping("/supplier/{id}")
+    ResponseEntity<SupplierAdminDto> getSupplierById(@PathVariable Long id);
 
 }
