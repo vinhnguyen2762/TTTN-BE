@@ -2,15 +2,15 @@ package product_service.dto.purchaseOrderDetail;
 
 import product_service.model.PurchaseOrderDetail;
 
-public record PurchaseOderDetailAdminDto(
+public record PurchaseOrderDetailAdminDto(
         Long id,
         Long productId,
         String productName,
         String supplyPrice,
         String quantity
 ) {
-    public static PurchaseOderDetailAdminDto fromPurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail, String productName) {
-        return new PurchaseOderDetailAdminDto(
+    public static PurchaseOrderDetailAdminDto fromPurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail, String productName) {
+        return new PurchaseOrderDetailAdminDto(
                 purchaseOrderDetail.getId(),
                 purchaseOrderDetail.getProductId(),
                 productName,

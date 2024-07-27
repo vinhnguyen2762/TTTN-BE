@@ -1,6 +1,6 @@
 package product_service.dto.purchaseOrder;
 
-import product_service.dto.purchaseOrderDetail.PurchaseOderDetailAdminDto;
+import product_service.dto.purchaseOrderDetail.PurchaseOrderDetailAdminDto;
 import product_service.model.PurchaseOrder;
 
 import java.time.format.DateTimeFormatter;
@@ -11,11 +11,12 @@ public record PurchaseOrderAdminDto(
         Long supplierId,
         String taxId,
         String supplierName,
-        String deliveryTime,
+        String createDate,
+        String deliveryDate,
         String status,
-        List<PurchaseOderDetailAdminDto> list
+        List<PurchaseOrderDetailAdminDto> list
 ) {
-    public static PurchaseOrderAdminDto fromPurchaseOrder(PurchaseOrder purchaseOrder, String taxId, String supplierName, List<PurchaseOderDetailAdminDto> list) {
+    public static PurchaseOrderAdminDto fromPurchaseOrder(PurchaseOrder purchaseOrder, String taxId, String supplierName, List<PurchaseOrderDetailAdminDto> list) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = purchaseOrder.getStatus().name().equals("PENDING") ? "Chờ thanh toán" : "Đã thanh toán";
         return new PurchaseOrderAdminDto(
@@ -23,7 +24,8 @@ public record PurchaseOrderAdminDto(
                 purchaseOrder.getSupplierId(),
                 taxId,
                 supplierName,
-                purchaseOrder.getDeliveryTime().format(formatter),
+                purchaseOrder.getCreateDate().format(formatter),
+                purchaseOrder.getDeliveryDate().format(formatter),
                 status,
                 list
         );

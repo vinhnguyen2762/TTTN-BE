@@ -6,7 +6,7 @@ import java.util.List;
 
 public record PurchaseOrderAddDto(
         Long supplierId,
-        String deliveryTime,
+        String deliveryDate,
         List<PurchaseOrderDetailPostDto> list
 ) {
 }

@@ -20,14 +20,16 @@ public class PurchaseOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long supplierId;
-    private LocalDate deliveryTime;
+    private LocalDate createDate;
+    private LocalDate deliveryDate;
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<OrderDetail> purchaseOrderDetails = new ArrayList<>();
+    private List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
 
-    public PurchaseOrder(Long supplierId, LocalDate deliveryTime) {
+    public PurchaseOrder(Long supplierId, LocalDate deliveryDate, LocalDate createDate) {
         this.supplierId = supplierId;
-        this.deliveryTime = deliveryTime;
+        this.deliveryDate = deliveryDate;
+        this.createDate = createDate;
     }
 }
