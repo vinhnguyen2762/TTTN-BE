@@ -3,6 +3,8 @@ package product_service.service;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
+import product_service.dto.revenue.RevenueRequest;
+import product_service.dto.revenue.RevenueResponse;
 
 import java.util.List;
 
@@ -12,4 +14,5 @@ public interface OrderService {
     public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto);
     public Long deleteOrder(Long id);
     public Long payOrder(Long id);
+    public RevenueResponse findTop5ProductsByRevenue(RevenueRequest revenueRequest);
 }

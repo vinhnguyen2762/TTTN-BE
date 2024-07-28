@@ -8,6 +8,8 @@ import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
 import product_service.dto.product.ProductAdminDto;
 import product_service.dto.product.ProductUpdateDto;
+import product_service.dto.revenue.RevenueRequest;
+import product_service.dto.revenue.RevenueResponse;
 import product_service.service.OrderService;
 
 import java.util.List;
@@ -50,5 +52,11 @@ public class OrderController {
     public ResponseEntity<Long> payOrder(@PathVariable Long id) {
         Long payId = orderService.payOrder(id);
         return ResponseEntity.ok().body(payId);
+    }
+
+    @PostMapping("/get-revenue")
+    public ResponseEntity<RevenueResponse> getTop5Revenue(@RequestBody RevenueRequest revenueRequest) {
+        RevenueResponse rs = orderService.findTop5ProductsByRevenue(revenueRequest);
+        return ResponseEntity.ok().body(rs);
     }
 }

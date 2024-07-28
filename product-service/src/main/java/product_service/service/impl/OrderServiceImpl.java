@@ -8,6 +8,9 @@ import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
 import product_service.dto.orderDetail.OrderDetailPostDto;
 import product_service.dto.orderDetail.OrderDetailAdminDto;
+import product_service.dto.revenue.RevenueProduct;
+import product_service.dto.revenue.RevenueRequest;
+import product_service.dto.revenue.RevenueResponse;
 import product_service.enums.OrderStatus;
 import product_service.exception.EmptyException;
 import product_service.exception.FailedException;
@@ -203,6 +206,37 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(OrderStatus.PAID);
         orderRepository.saveAndFlush(order);
         return id;
+    }
+
+    public RevenueResponse findTop5ProductsByRevenue(RevenueRequest revenueRequest) {
+        Long revenueTotal = orderRepository.findRevenueByMonthAndYear(revenueRequest.year(), revenueRequest.month());
+        List<Object[]> products = orderRepository.findTop5ProductsByRevenue(revenueRequest.year(), revenueRequest.month());
+        List<RevenueProduct> list = new ArrayList<>();
+        for (Object[] item : products) {
+            Long id = (Long) item[0];
+            Long revenue = (Long) item[1];
+            Product product = productRepository.findById(id).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id)));
+            if (product.getStatus() == false) {
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id));
+            }
+            String productName = product.getName();
+            RevenueProduct revenueProduct = new RevenueProduct(
+                    id,
+                    productName,
+                    revenue
+            );
+            list.add(revenueProduct);
+            if (list.size() == 5) {
+                break;
+            }
+        }
+        return new RevenueResponse(
+                revenueRequest.month(),
+                revenueRequest.year(),
+                revenueTotal,
+                list
+                );
     }
 
     private EmployeeAdminDto findEmployeeById(Long id) {
