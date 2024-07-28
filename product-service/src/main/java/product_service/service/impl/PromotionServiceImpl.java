@@ -124,12 +124,10 @@ public class PromotionServiceImpl implements PromotionService {
 
         PromotionType type = promotionPostDto.type().equals("Phần trăm") ? PromotionType.PERCENTAGE : PromotionType.FIXED_AMOUNT;
         Long value = Long.parseLong(promotionPostDto.value());
-        LocalDate today = LocalDate.now();
+
         LocalDate startDate = LocalDate.parse(promotionPostDto.startDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate endDate = LocalDate.parse(promotionPostDto.endDate(), DateTimeFormatter.ISO_LOCAL_DATE);
-        if (startDate.isBefore(today)) {
-            throw new FailedException("Start date is before today");
-        }  else if (startDate.isAfter(endDate)) {
+        if (startDate.isAfter(endDate)) {
             throw new FailedException(("Start date is after end date"));
         }
 
