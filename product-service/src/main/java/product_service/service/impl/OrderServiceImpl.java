@@ -51,6 +51,8 @@ public class OrderServiceImpl implements OrderService {
             EmployeeAdminDto employeeAdminDto = findEmployeeById(o.getUserId());
             String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
 
+            String phoneNumber = customerAdminDto.phoneNumber();
+
             List<OrderDetailAdminDto> list = o.getOrderDetails().stream().map(od -> {
                 Product product = productRepository.findById(od.getProductId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
@@ -60,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
             }).toList();
-            return OrderAdminDto.fromOrder(o, customerName, employeeName, list);
+            return OrderAdminDto.fromOrder(o, customerName, employeeName, phoneNumber, list);
         }).toList();
     }
 
@@ -99,6 +101,9 @@ public class OrderServiceImpl implements OrderService {
 
         EmployeeAdminDto employeeAdminDto = findEmployeeById(orderAdd.getUserId());
         String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
+
+        String phoneNumber = customerAdminDto.phoneNumber();
+
         List<OrderDetailAdminDto> list = orderDetailList.stream().map(od -> {
             Product product = productRepository.findById(od.getProductId()).orElseThrow(
                     () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
@@ -109,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
             return OrderDetailAdminDto.fromOderDetail(od, productName);
         }).toList();
 
-        return OrderAdminDto.fromOrder(orderAdd, customerName, employeeName ,list);
+        return OrderAdminDto.fromOrder(orderAdd, customerName, employeeName, phoneNumber, list);
     }
 
     public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
@@ -143,19 +148,23 @@ public class OrderServiceImpl implements OrderService {
 
         CustomerAdminDto customerAdminDto = findCustomerById(order.getCustomerId());
         String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
+
         EmployeeAdminDto employeeAdminDto = findEmployeeById(order.getUserId());
         String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
+
+        String phoneNumber = customerAdminDto.phoneNumber();
+
         List<OrderDetailAdminDto> list = updateList.stream().map(od -> {
             Product product = productRepository.findById(od.getProductId()).orElseThrow(
-                    () -> new FailedException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
             if (product.getStatus() == false) {
-                throw new FailedException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
             }
             String productName = product.getName();
             return OrderDetailAdminDto.fromOderDetail(od, productName);
         }).toList();
 
-        return OrderAdminDto.fromOrder(order, customerName, employeeName,list);
+        return OrderAdminDto.fromOrder(order, customerName, employeeName, phoneNumber, list);
     }
 
     public Long deleteOrder(Long id) {

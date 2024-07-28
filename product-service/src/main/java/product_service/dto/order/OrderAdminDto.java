@@ -15,9 +15,10 @@ public record OrderAdminDto(
         Long userId,
         String userName,
         String total,
+        String phoneNumber,
         List<OrderDetailAdminDto> list
 ) {
-    public static OrderAdminDto fromOrder(Order order, String customerName, String userName, List<OrderDetailAdminDto> list) {
+    public static OrderAdminDto fromOrder(Order order, String customerName, String userName, String phoneNumber, List<OrderDetailAdminDto> list) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = order.getStatus().name().equals("PENDING") ? "Chờ thanh toán" : "Đã thanh toán";
 
@@ -36,6 +37,7 @@ public record OrderAdminDto(
                 order.getUserId(),
                 userName,
                 total.toString(),
+                phoneNumber,
                 list
         );
     }
