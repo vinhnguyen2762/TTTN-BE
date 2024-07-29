@@ -15,5 +15,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """)
     List<Product> findAll();
 
+    @Query("SELECT COALESCE(COUNT(p), 0) FROM Product p WHERE p.status = true")
+    Long countProductsByStatusTrue();
+
     Optional<Product> findByName(String name);
 }

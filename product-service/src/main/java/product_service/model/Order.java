@@ -19,7 +19,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate oderDate;
+    private LocalDate orderDate;
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
     private Long customerId;
@@ -28,8 +28,8 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
-    public Order(LocalDate oderDate, Long customerId, Long userId) {
-        this.oderDate = oderDate;
+    public Order(LocalDate orderDate, Long customerId, Long userId) {
+        this.orderDate = orderDate;
         this.customerId = customerId;
         this.userId = userId;
     }

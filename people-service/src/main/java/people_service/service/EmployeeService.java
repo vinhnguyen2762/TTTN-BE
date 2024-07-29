@@ -16,4 +16,5 @@ public interface EmployeeService {
     public EmployeeAdminDto changeAccountStatus(Long id);
     public Long changePassword(Long id, ChangePasswordRequest changePasswordRequest);
     public EmployeeAdminDto findById(Long id);
+    public Long countEmployeeByStatusTrue();
 }

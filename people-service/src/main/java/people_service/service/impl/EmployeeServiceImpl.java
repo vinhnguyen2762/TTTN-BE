@@ -123,4 +123,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         return EmployeeAdminDto.fromEmployee(employee);
     }
+
+    public Long countEmployeeByStatusTrue() {
+        Long rs = employeeRepository.countEmployeeByStatusTrue();
+        return rs;
+    }
 }

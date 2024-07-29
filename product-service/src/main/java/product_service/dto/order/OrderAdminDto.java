@@ -30,7 +30,7 @@ public record OrderAdminDto(
 
         return new OrderAdminDto(
                 order.getId(),
-                order.getOderDate().format(formatter),
+                order.getOrderDate().format(formatter),
                 status,
                 order.getCustomerId(),
                 customerName,

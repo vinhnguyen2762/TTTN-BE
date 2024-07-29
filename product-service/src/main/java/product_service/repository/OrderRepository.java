@@ -27,13 +27,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COALESCE(SUM(od.quantity * od.price), 0) " +
             "FROM Order o JOIN o.orderDetails od " +
-            "WHERE YEAR(o.oderDate) = :year AND MONTH(o.oderDate) = :month AND o.status = 'PAID'")
+            "WHERE YEAR(o.orderDate) = :year AND MONTH(o.orderDate) = :month AND o.status = 'PAID'")
     Long findRevenueByMonthAndYear(@Param("year") Integer year, @Param("month") Integer month);
 
     @Query("SELECT od.productId, COALESCE(SUM(od.quantity * od.price), 0) AS revenue " +
             "FROM Order o JOIN o.orderDetails od " +
-            "WHERE YEAR(o.oderDate) = :year AND MONTH(o.oderDate) = :month AND o.status = 'PAID' " +
+            "WHERE YEAR(o.orderDate) = :year AND MONTH(o.orderDate) = :month AND o.status = 'PAID' " +
             "GROUP BY od.productId " +
             "ORDER BY revenue DESC")
     List<Object[]> findTop5ProductsByRevenue(@Param("year") Integer year, @Param("month") Integer month);
+
+    @Query("SELECT COALESCE(COUNT(o), 0) FROM Order o WHERE o.status = 'PAID' AND YEAR(o.orderDate) = :year AND MONTH(o.orderDate) = :month")
+    Long countOrdersByStatusAndMonth(@Param("year") Integer year, @Param("month") Integer month);
 }

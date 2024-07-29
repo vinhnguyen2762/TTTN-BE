@@ -57,4 +57,10 @@ public class EmployeeController {
         Long returnId = employeeService.changePassword(id, request);
         return ResponseEntity.ok().body(returnId);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countEmployeeByStatusTrue() {
+        Long rs = employeeService.countEmployeeByStatusTrue();
+        return ResponseEntity.ok().body(rs);
+    }
 }

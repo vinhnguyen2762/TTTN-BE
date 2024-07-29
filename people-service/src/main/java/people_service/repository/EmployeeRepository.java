@@ -23,4 +23,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             where e.status = true
             """)
     List<Employee> findAll();
+
+    @Query("SELECT COALESCE(COUNT(e), 0) FROM Employee e WHERE e.status = true")
+    Long countEmployeeByStatusTrue();
 }

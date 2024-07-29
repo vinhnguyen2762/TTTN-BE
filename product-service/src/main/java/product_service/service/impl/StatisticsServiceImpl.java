@@ -1,30 +1,35 @@
 package product_service.service.impl;
 
 import org.springframework.stereotype.Service;
+import product_service.dto.employee.EmployeeAdminDto;
 import product_service.dto.revenue.RevenueProduct;
 import product_service.dto.revenue.RevenueRequest;
 import product_service.dto.revenue.RevenueResponse;
+import product_service.dto.statistics.StatisticsResponse;
 import product_service.exception.NotFoundException;
 import product_service.model.Product;
 import product_service.repository.OrderRepository;
 import product_service.repository.ProductRepository;
 import product_service.repository.PurchaseOrderRepository;
-import product_service.service.RevenueService;
+import product_service.service.StatisticsService;
+import product_service.service.client.PeopleFeignClient;
 import product_service.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class RevenueServiceImpl implements RevenueService {
+public class StatisticsServiceImpl implements StatisticsService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final PurchaseOrderRepository purchaseOrderRepository;
+    private final PeopleFeignClient peopleFeignClient;
 
-    public RevenueServiceImpl(ProductRepository productRepository, OrderRepository orderRepository, PurchaseOrderRepository purchaseOrderRepository) {
+    public StatisticsServiceImpl(ProductRepository productRepository, OrderRepository orderRepository, PurchaseOrderRepository purchaseOrderRepository, PeopleFeignClient peopleFeignClient) {
         this.productRepository = productRepository;
         this.orderRepository = orderRepository;
         this.purchaseOrderRepository = purchaseOrderRepository;
+        this.peopleFeignClient = peopleFeignClient;
     }
 
     public RevenueResponse findTop5ProductsByRevenue(RevenueRequest revenueRequest) {
@@ -59,6 +64,21 @@ public class RevenueServiceImpl implements RevenueService {
                 moneyPurchase,
                 list
         );
+    }
+    public StatisticsResponse getDataHomePage(RevenueRequest revenueRequest) {
+        Long employeeNumber = countEmployee();
+        Long productNumber = productRepository.countProductsByStatusTrue();
+        Long orderNumber = orderRepository.countOrdersByStatusAndMonth(revenueRequest.year(), revenueRequest.month());
+        return new StatisticsResponse(
+                employeeNumber,
+                productNumber,
+                orderNumber
+        );
+    }
+
+    private Long countEmployee() {
+        Long employeeNumber = peopleFeignClient.countEmployeeByStatusTrue().getBody();
+        return employeeNumber;
     }
 
 }

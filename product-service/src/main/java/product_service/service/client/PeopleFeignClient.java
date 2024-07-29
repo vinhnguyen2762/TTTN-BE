@@ -14,6 +14,9 @@ public interface PeopleFeignClient {
     @GetMapping("/employee/{id}")
     ResponseEntity<EmployeeAdminDto> getEmployeeById(@PathVariable Long id);
 
+    @GetMapping("/employee/count")
+    ResponseEntity<Long> countEmployeeByStatusTrue();
+
     @GetMapping("/customer/{id}")
     ResponseEntity<CustomerAdminDto> getCustomerById(@PathVariable Long id);
 
