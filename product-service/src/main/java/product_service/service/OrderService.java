@@ -14,5 +14,4 @@ public interface OrderService {
     public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto);
     public Long deleteOrder(Long id);
     public Long payOrder(Long id);
-    public RevenueResponse findTop5ProductsByRevenue(RevenueRequest revenueRequest);
 }

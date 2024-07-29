@@ -24,4 +24,9 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
             where p.id = :id
             """)
     Optional<PurchaseOrder> findById(@Param("id") Long id);
+
+    @Query("SELECT COALESCE(SUM(pod.quantity * pod.supplyPrice), 0) " +
+            "FROM PurchaseOrder po JOIN po.purchaseOrderDetails pod " +
+            "WHERE YEAR(po.deliveryDate) = :year AND MONTH(po.deliveryDate) = :month AND po.status = 'PAID'")
+    Long findMoneyPurchaseByMonthAndYear(@Param("year") Integer year, @Param("month") Integer month);
 }

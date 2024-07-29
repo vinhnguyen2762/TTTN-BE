@@ -53,10 +53,4 @@ public class OrderController {
         Long payId = orderService.payOrder(id);
         return ResponseEntity.ok().body(payId);
     }
-
-    @PostMapping("/get-revenue")
-    public ResponseEntity<RevenueResponse> getTop5Revenue(@RequestBody RevenueRequest revenueRequest) {
-        RevenueResponse rs = orderService.findTop5ProductsByRevenue(revenueRequest);
-        return ResponseEntity.ok().body(rs);
-    }
 }
