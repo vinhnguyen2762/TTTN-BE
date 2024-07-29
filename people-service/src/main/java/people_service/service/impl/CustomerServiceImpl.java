@@ -101,4 +101,9 @@ public class CustomerServiceImpl implements CustomerService {
         );
     }
 
+    public Long countCustomerByStatusTrue() {
+        Long rs = customerRepository.countCustomerByStatusTrue();
+        return rs;
+    }
+
 }

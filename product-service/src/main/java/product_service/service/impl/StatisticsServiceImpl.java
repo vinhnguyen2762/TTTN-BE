@@ -69,16 +69,23 @@ public class StatisticsServiceImpl implements StatisticsService {
         Long employeeNumber = countEmployee();
         Long productNumber = productRepository.countProductsByStatusTrue();
         Long orderNumber = orderRepository.countOrdersByStatusAndMonth(revenueRequest.year(), revenueRequest.month());
+        Long customerNumber = countCustomer();
         return new StatisticsResponse(
                 employeeNumber,
                 productNumber,
-                orderNumber
+                orderNumber,
+                customerNumber
         );
     }
 
     private Long countEmployee() {
         Long employeeNumber = peopleFeignClient.countEmployeeByStatusTrue().getBody();
         return employeeNumber;
+    }
+
+    private Long countCustomer() {
+        Long customerNumber = peopleFeignClient.countCustomerByStatusTrue().getBody();
+        return customerNumber;
     }
 
 }

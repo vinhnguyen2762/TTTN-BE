@@ -24,4 +24,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             where c.status = true
             """)
     List<Customer> findAll();
+
+    @Query("SELECT COALESCE(COUNT(c), 0) FROM Customer c WHERE c.status = true")
+    Long countCustomerByStatusTrue();
 }

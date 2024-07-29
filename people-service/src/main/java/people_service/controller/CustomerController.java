@@ -58,4 +58,10 @@ public class CustomerController {
         CustomerSearchDto customerSearchDto = customerService.findByPhoneNumberSearch(phoneNumber);
         return ResponseEntity.ok().body(customerSearchDto);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> countCustomerByStatusTrue() {
+        Long rs = customerService.countCustomerByStatusTrue();
+        return ResponseEntity.ok().body(rs);
+    }
 }

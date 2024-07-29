@@ -14,4 +14,5 @@ public interface CustomerService {
     public CustomerAdminDto deleteCustomer(Long id);
     public CustomerAdminDto findById(Long id);
     public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber);
+    public Long countCustomerByStatusTrue();
 }
