@@ -14,11 +14,19 @@ public record PurchaseOrderAdminDto(
         String createDate,
         String deliveryDate,
         String status,
+        String total,
         List<PurchaseOrderDetailAdminDto> list
 ) {
     public static PurchaseOrderAdminDto fromPurchaseOrder(PurchaseOrder purchaseOrder, String taxId, String supplierName, List<PurchaseOrderDetailAdminDto> list) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = purchaseOrder.getStatus().name().equals("PENDING") ? "Chờ thanh toán" : "Đã thanh toán";
+
+        Long total = list.stream().mapToLong(pod -> {
+            Long supplyPrice = Long.parseLong(pod.supplyPrice());
+            Integer quantity = Integer.parseInt(pod.quantity());
+            return supplyPrice * quantity;
+        }).sum();
+
         return new PurchaseOrderAdminDto(
                 purchaseOrder.getId(),
                 purchaseOrder.getSupplierId(),
@@ -27,6 +35,7 @@ public record PurchaseOrderAdminDto(
                 purchaseOrder.getCreateDate().format(formatter),
                 purchaseOrder.getDeliveryDate().format(formatter),
                 status,
+                total.toString(),
                 list
         );
     }
