@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
                 if (pd.getProductId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
-                    if (promotion.getStatus().name().equals("ACTIVE") && !promotion.getEndDate().isBefore(today)) {
+                    if (!promotion.getStatus().name().equals("DELETED") && !promotion.getEndDate().isBefore(today)) {
                         noContain = true;
                     }
                 }
