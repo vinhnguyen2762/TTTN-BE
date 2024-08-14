@@ -14,6 +14,8 @@ import people_service.service.AuthService;
 import people_service.service.RegistrationService;
 import people_service.utils.Constants;
 
+import static people_service.utils.PasswordHashing.checkPassword;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -29,11 +31,12 @@ public class AuthServiceImpl implements AuthService {
     public EmployeeAdminDto login(AuthenticationRequest request) {
         Employee employee = employeeRepository.findByEmail(request.getEmail()).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, request.getEmail())));
+        boolean isMatch = checkPassword(request.getPassword(), employee.getPassword());
         if (employee.getStatus() == false) {
             throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, request.getEmail()));
         } else if (employee.getLocked() == true) {
             throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
-        } else if (!employee.getPassword().equals(request.getPassword())) {
+        } else if (!isMatch) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
         }
         return EmployeeAdminDto.fromEmployee(employee);

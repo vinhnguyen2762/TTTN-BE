@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import people_service.dto.employee.EmployeeAdminDto;
 import people_service.dto.employee.EmployeeUpdateDto;
 import people_service.enums.Gender;
-import people_service.exception.AccountLockedException;
 import people_service.exception.DuplicateException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
@@ -23,6 +22,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
+import static people_service.utils.PasswordHashing.checkPassword;
+import static people_service.utils.PasswordHashing.hashPassword;
+
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
@@ -35,6 +37,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (isUserExists) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, employee.getEmail()));
         }
+        String hashedPassword = hashPassword(employee.getPassword());
+        employee.setPassword(hashedPassword);
 
         employeeRepository.saveAndFlush(employee);
 
@@ -106,10 +110,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Long changePassword(Long id, ChangePasswordRequest changePasswordRequest) {
         Employee employee = employeeRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND_ID, id)));
-        if (!employee.getPassword().equals(changePasswordRequest.getOldPassword())) {
+        boolean isMatch = checkPassword(changePasswordRequest.getOldPassword(), employee.getPassword());
+        if (!isMatch) {
             throw new FailedException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
         } else {
-            employee.setPassword(changePasswordRequest.getNewPassword());
+            employee.setPassword(hashPassword(changePasswordRequest.getNewPassword()));
             employeeRepository.saveAndFlush(employee);
         }
         return employee.getId();
