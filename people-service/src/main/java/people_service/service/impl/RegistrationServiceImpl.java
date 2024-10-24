@@ -5,12 +5,12 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
-import people_service.dto.employee.EmployeeAdminDto;
+import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.ConfirmationToken;
-import people_service.model.Employee;
+import people_service.model.SmallTrader;
 import people_service.model.RegistrationRequest;
 import people_service.service.ConfirmationTokenService;
 import people_service.service.EmailService;
@@ -25,11 +25,11 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
 
-    private final EmployeeServiceImpl employeeService;
+    private final SmallTraderServiceImpl employeeService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailSender;
 
-    public EmployeeAdminDto register(RegistrationRequest request) {
+    public SmallTraderAdminDto register(RegistrationRequest request) {
         boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
         if (!isValidEmail) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_NOT_VALID, request.getEmail()));
@@ -38,7 +38,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
         Gender gender = request.getGender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
 
-        Employee employee = new Employee(
+        SmallTrader smallTrader = new SmallTrader(
                 request.getFirstName(),
                 request.getLastName(),
                 date,
@@ -47,10 +47,10 @@ public class RegistrationServiceImpl implements RegistrationService {
                 request.getPhoneNumber(),
                 request.getEmail(),
                 request.getPassword());
-        String confirmToken = employeeService.signUpUser(employee);
+        String confirmToken = employeeService.signUpUser(smallTrader);
         String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
         emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
-        return EmployeeAdminDto.fromEmployee(employee);
+        return SmallTraderAdminDto.fromEmployee(smallTrader);
     }
 
     @Transactional
@@ -61,18 +61,18 @@ public class RegistrationServiceImpl implements RegistrationService {
                         new NotFoundException(String.format(Constants.ErrorMessage.TOKEN_NOT_FOUND, confirmToken)));
 
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_CONFIRMED, confirmationToken.getEmployee().getEmail()));
+            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_CONFIRMED, confirmationToken.getSmallTrader().getEmail()));
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new FailedException(String.format(Constants.ErrorMessage.TOKEN_EXPIRED, confirmationToken.getEmployee().getEmail()));
+            throw new FailedException(String.format(Constants.ErrorMessage.TOKEN_EXPIRED, confirmationToken.getSmallTrader().getEmail()));
         }
 
         confirmationTokenService.setConfirmedAt(confirmToken);
         employeeService.enableAppUser(
-                confirmationToken.getEmployee().getEmail());
+                confirmationToken.getSmallTrader().getEmail());
         return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
     }
 

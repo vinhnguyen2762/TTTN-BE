@@ -14,9 +14,10 @@ public record ProductAdminDto (
         String quantity,
         String promotionName,
         String discountedPrice,
-        String imagePath
+        String imagePath,
+        String smallTraderName
 ) {
-    public static ProductAdminDto fromProduct(Product product, String promotionName, String discountedPrice) {
+    public static ProductAdminDto fromProduct(Product product, String promotionName, String discountedPrice, String smallTraderName) {
 
         return new ProductAdminDto(
                 product.getId(),
@@ -26,7 +27,8 @@ public record ProductAdminDto (
                 product.getQuantity().toString(),
                 promotionName,
                 discountedPrice,
-                product.getImagePath()
+                product.getImagePath(),
+                smallTraderName
         );
     }
 }

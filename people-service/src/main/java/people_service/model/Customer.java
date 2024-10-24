@@ -21,15 +21,20 @@ public class Customer {
     private Gender gender;
     private String address;
     @Column(unique = true)
+    private String email;
+    @Column(unique = true)
     private String phoneNumber;
+    private String password;
     private Boolean status = true;
+    private Boolean locked = true;
 
-    public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber) {
+    public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.address = address;
         this.phoneNumber = phoneNumber;
+        this.email = email;
     }
 }

@@ -23,14 +23,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status = OrderStatus.PENDING;
     private Long customerId;
-    private Long userId;
+    private Long smallTraderId;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
-    public Order(LocalDate orderDate, Long customerId, Long userId) {
+    public Order(LocalDate orderDate, Long customerId, Long smallTraderId) {
         this.orderDate = orderDate;
         this.customerId = customerId;
-        this.userId = userId;
+        this.smallTraderId = smallTraderId;
     }
 }

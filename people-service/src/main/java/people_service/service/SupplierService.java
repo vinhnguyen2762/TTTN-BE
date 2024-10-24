@@ -1,7 +1,5 @@
 package people_service.service;
 
-import people_service.dto.customer.CustomerSearchDto;
-import people_service.dto.employee.EmployeeAdminDto;
 import people_service.dto.supplier.SupplierAddDto;
 import people_service.dto.supplier.SupplierAdminDto;
 import people_service.dto.supplier.SupplierSearchDto;

@@ -13,5 +13,6 @@ public interface ProductService {
     public Long deleteProduct(Long id);
     public Long uploadImageById(Long id, MultipartFile file);
     public ProductSearchDto findByName(String name);
+    public List<ProductAdminDto> getAllProductSmallTrader(Long id);
 
 }

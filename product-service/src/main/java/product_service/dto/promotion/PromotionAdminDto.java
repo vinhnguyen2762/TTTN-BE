@@ -1,6 +1,6 @@
 package product_service.dto.promotion;
 
-import product_service.dto.promotionProduct.PromotionProductAdminDto;
+import product_service.dto.promotionDetail.PromotionDetailAdminDto;
 import product_service.model.Promotion;
 
 import java.time.format.DateTimeFormatter;
@@ -15,9 +15,10 @@ public record PromotionAdminDto(
         String startDate,
         String endDate,
         String status,
-        List<PromotionProductAdminDto> list
+        List<PromotionDetailAdminDto> list,
+        String smallTraderName
 ) {
-    public static PromotionAdminDto fromPromotion(Promotion promotion, List<PromotionProductAdminDto> list) {
+    public static PromotionAdminDto fromPromotion(Promotion promotion, List<PromotionDetailAdminDto> list, String smallTraderName) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = promotion.getStatus().name().equals("PENDING") ? "Chờ áp dụng" : "Đang áp dụng";
         String type = promotion.getType().name().equals("PERCENTAGE") ? "Phần trăm" : "Số tiền cố định";
@@ -31,7 +32,8 @@ public record PromotionAdminDto(
                 promotion.getStartDate().format(formatter),
                 promotion.getEndDate().format(formatter),
                 status,
-                list
+                list,
+                smallTraderName
         );
     }
 }

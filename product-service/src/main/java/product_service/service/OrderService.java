@@ -14,4 +14,5 @@ public interface OrderService {
     public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto);
     public Long deleteOrder(Long id);
     public Long payOrder(Long id);
+    public Boolean checkCustomerHasOrder(Long id);
 }

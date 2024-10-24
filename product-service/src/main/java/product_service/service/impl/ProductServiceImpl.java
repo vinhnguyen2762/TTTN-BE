@@ -2,17 +2,19 @@ package product_service.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import product_service.dto.smallTrader.SmallTraderAdminDto;
 import product_service.dto.product.*;
 import product_service.exception.DuplicateException;
 import product_service.exception.NotFoundException;
 import product_service.model.Product;
 import product_service.model.Promotion;
-import product_service.model.PromotionProduct;
+import product_service.model.PromotionDetail;
 import product_service.repository.ProductRepository;
-import product_service.repository.PromotionProductRepository;
+import product_service.repository.PromotionDetailRepository;
 import product_service.repository.PromotionRepository;
 import product_service.service.CloudinaryService;
 import product_service.service.ProductService;
+import product_service.service.client.PeopleFeignClient;
 import product_service.utils.Constants;
 
 import java.time.LocalDate;
@@ -25,22 +27,27 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CloudinaryService cloudinaryService;
-    private final PromotionProductRepository promotionProductRepository;
+    private final PromotionDetailRepository promotionDetailRepository;
     private final PromotionRepository promotionRepository;
+    private final PeopleFeignClient peopleFeignClient;
 
-    public ProductServiceImpl(ProductRepository productRepository, CloudinaryService cloudinaryService, PromotionProductRepository promotionProductRepository, PromotionRepository promotionRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, CloudinaryService cloudinaryService, PromotionDetailRepository promotionDetailRepository, PromotionRepository promotionRepository, PeopleFeignClient peopleFeignClient) {
         this.productRepository = productRepository;
         this.cloudinaryService = cloudinaryService;
-        this.promotionProductRepository = promotionProductRepository;
+        this.promotionDetailRepository = promotionDetailRepository;
         this.promotionRepository = promotionRepository;
+        this.peopleFeignClient = peopleFeignClient;
     }
 
     public List<ProductAdminDto> getAllProductAdmin() {
         LocalDate today = LocalDate.now();
         List<Product> list = productRepository.findAll();
-        List<PromotionProduct> promotionProductList = promotionProductRepository.findAll();
+        List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
         return list.stream().map(p -> {
-            for (PromotionProduct pd : promotionProductList) {;
+            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
+            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+
+            for (PromotionDetail pd : promotionDetailList) {;
                 if (pd.getProductId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
@@ -53,11 +60,11 @@ public class ProductServiceImpl implements ProductService {
                         } else {
                             discountedPrice = originalPrice - promotion.getValue();
                         }
-                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString());
+                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString(), smallTraderName);
                     }
                 }
             }
-            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString());
+            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString(), smallTraderName);
         }).toList();
     }
 
@@ -65,10 +72,10 @@ public class ProductServiceImpl implements ProductService {
         LocalDate today = LocalDate.now();
         List<Product> list = productRepository.findAll();
         List<Product> result = new ArrayList<>();
-        List<PromotionProduct> promotionProductList = promotionProductRepository.findAll();
+        List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
         for (Product p : list) {
             Boolean noContain = false;
-            for (PromotionProduct pd : promotionProductList) {
+            for (PromotionDetail pd : promotionDetailList) {
                 if (pd.getProductId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
@@ -97,7 +104,8 @@ public class ProductServiceImpl implements ProductService {
                 productAddDto.name(),
                 productAddDto.description(),
                 price,
-                quantity);
+                quantity,
+                productAddDto.smallTraderId());
         productRepository.saveAndFlush(productAdd);
         return productAdd.getId();
     }
@@ -156,5 +164,39 @@ public class ProductServiceImpl implements ProductService {
                 product.getPrice().toString(),
                 product.getQuantity().toString()
         );
+    }
+
+    public List<ProductAdminDto> getAllProductSmallTrader(Long id) {
+        LocalDate today = LocalDate.now();
+        List<Product> list = productRepository.findBySmallTraderId(id);
+        List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
+        return list.stream().map(p -> {
+            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
+            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+
+            for (PromotionDetail pd : promotionDetailList) {;
+                if (pd.getProductId() == p.getId()) {
+                    Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
+                            () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
+                    if (promotion.getStatus().name().equals("ACTIVE") && !promotion.getEndDate().isBefore(today)) {
+                        String promotionName = promotion.getName();
+                        Long originalPrice = p.getPrice();
+                        Long discountedPrice;
+                        if (promotion.getType().name().equals("PERCENTAGE")) {
+                            discountedPrice = originalPrice -  (originalPrice * promotion.getValue()/100);
+                        } else {
+                            discountedPrice = originalPrice - promotion.getValue();
+                        }
+                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString(), smallTraderName);
+                    }
+                }
+            }
+            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString(), smallTraderName);
+        }).toList();
+    }
+
+    private SmallTraderAdminDto findSmallTraderById(Long id) {
+        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
+        return smallTraderAdminDto;
     }
 }

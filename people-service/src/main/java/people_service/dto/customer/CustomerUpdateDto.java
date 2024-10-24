@@ -5,6 +5,8 @@ public record CustomerUpdateDto(
         String lastName,
         String dateOfBirth,
         String gender,
-        String address
+        String address,
+        String phoneNumber,
+        String email
 ) {
 }

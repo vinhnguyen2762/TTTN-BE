@@ -1,10 +1,10 @@
 package people_service.service;
 
-import people_service.dto.employee.EmployeeAdminDto;
+import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.model.AuthenticationRequest;
 import people_service.model.RegistrationRequest;
 
 public interface AuthService {
-    public EmployeeAdminDto register(RegistrationRequest request);
-    public EmployeeAdminDto login(AuthenticationRequest request);
+    public SmallTraderAdminDto register(RegistrationRequest request);
+    public SmallTraderAdminDto login(AuthenticationRequest request);
 }

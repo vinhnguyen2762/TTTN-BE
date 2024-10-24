@@ -1,6 +1,6 @@
 package product_service.dto.promotion;
 
-import product_service.dto.promotionProduct.PromotionProductPostDto;
+import product_service.dto.promotionDetail.PromotionDetailPostDto;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ public record PromotionPostDto(
         String value,
         String startDate,
         String endDate,
-        List<PromotionProductPostDto> list
+        List<PromotionDetailPostDto> list
 ) {
 }

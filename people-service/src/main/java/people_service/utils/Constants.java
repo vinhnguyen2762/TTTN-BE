@@ -17,8 +17,8 @@ public class Constants {
         public static final String SUPPLIER_ALREADY_TAKEN = "Supplier with tax id: %s already taken";
         public static final String SUPPLIER_NOT_FOUND = "Supplier with id: %s not found";
         public static final String SUPPLIER_NOT_FOUND_TAX_ID = "Supplier with tax id: %s not found";
-        public static final String EMPLOYEE_NOT_FOUND = "Employee with id: %s not found";
-        public static final String USER_NOT_EXIST = "Employee with email: %s not exist";
+        public static final String SMALL_TRADER_NOT_FOUND = "SmallTrader with id: %s not found";
+        public static final String USER_NOT_EXIST = "SmallTrader with email: %s not exist";
         public static final String ACCOUNT_IS_LOCKED = "Account with username: %s is locked";
         public static final String PASSWORD_NOT_CORRECT = "Password is not correct";
 

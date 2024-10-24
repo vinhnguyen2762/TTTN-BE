@@ -36,21 +36,27 @@ public class OrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
-    @PutMapping ("/update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<OrderAdminDto> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDto orderUpdateDto) {
         OrderAdminDto orderAdminDto = orderService.updateOrder(id, orderUpdateDto);
         return ResponseEntity.ok().body(orderAdminDto);
     }
 
-    @DeleteMapping ("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Long> deleteOrder(@PathVariable Long id) {
         Long deleteId = orderService.deleteOrder(id);
         return ResponseEntity.ok().body(deleteId);
     }
 
-    @PostMapping ("/pay/{id}")
+    @PostMapping("/pay/{id}")
     public ResponseEntity<Long> payOrder(@PathVariable Long id) {
         Long payId = orderService.payOrder(id);
         return ResponseEntity.ok().body(payId);
+    }
+
+    @GetMapping("/customer/{id}")
+    public ResponseEntity<Boolean> checkCustomerHasOrder(@PathVariable Long id) {
+        Boolean rs = orderService.checkCustomerHasOrder(id);
+        return ResponseEntity.ok().body(rs);
     }
 }

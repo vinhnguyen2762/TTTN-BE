@@ -29,16 +29,18 @@ public class Promotion {
     private LocalDate endDate;
     @Enumerated(EnumType.STRING)
     private PromotionStatus status = PromotionStatus.PENDING;
+    private Long smallTraderId;
 
     @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<PromotionProduct> promotionProductList = new ArrayList<>();
+    List<PromotionDetail> promotionDetailList = new ArrayList<>();
 
-    public Promotion(String name, String description, PromotionType type, Long value, LocalDate startDate, LocalDate endDate) {
+    public Promotion(String name, String description, PromotionType type, Long value, LocalDate startDate, LocalDate endDate, Long smallTraderId) {
         this.name = name;
         this.description = description;
         this.type = type;
         this.value = value;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.smallTraderId = smallTraderId;
     }
 }

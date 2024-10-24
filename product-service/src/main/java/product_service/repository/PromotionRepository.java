@@ -13,7 +13,7 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Query("""
             select p
             from Promotion p
-            left join fetch p.promotionProductList
+            left join fetch p.promotionDetailList
             where p.status != 'DELETED' 
             """)
     List<Promotion> findAll();
@@ -21,7 +21,15 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
     @Query("""
             select p
             from Promotion p
-            left join fetch p.promotionProductList
+            left join fetch p.promotionDetailList
+            where p.status != 'DELETED' and p.smallTraderId = :id
+            """)
+    List<Promotion> findBySmallTraderId(@Param("id") Long id);
+
+    @Query("""
+            select p
+            from Promotion p
+            left join fetch p.promotionDetailList
             where p.id = :id 
             """)
     Optional<Promotion> findById(@Param("id") Long id);

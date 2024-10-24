@@ -26,10 +26,12 @@ public class PurchaseOrder {
     private OrderStatus status = OrderStatus.PENDING;
     @OneToMany(mappedBy = "purchaseOrder", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<PurchaseOrderDetail> purchaseOrderDetails = new ArrayList<>();
+    private Long smallTraderId;
 
-    public PurchaseOrder(Long supplierId, LocalDate deliveryDate, LocalDate createDate) {
+    public PurchaseOrder(Long supplierId, LocalDate deliveryDate, LocalDate createDate, Long smallTraderId) {
         this.supplierId = supplierId;
         this.deliveryDate = deliveryDate;
         this.createDate = createDate;
+        this.smallTraderId = smallTraderId;
     }
 }

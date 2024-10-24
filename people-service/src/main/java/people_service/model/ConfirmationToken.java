@@ -25,12 +25,12 @@ public class ConfirmationToken {
 
     @ManyToOne
     @JoinColumn(nullable = false, name = "employee_id")
-    private Employee employee;
+    private SmallTrader smallTrader;
 
-    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, Employee employee) {
+    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, SmallTrader smallTrader) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.employee = employee;
+        this.smallTrader = smallTrader;
     }
 }

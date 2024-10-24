@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
+import product_service.dto.product.ProductAdminDto;
 import product_service.dto.purchaseOrder.PurchaseOrderAddDto;
 import product_service.dto.purchaseOrder.PurchaseOrderAdminDto;
 import product_service.dto.purchaseOrder.PurchaseOrderUpdateDto;
@@ -29,22 +30,28 @@ public class PurchaseOrderController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/get-all/{id}")
+    public ResponseEntity<List<PurchaseOrderAdminDto>> getAllBySmallTraderId(@PathVariable Long id) {
+        List<PurchaseOrderAdminDto> list = purchaseOrderService.getAllPurchaseOrderSmallTraderId(id);
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<PurchaseOrderAdminDto> addPurchaseOder(@RequestBody PurchaseOrderAddDto purchaseOrderAddDto) {
-        PurchaseOrderAdminDto purchaseOrderAdminDto = purchaseOrderService.addPurchaseOrder(purchaseOrderAddDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(purchaseOrderAdminDto);
+    public ResponseEntity<Long> addPurchaseOder(@RequestBody PurchaseOrderAddDto purchaseOrderAddDto) {
+        Long rs = purchaseOrderService.addPurchaseOrder(purchaseOrderAddDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<PurchaseOrderAdminDto> updatePurchaseOrder(@PathVariable Long id, @RequestBody PurchaseOrderUpdateDto purchaseOrderUpdateDto) {
-        PurchaseOrderAdminDto purchaseOrderAdminDto = purchaseOrderService.updatePurchaseOrder(id, purchaseOrderUpdateDto);
-        return ResponseEntity.ok().body(purchaseOrderAdminDto);
+    public ResponseEntity<Long> updatePurchaseOrder(@PathVariable Long id, @RequestBody PurchaseOrderUpdateDto purchaseOrderUpdateDto) {
+        Long rs = purchaseOrderService.updatePurchaseOrder(id, purchaseOrderUpdateDto);
+        return ResponseEntity.ok().body(rs);
     }
 
     @DeleteMapping ("/delete/{id}")
     public ResponseEntity<Long> deletePurchaseOrder(@PathVariable Long id) {
-        Long deleteId = purchaseOrderService.deletePurchaseOrder(id);
-        return ResponseEntity.ok().body(deleteId);
+        Long rs = purchaseOrderService.deletePurchaseOrder(id);
+        return ResponseEntity.ok().body(rs);
     }
 
     @PostMapping ("/pay/{id}")

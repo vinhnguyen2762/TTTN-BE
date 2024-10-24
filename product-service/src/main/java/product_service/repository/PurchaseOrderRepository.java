@@ -17,6 +17,14 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
             where p.status != 'DELETED'
             """)
     List<PurchaseOrder> findAll();
+
+    @Query("""
+            select p
+            from PurchaseOrder p
+            left join fetch p.purchaseOrderDetails
+            where p.status != 'DELETED' and p.smallTraderId = :id
+            """)
+    List<PurchaseOrder> findBySmallTraderId(@Param("id") Long id);
     @Query("""
             select p
             from PurchaseOrder p

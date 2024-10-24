@@ -34,6 +34,12 @@ public class ProductController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/get-all/{id}")
+    public ResponseEntity<List<ProductAdminDto>> getAllBySmallTraderId(@PathVariable Long id) {
+        List<ProductAdminDto> list = productService.getAllProductSmallTrader(id);
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Long> addProduct(@RequestBody ProductAddDto productAddDto) {
         Long rs = productService.addProduct(productAddDto);

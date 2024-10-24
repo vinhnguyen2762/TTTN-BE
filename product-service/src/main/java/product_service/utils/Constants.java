@@ -14,7 +14,7 @@ public class Constants {
         public static final String PURCHASE_ORDER_ALREADY_PAID = "Purchase order with id: %s already paid";
         public static final String PROMOTION_NOT_FOUND = "Promotion with id: %s not found";
         public static final String PROMOTION_ALREADY_ACTIVE = "Promotion with id: %s already active";
-
+        public static final String PRODUCT_ALREADY_HAS_PROMOTION = "Some product already has promotion";
 
     }
 

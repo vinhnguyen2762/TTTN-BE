@@ -15,9 +15,10 @@ public record PurchaseOrderAdminDto(
         String deliveryDate,
         String status,
         String total,
-        List<PurchaseOrderDetailAdminDto> list
+        List<PurchaseOrderDetailAdminDto> list,
+        String smallTraderName
 ) {
-    public static PurchaseOrderAdminDto fromPurchaseOrder(PurchaseOrder purchaseOrder, String taxId, String supplierName, List<PurchaseOrderDetailAdminDto> list) {
+    public static PurchaseOrderAdminDto fromPurchaseOrder(PurchaseOrder purchaseOrder, String taxId, String supplierName, List<PurchaseOrderDetailAdminDto> list, String smallTraderName) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = purchaseOrder.getStatus().name().equals("PENDING") ? "Chờ thanh toán" : "Đã thanh toán";
 
@@ -36,7 +37,8 @@ public record PurchaseOrderAdminDto(
                 purchaseOrder.getDeliveryDate().format(formatter),
                 status,
                 total.toString(),
-                list
+                list,
+                smallTraderName
         );
     }
 }

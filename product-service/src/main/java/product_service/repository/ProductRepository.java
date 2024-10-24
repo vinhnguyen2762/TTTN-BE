@@ -2,6 +2,7 @@ package product_service.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import product_service.model.Product;
 
 import java.util.List;
@@ -14,6 +15,13 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             where p.status = true
             """)
     List<Product> findAll();
+
+    @Query("""
+            select p
+            from Product p
+            where p.status = true and p.smallTraderId = :id
+            """)
+    List<Product> findBySmallTraderId(@Param("id") Long id);
 
     @Query("SELECT COALESCE(COUNT(p), 0) FROM Product p WHERE p.status = true")
     Long countProductsByStatusTrue();

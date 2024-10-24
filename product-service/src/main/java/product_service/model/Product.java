@@ -21,11 +21,13 @@ public class Product {
     private Integer quantity;
     private Boolean status = true;
     private String imagePath;
+    private Long smallTraderId;
 
-    public Product(String name, String description, Long price, int quantity) {
+    public Product(String name, String description, Long price, int quantity, Long smallTraderId) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+        this.smallTraderId = smallTraderId;
     }
 }

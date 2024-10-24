@@ -1,16 +1,12 @@
 package people_service.service.impl;
 
 import org.springframework.stereotype.Service;
-import people_service.dto.customer.CustomerSearchDto;
-import people_service.dto.employee.EmployeeAdminDto;
 import people_service.dto.supplier.SupplierAddDto;
 import people_service.dto.supplier.SupplierAdminDto;
 import people_service.dto.supplier.SupplierSearchDto;
 import people_service.dto.supplier.SupplierUpdateDto;
 import people_service.exception.DuplicateException;
 import people_service.exception.NotFoundException;
-import people_service.model.Customer;
-import people_service.model.Employee;
 import people_service.model.Supplier;
 import people_service.repository.SupplierRepository;
 import people_service.service.SupplierService;
@@ -79,9 +75,6 @@ public class SupplierServiceImpl implements SupplierService {
     public SupplierAdminDto findById(Long id) {
         Supplier supplier = supplierRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SUPPLIER_NOT_FOUND, id)));
-        if (supplier.getStatus() == false) {
-            throw new NotFoundException(String.format(Constants.ErrorMessage.SUPPLIER_NOT_FOUND, id));
-        }
         return SupplierAdminDto.fromSupplier(supplier);
     }
 

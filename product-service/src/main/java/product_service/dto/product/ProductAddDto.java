@@ -4,6 +4,7 @@ public record ProductAddDto(
         String name,
         String description,
         String price,
-        String quantity
+        String quantity,
+        Long smallTraderId
 ) {
 }

@@ -24,6 +24,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             where o.id = :id
             """)
     Optional<Order> findById(@Param("id") Long id);
+    List<Order> findByCustomerId(Long id);
 
     @Query("SELECT COALESCE(SUM(od.quantity * od.price), 0) " +
             "FROM Order o JOIN o.orderDetails od " +

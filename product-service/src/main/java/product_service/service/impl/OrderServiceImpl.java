@@ -2,15 +2,12 @@ package product_service.service.impl;
 
 import org.springframework.stereotype.Service;
 import product_service.dto.customer.CustomerAdminDto;
-import product_service.dto.employee.EmployeeAdminDto;
+import product_service.dto.smallTrader.SmallTraderAdminDto;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
 import product_service.dto.orderDetail.OrderDetailPostDto;
 import product_service.dto.orderDetail.OrderDetailAdminDto;
-import product_service.dto.revenue.RevenueProduct;
-import product_service.dto.revenue.RevenueRequest;
-import product_service.dto.revenue.RevenueResponse;
 import product_service.enums.OrderStatus;
 import product_service.exception.EmptyException;
 import product_service.exception.FailedException;
@@ -51,8 +48,8 @@ public class OrderServiceImpl implements OrderService {
             CustomerAdminDto customerAdminDto = findCustomerById(o.getCustomerId());
             String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
 
-            EmployeeAdminDto employeeAdminDto = findEmployeeById(o.getUserId());
-            String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
+            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(o.getSmallTraderId());
+            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
 
             String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -65,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
             }).toList();
-            return OrderAdminDto.fromOrder(o, customerName, employeeName, phoneNumber, list);
+            return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list);
         }).toList();
     }
 
@@ -78,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
         Order orderAdd = new Order(
                 orderDate,
                 orderAddDto.customerId(),
-                orderAddDto.userId()
+                orderAddDto.smallTraderId()
         );
         orderRepository.saveAndFlush(orderAdd);
 
@@ -102,8 +99,8 @@ public class OrderServiceImpl implements OrderService {
         CustomerAdminDto customerAdminDto = findCustomerById(orderAdd.getCustomerId());
         String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
 
-        EmployeeAdminDto employeeAdminDto = findEmployeeById(orderAdd.getUserId());
-        String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
+        SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(orderAdd.getSmallTraderId());
+        String employeeName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
 
         String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -152,8 +149,8 @@ public class OrderServiceImpl implements OrderService {
         CustomerAdminDto customerAdminDto = findCustomerById(order.getCustomerId());
         String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
 
-        EmployeeAdminDto employeeAdminDto = findEmployeeById(order.getUserId());
-        String employeeName = employeeAdminDto.firstName() + " " + employeeAdminDto.lastName();
+        SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(order.getSmallTraderId());
+        String employeeName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
 
         String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -208,9 +205,14 @@ public class OrderServiceImpl implements OrderService {
         return id;
     }
 
-    private EmployeeAdminDto findEmployeeById(Long id) {
-        EmployeeAdminDto employeeAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
-        return employeeAdminDto;
+    public Boolean checkCustomerHasOrder(Long id) {
+        List<Order> rs = orderRepository.findByCustomerId(id);
+        return rs.isEmpty() ? false : true;
+    }
+
+    private SmallTraderAdminDto findSmallTraderById(Long id) {
+        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
+        return smallTraderAdminDto;
     }
 
     private CustomerAdminDto findCustomerById(Long id) {

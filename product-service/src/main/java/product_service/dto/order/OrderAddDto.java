@@ -6,7 +6,7 @@ import java.util.List;
 
 public record OrderAddDto(
         Long customerId,
-        Long userId,
+        Long smallTraderId,
         List<OrderDetailPostDto> list
 ) {
 }

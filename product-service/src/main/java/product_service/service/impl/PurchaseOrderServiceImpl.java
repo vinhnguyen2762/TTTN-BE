@@ -9,6 +9,7 @@ import product_service.dto.purchaseOrder.PurchaseOrderAddDto;
 import product_service.dto.purchaseOrder.PurchaseOrderUpdateDto;
 import product_service.dto.purchaseOrderDetail.PurchaseOrderDetailAdminDto;
 import product_service.dto.purchaseOrderDetail.PurchaseOrderDetailPostDto;
+import product_service.dto.smallTrader.SmallTraderAdminDto;
 import product_service.dto.supplier.SupplierAdminDto;
 import product_service.enums.OrderStatus;
 import product_service.exception.EmptyException;
@@ -47,6 +48,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     public List<PurchaseOrderAdminDto> getAllPurchaseOrderAdmin() {
         List<PurchaseOrder> purchaseOrderList = purchaseOrderRepository.findAll();
         return purchaseOrderList.stream().map(p -> {
+            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
+            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
             SupplierAdminDto supplierAdminDto = findSupplierById(p.getSupplierId());
             String supplierName = supplierAdminDto.firstName() + " " + supplierAdminDto.lastName();
 
@@ -59,11 +62,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
                 String productName = product.getName();
                 return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
             }).toList();
-            return PurchaseOrderAdminDto.fromPurchaseOrder(p, supplierAdminDto.taxId(),supplierName, list);
+            return PurchaseOrderAdminDto.fromPurchaseOrder(p, supplierAdminDto.taxId(),supplierName, list, smallTraderName);
         }).toList();
     }
 
-    public PurchaseOrderAdminDto addPurchaseOrder(PurchaseOrderAddDto purchaseOrderAddDto) {
+    public Long addPurchaseOrder(PurchaseOrderAddDto purchaseOrderAddDto) {
         if (purchaseOrderAddDto.list().isEmpty()) {
             throw new EmptyException("List purchase order detail is null");
         }
@@ -72,7 +75,8 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         PurchaseOrder purchaseOrderAdd = new PurchaseOrder(
                 purchaseOrderAddDto.supplierId(),
                 deliveryDate,
-                createDate
+                createDate,
+                purchaseOrderAddDto.smallTraderId()
         );
         purchaseOrderRepository.saveAndFlush(purchaseOrderAdd);
 
@@ -105,10 +109,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             String productName = product.getName();
             return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
         }).toList();
-        return PurchaseOrderAdminDto.fromPurchaseOrder(purchaseOrderAdd, supplierAdminDto.taxId(),supplierName, list);
+        return purchaseOrderAdd.getId();
     }
 
-    public PurchaseOrderAdminDto updatePurchaseOrder(Long id, PurchaseOrderUpdateDto purchaseOrderUpdateDto) {
+    public Long updatePurchaseOrder(Long id, PurchaseOrderUpdateDto purchaseOrderUpdateDto) {
         if (purchaseOrderUpdateDto.list().isEmpty()) {
             throw new EmptyException("List purchase order detail is null");
         }
@@ -152,7 +156,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             String productName = product.getName();
             return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
         }).toList();
-        return PurchaseOrderAdminDto.fromPurchaseOrder(purchaseOrder, supplierAdminDto.taxId(),supplierName, list);
+        return purchaseOrder.getId();
     }
 
     public Long deletePurchaseOrder(Long id) {
@@ -189,8 +193,34 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return id;
     }
 
+    public List<PurchaseOrderAdminDto> getAllPurchaseOrderSmallTraderId(Long id) {
+        List<PurchaseOrder> purchaseOrderList = purchaseOrderRepository.findBySmallTraderId(id);
+        return purchaseOrderList.stream().map(p -> {
+            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
+            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+            SupplierAdminDto supplierAdminDto = findSupplierById(p.getSupplierId());
+            String supplierName = supplierAdminDto.firstName() + " " + supplierAdminDto.lastName();
+
+            List<PurchaseOrderDetailAdminDto> list = p.getPurchaseOrderDetails().stream().map(pd -> {
+                Product product = productRepository.findById(pd.getProductId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
+                if (product.getStatus() == false) {
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
+                }
+                String productName = product.getName();
+                return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
+            }).toList();
+            return PurchaseOrderAdminDto.fromPurchaseOrder(p, supplierAdminDto.taxId(),supplierName, list, smallTraderName);
+        }).toList();
+    }
+
     private SupplierAdminDto findSupplierById(Long id) {
         SupplierAdminDto supplierAdminDto = peopleFeignClient.getSupplierById(id).getBody();
         return supplierAdminDto;
+    }
+
+    private SmallTraderAdminDto findSmallTraderById(Long id) {
+        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
+        return smallTraderAdminDto;
     }
 }

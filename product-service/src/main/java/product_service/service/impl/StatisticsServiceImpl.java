@@ -1,7 +1,6 @@
 package product_service.service.impl;
 
 import org.springframework.stereotype.Service;
-import product_service.dto.employee.EmployeeAdminDto;
 import product_service.dto.revenue.RevenueProduct;
 import product_service.dto.revenue.RevenueRequest;
 import product_service.dto.revenue.RevenueResponse;

@@ -10,7 +10,8 @@ public record CustomerAdminDto(
         String address,
         String phoneNumber,
         String gender,
-        String dateOfBirth
+        String dateOfBirth,
+        String email
 ) {
     public static CustomerAdminDto fromCustomer(Customer customer) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -22,7 +23,8 @@ public record CustomerAdminDto(
                 customer.getAddress(),
                 customer.getPhoneNumber(),
                 gender,
-                customer.getDateOfBirth().format(formatter)
+                customer.getDateOfBirth().format(formatter),
+                customer.getEmail()
         );
     }
 }

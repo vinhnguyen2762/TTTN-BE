@@ -6,6 +6,7 @@ public record CustomerAddDto(
         String dateOfBirth,
         String gender,
         String address,
-        String phoneNumber
+        String phoneNumber,
+        String email
 ) {
 }
