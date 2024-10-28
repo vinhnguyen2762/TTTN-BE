@@ -7,6 +7,8 @@ import lombok.Setter;
 import people_service.enums.Gender;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "producer")
@@ -27,6 +29,8 @@ public class Producer {
     private String phoneNumber;
     private Long smallTraderId;
     private Boolean status = true;
+    @OneToMany(mappedBy = "producer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<DebtDetail> debtDetails = new ArrayList<>();
 
     public Producer(String firstName, String lastName, Gender gender, String address, String phoneNumber, String email, Long smallTraderId) {
         this.firstName = firstName;

@@ -4,10 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import people_service.enums.Gender;
-import people_service.enums.UserRole;
-
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor

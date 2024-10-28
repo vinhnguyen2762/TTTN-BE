@@ -9,6 +9,7 @@ import product_service.dto.promotionDetail.PromotionDetailAdminDto;
 import product_service.dto.promotionDetail.PromotionDetailPostDto;
 import product_service.enums.PromotionStatus;
 import product_service.enums.PromotionType;
+import product_service.exception.DuplicateException;
 import product_service.exception.FailedException;
 import product_service.exception.NotFoundException;
 import product_service.model.Product;
@@ -200,8 +201,11 @@ public class PromotionServiceImpl implements PromotionService {
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id)));
         if (promotion.getStatus().name().equals("DELETED")) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id));
-        } else if (promotion.getStatus().name().equals("ACTIVE")) {
-            throw new FailedException(String.format(Constants.ErrorMessage.PROMOTION_ALREADY_ACTIVE, id));
+        }
+        if (promotion.getStatus().name().equals("ACTIVE")) {
+            promotion.setStatus(PromotionStatus.PENDING);
+            promotionRepository.saveAndFlush(promotion);
+            return id;
         }
 
         List<PromotionDetail> promotionDetailList = promotion.getPromotionDetailList();
@@ -220,7 +224,7 @@ public class PromotionServiceImpl implements PromotionService {
             promotion.setStatus(PromotionStatus.ACTIVE);
             promotionRepository.saveAndFlush(promotion);
         } else {
-            throw new FailedException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_HAS_PROMOTION));
+            throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_HAS_PROMOTION));
         }
         return id;
     }
@@ -252,7 +256,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     private SmallTraderAdminDto findSmallTraderById(Long id) {
-        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
+        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getById(id).getBody();
         return smallTraderAdminDto;
     }
 }

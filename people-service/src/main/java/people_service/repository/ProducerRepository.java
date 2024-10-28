@@ -33,6 +33,6 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
             """)
     List<Producer> findBySmallTraderId(@Param("id") Long id);
 
-    @Query("SELECT COALESCE(COUNT(c), 0) FROM Producer p WHERE p.status = true")
+    @Query("SELECT COALESCE(COUNT(p), 0) FROM Producer p WHERE p.status = true")
     Long countProducerByStatusTrue();
 }

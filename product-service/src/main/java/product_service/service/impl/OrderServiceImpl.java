@@ -211,7 +211,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private SmallTraderAdminDto findSmallTraderById(Long id) {
-        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
+        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getById(id).getBody();
         return smallTraderAdminDto;
     }
 

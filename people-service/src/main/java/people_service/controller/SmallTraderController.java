@@ -10,24 +10,24 @@ import people_service.service.impl.SmallTraderServiceImpl;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/employee")
-public class EmployeeController {
+@RequestMapping("/api/v1/small-trader")
+public class SmallTraderController {
 
     private final SmallTraderServiceImpl employeeService;
 
-    public EmployeeController(SmallTraderServiceImpl employeeService) {
+    public SmallTraderController(SmallTraderServiceImpl employeeService) {
         this.employeeService = employeeService;
     }
 
     @GetMapping("/get-all")
     public ResponseEntity<List<SmallTraderAdminDto>> getAllEmployeeAdmin() {
-        List<SmallTraderAdminDto> list = employeeService.getAllEmployeeAdmin();
+        List<SmallTraderAdminDto> list = employeeService.getAllSmallTraderAdmin();
         return ResponseEntity.ok().body(list);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<SmallTraderAdminDto> updateEmployee(@PathVariable Long id, @RequestBody SmallTraderUpdateDto smallTraderUpdateDto) {
-        SmallTraderAdminDto smallTraderAdminDto = employeeService.updateEmployee(id, smallTraderUpdateDto);
+        SmallTraderAdminDto smallTraderAdminDto = employeeService.updateSmallTrader(id, smallTraderUpdateDto);
         return ResponseEntity.ok().body(smallTraderAdminDto);
     }
 
@@ -39,7 +39,7 @@ public class EmployeeController {
 
     @DeleteMapping ("/delete/{id}")
     public ResponseEntity<SmallTraderAdminDto> deleteEmployee(@PathVariable Long id) {
-        SmallTraderAdminDto smallTraderAdminDto = employeeService.deleteEmployee(id);
+        SmallTraderAdminDto smallTraderAdminDto = employeeService.deleteSmallTrader(id);
         return ResponseEntity.ok().body(smallTraderAdminDto);
     }
 
@@ -56,8 +56,8 @@ public class EmployeeController {
     }
 
     @GetMapping("/count")
-    public ResponseEntity<Long> countEmployeeByStatusTrue() {
-        Long rs = employeeService.countEmployeeByStatusTrue();
+    public ResponseEntity<Long> countSmallTraderByStatusTrue() {
+        Long rs = employeeService.countSmallTraderByStatusTrue();
         return ResponseEntity.ok().body(rs);
     }
 }

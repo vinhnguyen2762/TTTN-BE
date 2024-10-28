@@ -1,7 +1,7 @@
 package product_service.dto.statistics;
 
 public record StatisticsResponse(
-        Long employeeNumber,
+        Long smallTraderNumber,
         Long productNumber,
         Long orderNumber,
         Long customerNumber

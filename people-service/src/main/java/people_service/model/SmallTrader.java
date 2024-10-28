@@ -3,7 +3,7 @@ package people_service.model;
 import jakarta.persistence.*;
 import lombok.*;
 import people_service.enums.Gender;
-import people_service.enums.UserRole;
+import people_service.enums.SmallTraderRole;
 
 import java.time.LocalDate;
 
@@ -27,7 +27,7 @@ public class SmallTrader {
     private String email;
     private Boolean status = false;
     private String password;
-    private UserRole role = UserRole.USER;
+    private SmallTraderRole role = SmallTraderRole.USER;
     private Boolean locked = false;
 
     public SmallTrader(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, String password) {

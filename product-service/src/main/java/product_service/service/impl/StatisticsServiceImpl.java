@@ -78,7 +78,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     private Long countEmployee() {
-        Long employeeNumber = peopleFeignClient.countEmployeeByStatusTrue().getBody();
+        Long employeeNumber = peopleFeignClient.countSmallTraderByStatusTrue().getBody();
         return employeeNumber;
     }
 

@@ -1,5 +1,5 @@
 package people_service.enums;
 
-public enum UserRole {
+public enum SmallTraderRole {
     USER, ADMIN
 }

@@ -7,6 +7,7 @@ import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.customer.CustomerSearchDto;
 import people_service.dto.customer.CustomerUpdateDto;
 import people_service.enums.Gender;
+import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.Customer;
 import people_service.repository.CustomerRepository;
@@ -85,7 +86,7 @@ public class CustomerServiceImpl implements CustomerService {
             if (!isPhoneNumberExist) {
                 customer.setPhoneNumber(customerUpdateDto.phoneNumber());
             } else {
-                throw new DuplicateException(String.format(Constants.ErrorMessage.CUSTOMER_ALREADY_TAKEN, customerUpdateDto.phoneNumber()));
+                throw new FailedException(String.format(Constants.ErrorMessage.CUSTOMER_ALREADY_TAKEN, customerUpdateDto.phoneNumber()));
             }
         }
 

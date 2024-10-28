@@ -11,11 +11,11 @@ import product_service.dto.supplier.SupplierAdminDto;
 @FeignClient(name = "people-service", url = "http://localhost:9001/api/v1")
 public interface PeopleFeignClient {
 
-    @GetMapping("/employee/{id}")
-    ResponseEntity<SmallTraderAdminDto> getEmployeeById(@PathVariable Long id);
+    @GetMapping("/small-trader/{id}")
+    ResponseEntity<SmallTraderAdminDto> getById(@PathVariable Long id);
 
-    @GetMapping("/employee/count")
-    ResponseEntity<Long> countEmployeeByStatusTrue();
+    @GetMapping("/small-trader/count")
+    ResponseEntity<Long> countSmallTraderByStatusTrue();
 
     @GetMapping("/customer/{id}")
     ResponseEntity<CustomerAdminDto> getCustomerById(@PathVariable Long id);

@@ -3,14 +3,9 @@ package people_service.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import people_service.dto.customer.CustomerAddDto;
-import people_service.dto.customer.CustomerAdminDto;
-import people_service.dto.customer.CustomerSearchDto;
-import people_service.dto.customer.CustomerUpdateDto;
 import people_service.dto.producer.ProducerAddDto;
 import people_service.dto.producer.ProducerAdminDto;
 import people_service.dto.producer.ProducerUpdateDto;
-import people_service.service.CustomerService;
 import people_service.service.ProducerService;
 
 import java.util.List;

@@ -220,7 +220,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
     }
 
     private SmallTraderAdminDto findSmallTraderById(Long id) {
-        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getEmployeeById(id).getBody();
+        SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getById(id).getBody();
         return smallTraderAdminDto;
     }
 }

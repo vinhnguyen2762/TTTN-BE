@@ -63,12 +63,12 @@ public class SmallTraderServiceImpl implements SmallTraderService {
     }
 
 
-    public List<SmallTraderAdminDto> getAllEmployeeAdmin() {
+    public List<SmallTraderAdminDto> getAllSmallTraderAdmin() {
         List<SmallTrader> list = smallTraderRepository.findAll();
         return list.stream().map(SmallTraderAdminDto::fromEmployee).toList();
     }
 
-    public SmallTraderAdminDto updateEmployee(Long id, SmallTraderUpdateDto smallTraderUpdateDto) {
+    public SmallTraderAdminDto updateSmallTrader(Long id, SmallTraderUpdateDto smallTraderUpdateDto) {
         SmallTrader smallTrader = smallTraderRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id)));
         if (smallTrader.getStatus() == false) {
@@ -99,7 +99,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         return SmallTraderAdminDto.fromEmployee(smallTrader);
     }
 
-    public SmallTraderAdminDto deleteEmployee(Long id) {
+    public SmallTraderAdminDto deleteSmallTrader(Long id) {
         SmallTrader smallTrader = smallTraderRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id)));
         if (smallTrader.getStatus() == false) {
@@ -137,7 +137,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         return SmallTraderAdminDto.fromEmployee(smallTrader);
     }
 
-    public Long countEmployeeByStatusTrue() {
+    public Long countSmallTraderByStatusTrue() {
         Long rs = smallTraderRepository.countEmployeeByStatusTrue();
         return rs;
     }
