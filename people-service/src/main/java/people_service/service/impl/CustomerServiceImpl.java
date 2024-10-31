@@ -10,7 +10,9 @@ import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.Customer;
+import people_service.model.SmallTrader;
 import people_service.repository.CustomerRepository;
+import people_service.repository.SmallTraderRepository;
 import people_service.service.CustomerService;
 import people_service.exception.DuplicateException;
 import people_service.service.client.ProductFeignClient;
@@ -25,21 +27,45 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final ProductFeignClient productFeignClient;
+    private final SmallTraderRepository smallTraderRepository;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, ProductFeignClient productFeignClient) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, ProductFeignClient productFeignClient, SmallTraderRepository smallTraderRepository) {
         this.customerRepository = customerRepository;
         this.productFeignClient = productFeignClient;
+        this.smallTraderRepository = smallTraderRepository;
     }
 
     public List<CustomerAdminDto> getAllCustomerAdmin() {
         List<Customer> list = customerRepository.findAll();
-        return list.stream().map(CustomerAdminDto::fromCustomer).toList();
+        return list.stream().map(c -> {
+            SmallTrader smallTrader = smallTraderRepository.findById(c.getSmallTraderId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, c.getSmallTraderId()))
+            );
+            String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
+            return CustomerAdminDto.fromCustomer(c, smallTraderName);
+        }).toList();
     }
 
-    public CustomerAdminDto addCustomer(CustomerAddDto customerAddDto) {
-        Boolean isExist = customerRepository.findByPhoneNumber(customerAddDto.phoneNumber()).isPresent();
-        if (isExist) {
+    public List<CustomerAdminDto> getAllCustomerSmallTrader(Long id) {
+        List<Customer> list = customerRepository.findBySmallTraderId(id);
+        return list.stream().map(c -> {
+            SmallTrader smallTrader = smallTraderRepository.findById(c.getSmallTraderId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, c.getSmallTraderId()))
+            );
+            String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
+            return CustomerAdminDto.fromCustomer(c, smallTraderName);
+        }).toList();
+    }
+
+    public Long addCustomer(CustomerAddDto customerAddDto) {
+        Boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerAddDto.phoneNumber()).isPresent();
+        if (isPhoneNumberExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.CUSTOMER_ALREADY_TAKEN, customerAddDto.phoneNumber()));
+        }
+
+        Boolean isEmailExist = customerRepository.findByEmail(customerAddDto.email()).isPresent();
+        if (isEmailExist) {
+            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerAddDto.email()));
         }
 
         LocalDate date = LocalDate.parse(customerAddDto.dateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
@@ -52,12 +78,13 @@ public class CustomerServiceImpl implements CustomerService {
                 gender,
                 customerAddDto.address(),
                 customerAddDto.phoneNumber(),
-                customerAddDto.email());
+                customerAddDto.email(),
+                customerAddDto.smallTraderId());
         customerRepository.saveAndFlush(customerAdd);
-        return CustomerAdminDto.fromCustomer(customerAdd);
+        return customerAdd.getId();
     }
 
-    public CustomerAdminDto updateCustomer(Long id, CustomerUpdateDto customerUpdateDto) {
+    public Long updateCustomer(Long id, CustomerUpdateDto customerUpdateDto) {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id)));
         if (customer.getStatus() == false) {
@@ -96,10 +123,10 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setGender(gender);
         customer.setAddress(customerUpdateDto.address());
         customerRepository.saveAndFlush(customer);
-        return CustomerAdminDto.fromCustomer(customer);
+        return customer.getId();
     }
 
-    public CustomerAdminDto deleteCustomer(Long id) {
+    public Long deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id)));
         if (customer.getStatus() == false) {
@@ -112,13 +139,17 @@ public class CustomerServiceImpl implements CustomerService {
         else {
             customerRepository.delete(customer);
         }
-        return CustomerAdminDto.fromCustomer(customer);
+        return customer.getId();
     }
 
     public CustomerAdminDto findById(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id)));
-        return CustomerAdminDto.fromCustomer(customer);
+        SmallTrader smallTrader = smallTraderRepository.findById(customer.getSmallTraderId()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, customer.getSmallTraderId()))
+        );
+        String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
+        return CustomerAdminDto.fromCustomer(customer, smallTraderName);
     }
 
     public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber) {

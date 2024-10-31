@@ -210,6 +210,30 @@ public class OrderServiceImpl implements OrderService {
         return rs.isEmpty() ? false : true;
     }
 
+    public List<OrderAdminDto> getAllOrderSmallTraderId(Long id) {
+        List<Order> orderList = orderRepository.findBySmallTraderId(id);
+        return orderList.stream().map(o -> {
+            CustomerAdminDto customerAdminDto = findCustomerById(o.getCustomerId());
+            String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
+
+            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(o.getSmallTraderId());
+            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+
+            String phoneNumber = customerAdminDto.phoneNumber();
+
+            List<OrderDetailAdminDto> list = o.getOrderDetails().stream().map(od -> {
+                Product product = productRepository.findById(od.getProductId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
+                if (product.getStatus() == false) {
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
+                }
+                String productName = product.getName();
+                return OrderDetailAdminDto.fromOderDetail(od, productName);
+            }).toList();
+            return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list);
+        }).toList();
+    }
+
     private SmallTraderAdminDto findSmallTraderById(Long id) {
         SmallTraderAdminDto smallTraderAdminDto = peopleFeignClient.getById(id).getBody();
         return smallTraderAdminDto;

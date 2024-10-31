@@ -21,6 +21,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             select o
             from Order o
             left join fetch o.orderDetails
+            where o.status != 'DELETED' and o.smallTraderId = :id
+            """)
+    List<Order> findBySmallTraderId(@Param("id") Long id);
+
+    @Query("""
+            select o
+            from Order o
+            left join fetch o.orderDetails
             where o.id = :id
             """)
     Optional<Order> findById(@Param("id") Long id);

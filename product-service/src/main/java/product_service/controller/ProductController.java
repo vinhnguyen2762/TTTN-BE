@@ -1,5 +1,6 @@
 package product_service.controller;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,12 @@ public class ProductController {
     @GetMapping("/get-all-no-promotion")
     public ResponseEntity<List<ProductNoPromotionDto>> getAllNoPromotionProduct() {
         List<ProductNoPromotionDto> list = productService.getAllProductNoPromotion();
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping("/get-all-no-promotion/{id}")
+    public ResponseEntity<List<ProductNoPromotionDto>> getAllNoPromotionProductSmallTrader(@PathVariable Long id) {
+        List<ProductNoPromotionDto> list = productService.getAllProductNoPromotionSmallTrader(id);
         return ResponseEntity.ok().body(list);
     }
 

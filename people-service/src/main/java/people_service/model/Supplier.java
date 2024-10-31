@@ -22,13 +22,15 @@ public class Supplier {
     @Column(unique = true)
     private String taxId;
     private Boolean status = true;
+    private Long smallTraderId;
 
-    public Supplier(String firstName, String lastName, String address, String email, String phoneNumber, String taxId) {
+    public Supplier(String firstName, String lastName, String address, String email, String phoneNumber, String taxId, Long smallTraderId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.taxId = taxId;
+        this.smallTraderId = smallTraderId;
     }
 }

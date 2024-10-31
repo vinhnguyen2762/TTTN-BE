@@ -29,22 +29,28 @@ public class CustomerController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/get-all/{id}")
+    public ResponseEntity<List<CustomerAdminDto>> getAllCustomerAdmin(@PathVariable Long id) {
+        List<CustomerAdminDto> list = customerService.getAllCustomerSmallTrader(id);
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<CustomerAdminDto> addCustomer(@RequestBody CustomerAddDto customerAddDto) {
-        CustomerAdminDto customerAdminDto = customerService.addCustomer(customerAddDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(customerAdminDto);
+    public ResponseEntity<Long> addCustomer(@RequestBody CustomerAddDto customerAddDto) {
+        Long rs = customerService.addCustomer(customerAddDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<CustomerAdminDto> updateCustomer(@PathVariable Long id, @RequestBody CustomerUpdateDto customerUpdateDto) {
-        CustomerAdminDto customerAdminDto = customerService.updateCustomer(id, customerUpdateDto);
-        return ResponseEntity.ok().body(customerAdminDto);
+    public ResponseEntity<Long> updateCustomer(@PathVariable Long id, @RequestBody CustomerUpdateDto customerUpdateDto) {
+        Long rs = customerService.updateCustomer(id, customerUpdateDto);
+        return ResponseEntity.ok().body(rs);
     }
 
     @DeleteMapping ("/delete/{id}")
-    public ResponseEntity<CustomerAdminDto> deleteCustomer(@PathVariable Long id) {
-        CustomerAdminDto customerAdminDto = customerService.deleteCustomer(id);
-        return ResponseEntity.ok().body(customerAdminDto);
+    public ResponseEntity<Long> deleteCustomer(@PathVariable Long id) {
+        Long rs = customerService.deleteCustomer(id);
+        return ResponseEntity.ok().body(rs);
     }
 
     @GetMapping("/{id}")

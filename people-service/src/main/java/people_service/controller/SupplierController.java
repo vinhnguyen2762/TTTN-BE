@@ -27,22 +27,28 @@ public class SupplierController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/get-all/{id}")
+    public ResponseEntity<List<SupplierAdminDto>> getAllSupplierSmallTrader(@PathVariable Long id) {
+        List<SupplierAdminDto> list = supplierService.getAllSupplierSmallTrader(id);
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<SupplierAdminDto> addSupplier(@RequestBody SupplierAddDto supplierAddDto) {
-        SupplierAdminDto supplierAdminDto = supplierService.addSupplier(supplierAddDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(supplierAdminDto);
+    public ResponseEntity<Long> addSupplier(@RequestBody SupplierAddDto supplierAddDto) {
+        Long rs = supplierService.addSupplier(supplierAddDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<SupplierAdminDto> updateSupplier(@PathVariable Long id, @RequestBody SupplierUpdateDto supplierUpdateDto) {
-        SupplierAdminDto supplierAdminDto = supplierService.updateSupplier(id, supplierUpdateDto);
-        return ResponseEntity.ok().body(supplierAdminDto);
+    public ResponseEntity<Long> updateSupplier(@PathVariable Long id, @RequestBody SupplierUpdateDto supplierUpdateDto) {
+        Long rs = supplierService.updateSupplier(id, supplierUpdateDto);
+        return ResponseEntity.ok().body(rs);
     }
 
     @DeleteMapping ("/delete/{id}")
-    public ResponseEntity<SupplierAdminDto> deleteSupplier(@PathVariable Long id) {
-        SupplierAdminDto supplierAdminDto = supplierService.deleteSupplier(id);
-        return ResponseEntity.ok().body(supplierAdminDto);
+    public ResponseEntity<Long> deleteSupplier(@PathVariable Long id) {
+        Long rs = supplierService.deleteSupplier(id);
+        return ResponseEntity.ok().body(rs);
     }
 
     @GetMapping("/{id}")

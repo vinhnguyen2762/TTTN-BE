@@ -9,9 +9,10 @@ import java.util.List;
 
 public interface CustomerService {
     public List<CustomerAdminDto> getAllCustomerAdmin();
-    public CustomerAdminDto addCustomer(CustomerAddDto customerAddDto);
-    public CustomerAdminDto updateCustomer(Long id, CustomerUpdateDto customerUpdateDto);
-    public CustomerAdminDto deleteCustomer(Long id);
+    public List<CustomerAdminDto> getAllCustomerSmallTrader(Long id);
+    public Long addCustomer(CustomerAddDto customerAddDto);
+    public Long updateCustomer(Long id, CustomerUpdateDto customerUpdateDto);
+    public Long deleteCustomer(Long id);
     public CustomerAdminDto findById(Long id);
     public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber);
     public Long countCustomerByStatusTrue();

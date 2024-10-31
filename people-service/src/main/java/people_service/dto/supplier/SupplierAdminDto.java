@@ -12,9 +12,10 @@ public record SupplierAdminDto(
         String address,
         String email,
         String phoneNumber,
-        String taxId
+        String taxId,
+        String smallTraderName
 ) {
-    public static SupplierAdminDto fromSupplier(Supplier supplier) {
+    public static SupplierAdminDto fromSupplier(Supplier supplier, String smallTraderName) {
         return new SupplierAdminDto(
                 supplier.getId(),
                 supplier.getFirstName(),
@@ -22,7 +23,8 @@ public record SupplierAdminDto(
                 supplier.getAddress(),
                 supplier.getEmail(),
                 supplier.getPhoneNumber(),
-                supplier.getTaxId()
+                supplier.getTaxId(),
+                smallTraderName
         );
     }
 }

@@ -26,6 +26,13 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             """)
     List<Customer> findAll();
 
+    @Query("""
+            select c
+            from Customer c
+            where c.status = true and c.smallTraderId = :id
+            """)
+    List<Customer> findBySmallTraderId(@Param("id") Long id);
+
     @Query("SELECT COALESCE(COUNT(c), 0) FROM Customer c WHERE c.status = true")
     Long countCustomerByStatusTrue();
 }

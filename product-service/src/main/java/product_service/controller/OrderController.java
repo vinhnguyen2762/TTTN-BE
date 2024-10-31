@@ -30,6 +30,12 @@ public class OrderController {
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/get-all/{id}")
+    public ResponseEntity<List<OrderAdminDto>> getAllOrderSmallTrader(@PathVariable Long id) {
+        List<OrderAdminDto> list = orderService.getAllOrderSmallTraderId(id);
+        return ResponseEntity.ok().body(list);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<OrderAdminDto> addOder(@RequestBody OrderAddDto orderAddDto) {
         OrderAdminDto order = orderService.addOrder(orderAddDto);

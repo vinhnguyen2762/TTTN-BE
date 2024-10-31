@@ -91,6 +91,29 @@ public class ProductServiceImpl implements ProductService {
         return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName())).toList();
     }
 
+    public List<ProductNoPromotionDto> getAllProductNoPromotionSmallTrader(Long id) {
+        LocalDate today = LocalDate.now();
+        List<Product> list = productRepository.findBySmallTraderId(id);
+        List<Product> result = new ArrayList<>();
+        List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
+        for (Product p : list) {
+            Boolean noContain = false;
+            for (PromotionDetail pd : promotionDetailList) {
+                if (pd.getProductId() == p.getId()) {
+                    Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
+                            () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
+                    if (!promotion.getStatus().name().equals("DELETED") && !promotion.getEndDate().isBefore(today)) {
+                        noContain = true;
+                    }
+                }
+            }
+            if (noContain == false) {
+                result.add(p);
+            }
+        }
+        return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName())).toList();
+    }
+
     public Long addProduct(ProductAddDto productAddDto) {
         Boolean isExist = productRepository.findByName(productAddDto.name()).isPresent();
         if (isExist) {

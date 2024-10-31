@@ -27,8 +27,9 @@ public class Customer {
     private String password;
     private Boolean status = true;
     private Boolean locked = true;
+    private Long smallTraderId;
 
-    public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email) {
+    public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, Long smallTraderId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
@@ -36,5 +37,6 @@ public class Customer {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.smallTraderId = smallTraderId;
     }
 }

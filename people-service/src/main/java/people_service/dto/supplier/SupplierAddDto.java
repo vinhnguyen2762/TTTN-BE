@@ -6,6 +6,7 @@ public record SupplierAddDto(
         String address,
         String email,
         String phoneNumber,
-        String taxId
+        String taxId,
+        Long smallTraderId
 ) {
 }

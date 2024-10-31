@@ -8,6 +8,7 @@ import java.util.List;
 public interface ProductService {
     public List<ProductAdminDto> getAllProductAdmin();
     public List<ProductNoPromotionDto> getAllProductNoPromotion();
+    public List<ProductNoPromotionDto> getAllProductNoPromotionSmallTrader(Long id);
     public Long addProduct(ProductAddDto productAddDto);
     public Long updateProduct(Long id, ProductUpdateDto productUpdateDto);
     public Long deleteProduct(Long id);

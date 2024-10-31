@@ -7,6 +7,7 @@ public record CustomerAddDto(
         String gender,
         String address,
         String phoneNumber,
-        String email
+        String email,
+        Long smallTraderId
 ) {
 }
