@@ -114,4 +114,9 @@ public class SupplierServiceImpl implements SupplierService {
                 fullName
         );
     }
+
+    public Long countSupplierSmallTrader(Long id) {
+        Long rs = supplierRepository.countSupplierSmallTrader(id);
+        return rs;
+    }
 }

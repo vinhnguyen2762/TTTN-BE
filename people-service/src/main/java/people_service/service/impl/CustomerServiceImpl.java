@@ -162,8 +162,8 @@ public class CustomerServiceImpl implements CustomerService {
         );
     }
 
-    public Long countCustomerByStatusTrue() {
-        Long rs = customerRepository.countCustomerByStatusTrue();
+    public Long countCustomerSmallTrader(Long id) {
+        Long rs = customerRepository.countCustomerSmallTrader(id);
         return rs;
     }
 

@@ -1,9 +1,11 @@
 package product_service.dto.statistics;
 
 public record StatisticsResponse(
-        Long smallTraderNumber,
         Long productNumber,
         Long orderNumber,
-        Long customerNumber
+        Long customerNumber,
+        Long purchaseOrderNumber,
+        Long supplierNumber,
+        Long promotionNumber
 ) {
 }

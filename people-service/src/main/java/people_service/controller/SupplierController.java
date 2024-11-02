@@ -62,4 +62,10 @@ public class SupplierController {
         SupplierSearchDto supplierSearchDto = supplierService.findByTaxIdSearch(taxId);
         return ResponseEntity.ok().body(supplierSearchDto);
     }
+
+    @GetMapping("/count/{id}")
+    public ResponseEntity<Long> countSupplierBySmallTraderId(@PathVariable Long id) {
+        Long rs = supplierService.countSupplierSmallTrader(id);
+        return ResponseEntity.ok().body(rs);
+    }
 }

@@ -2,6 +2,7 @@ package product_service.dto.revenue;
 
 public record RevenueRequest(
         Integer month,
-        Integer year
+        Integer year,
+        Long smallTraderId
 ) {
 }

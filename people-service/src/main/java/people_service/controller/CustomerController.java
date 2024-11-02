@@ -65,9 +65,9 @@ public class CustomerController {
         return ResponseEntity.ok().body(customerSearchDto);
     }
 
-    @GetMapping("/count")
-    public ResponseEntity<Long> countCustomerByStatusTrue() {
-        Long rs = customerService.countCustomerByStatusTrue();
+    @GetMapping("/count/{id}")
+    public ResponseEntity<Long> countCustomerByStatusTrue(@PathVariable Long id) {
+        Long rs = customerService.countCustomerSmallTrader(id);
         return ResponseEntity.ok().body(rs);
     }
 }

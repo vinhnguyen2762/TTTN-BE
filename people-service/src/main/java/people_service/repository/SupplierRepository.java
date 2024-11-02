@@ -32,4 +32,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
             where s.status = true and s.taxId = :taxId
             """)
     Optional<Supplier> findByTaxIdSearch(@Param("taxId") String taxId);
+
+    @Query("SELECT COALESCE(COUNT(s), 0) FROM Supplier s WHERE s.status = true and s.smallTraderId = :id")
+    Long countSupplierSmallTrader(@Param("id") Long id);
 }

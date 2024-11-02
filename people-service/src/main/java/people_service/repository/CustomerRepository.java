@@ -33,6 +33,6 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
             """)
     List<Customer> findBySmallTraderId(@Param("id") Long id);
 
-    @Query("SELECT COALESCE(COUNT(c), 0) FROM Customer c WHERE c.status = true")
-    Long countCustomerByStatusTrue();
+    @Query("SELECT COALESCE(COUNT(c), 0) FROM Customer c WHERE c.status = true and c.smallTraderId = :id")
+    Long countCustomerSmallTrader(@Param("id") Long id);
 }

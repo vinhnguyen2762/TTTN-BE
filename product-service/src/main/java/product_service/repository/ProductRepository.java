@@ -23,8 +23,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             """)
     List<Product> findBySmallTraderId(@Param("id") Long id);
 
-    @Query("SELECT COALESCE(COUNT(p), 0) FROM Product p WHERE p.status = true")
-    Long countProductsByStatusTrue();
+    @Query("SELECT COALESCE(COUNT(p), 0) FROM Product p WHERE p.status = true and p.smallTraderId = :id")
+    Long countProductsByStatusTrue(@Param("id") Long id);
 
     Optional<Product> findByName(String name);
 }

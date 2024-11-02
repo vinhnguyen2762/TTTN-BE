@@ -37,4 +37,14 @@ public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Lo
             "FROM PurchaseOrder po JOIN po.purchaseOrderDetails pod " +
             "WHERE YEAR(po.deliveryDate) = :year AND MONTH(po.deliveryDate) = :month AND po.status = 'PAID'")
     Long findMoneyPurchaseByMonthAndYear(@Param("year") Integer year, @Param("month") Integer month);
+
+    @Query("""
+            SELECT COALESCE(COUNT(po), 0) 
+            FROM PurchaseOrder po 
+            WHERE po.status = 'PAID' 
+            AND YEAR(po.deliveryDate) = :year 
+            AND MONTH(po.deliveryDate) = :month 
+            AND po.smallTraderId = :id
+            """)
+    Long countPurchaseOrdersByStatusAndMonth(@Param("year") Integer year, @Param("month") Integer month, @Param("id") Long id);
 }

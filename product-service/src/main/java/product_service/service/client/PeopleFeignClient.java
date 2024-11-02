@@ -20,10 +20,13 @@ public interface PeopleFeignClient {
     @GetMapping("/customer/{id}")
     ResponseEntity<CustomerAdminDto> getCustomerById(@PathVariable Long id);
 
-    @GetMapping("/customer/count")
-    ResponseEntity<Long> countCustomerByStatusTrue();
+    @GetMapping("/customer/count/{id}")
+    ResponseEntity<Long> countCustomerBySmallTraderId(@PathVariable Long id);
 
     @GetMapping("/supplier/{id}")
     ResponseEntity<SupplierAdminDto> getSupplierById(@PathVariable Long id);
+
+    @GetMapping("/supplier/count/{id}")
+    ResponseEntity<Long> countSupplierBySmallTraderId(@PathVariable Long id);
 
 }

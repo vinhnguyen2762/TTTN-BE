@@ -33,4 +33,18 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
             where p.id = :id 
             """)
     Optional<Promotion> findById(@Param("id") Long id);
+
+    @Query("""
+            SELECT COALESCE(COUNT(p), 0)
+            FROM Promotion p
+            WHERE p.status = 'ACTIVE'
+            AND YEAR(p.startDate) = :year
+            AND YEAR(p.endDate) = :year
+            AND (
+                (MONTH(p.startDate) <= :month)
+                AND (MONTH(p.endDate) >= :month)
+            )
+            AND p.smallTraderId = :id
+            """)
+    Long countPromotionsByStatusAndMonth(@Param("year") Integer year, @Param("month") Integer month, @Param("id") Long id);
 }

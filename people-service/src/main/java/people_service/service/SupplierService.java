@@ -15,4 +15,5 @@ public interface SupplierService {
     public Long deleteSupplier(Long id);
     public SupplierAdminDto findById(Long id);
     public SupplierSearchDto findByTaxIdSearch(String taxId);
+    public Long countSupplierSmallTrader(Long id);
 }
