@@ -58,7 +58,7 @@ public class StatisticsServiceImpl implements StatisticsService {
             }
         }
 
-        Long moneyPurchase = purchaseOrderRepository.findMoneyPurchaseByMonthAndYear(revenueRequest.year(), revenueRequest.month());
+        Long moneyPurchase = purchaseOrderRepository.findMoneyPurchaseByMonthAndYear(revenueRequest.year(), revenueRequest.month(), revenueRequest.smallTraderId());
         return new RevenueResponse(
                 revenueRequest.month(),
                 revenueRequest.year(),

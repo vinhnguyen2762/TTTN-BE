@@ -3,6 +3,7 @@ package people_service.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
+import people_service.dto.smallTrader.SmallTraderRevenueDto;
 import people_service.dto.smallTrader.SmallTraderUpdateDto;
 import people_service.model.ChangePasswordRequest;
 import people_service.service.impl.SmallTraderServiceImpl;
@@ -20,25 +21,31 @@ public class SmallTraderController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<SmallTraderAdminDto>> getAllEmployeeAdmin() {
+    public ResponseEntity<List<SmallTraderAdminDto>> getAllSmallTraderAdmin() {
         List<SmallTraderAdminDto> list = employeeService.getAllSmallTraderAdmin();
         return ResponseEntity.ok().body(list);
     }
 
+    @GetMapping("/revenue")
+    public ResponseEntity<List<SmallTraderRevenueDto>> getAllSmallTraderRevenue() {
+        List<SmallTraderRevenueDto> list = employeeService.getAllSmallTraderRevenue();
+        return ResponseEntity.ok().body(list);
+    }
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<SmallTraderAdminDto> updateEmployee(@PathVariable Long id, @RequestBody SmallTraderUpdateDto smallTraderUpdateDto) {
+    public ResponseEntity<SmallTraderAdminDto> updateSmallTrader(@PathVariable Long id, @RequestBody SmallTraderUpdateDto smallTraderUpdateDto) {
         SmallTraderAdminDto smallTraderAdminDto = employeeService.updateSmallTrader(id, smallTraderUpdateDto);
         return ResponseEntity.ok().body(smallTraderAdminDto);
     }
 
     @PutMapping("/change-account-status/{id}")
-    public ResponseEntity<SmallTraderAdminDto> changeEmployeeAccountStatus(@PathVariable Long id) {
+    public ResponseEntity<SmallTraderAdminDto> changeSmallTraderAccountStatus(@PathVariable Long id) {
         SmallTraderAdminDto smallTraderAdminDto = employeeService.changeAccountStatus(id);
         return ResponseEntity.ok().body(smallTraderAdminDto);
     }
 
     @DeleteMapping ("/delete/{id}")
-    public ResponseEntity<SmallTraderAdminDto> deleteEmployee(@PathVariable Long id) {
+    public ResponseEntity<SmallTraderAdminDto> deleteSmallTrader(@PathVariable Long id) {
         SmallTraderAdminDto smallTraderAdminDto = employeeService.deleteSmallTrader(id);
         return ResponseEntity.ok().body(smallTraderAdminDto);
     }

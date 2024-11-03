@@ -3,6 +3,7 @@ package people_service.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
+import people_service.dto.smallTrader.SmallTraderRevenueDto;
 import people_service.dto.smallTrader.SmallTraderUpdateDto;
 import people_service.enums.Gender;
 import people_service.exception.DuplicateException;
@@ -66,6 +67,14 @@ public class SmallTraderServiceImpl implements SmallTraderService {
     public List<SmallTraderAdminDto> getAllSmallTraderAdmin() {
         List<SmallTrader> list = smallTraderRepository.findAll();
         return list.stream().map(SmallTraderAdminDto::fromEmployee).toList();
+    }
+
+    public List<SmallTraderRevenueDto> getAllSmallTraderRevenue() {
+        List<SmallTrader> list = smallTraderRepository.findAll();
+        return list.stream().map(s -> {
+            String fullName = s.getFirstName() + " " + s.getLastName();
+            return new SmallTraderRevenueDto(s.getId(), fullName, s.getPhoneNumber());
+        }).toList();
     }
 
     public SmallTraderAdminDto updateSmallTrader(Long id, SmallTraderUpdateDto smallTraderUpdateDto) {
