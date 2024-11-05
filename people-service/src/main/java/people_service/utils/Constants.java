@@ -11,7 +11,7 @@ public class Constants {
         public static final String EMAIL_NOT_VALID = "Email with value: %s is not valid";
         public static final String EMAIL_ALREADY_CONFIRMED = "Email with value: %s already confirmed";
         public static final String TOKEN_EXPIRED = "Token of email: %s expired";
-        public static final String CUSTOMER_ALREADY_TAKEN = "Customer with phone number: %s already taken";
+        public static final String PHONE_NUMBER_ALREADY_TAKEN = "Customer with phone number: %s already taken";
         public static final String CUSTOMER_NOT_FOUND = "Customer with id: %s not found";
         public static final String CUSTOMER_NOT_FOUND_PHONE_NUMBER = "Customer with phone number: %s not found";
         public static final String SUPPLIER_ALREADY_TAKEN = "Supplier with tax id: %s already taken";
@@ -23,7 +23,7 @@ public class Constants {
         public static final String PASSWORD_NOT_CORRECT = "Password is not correct";
         public static final String DEBT_DETAIL_NOT_FOUND = "Debt detail with id: %s not found";
         public static final String PRODUCER_NOT_FOUND = "Producer with id: %s not found";
-
+        public static final String PRODUCER_CANT_DELETE = "Producer with id: %s can't be deleted because has debt not pay yet";
 
     }
 

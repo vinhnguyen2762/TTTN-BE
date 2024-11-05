@@ -7,6 +7,7 @@ public record CustomerAdminDto(
         String address,
         String phoneNumber,
         String gender,
-        String dateOfBirth
+        String dateOfBirth,
+        String email
 ) {
 }

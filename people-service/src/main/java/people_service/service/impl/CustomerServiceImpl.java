@@ -37,30 +37,18 @@ public class CustomerServiceImpl implements CustomerService {
 
     public List<CustomerAdminDto> getAllCustomerAdmin() {
         List<Customer> list = customerRepository.findAll();
-        return list.stream().map(c -> {
-            SmallTrader smallTrader = smallTraderRepository.findById(c.getSmallTraderId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, c.getSmallTraderId()))
-            );
-            String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
-            return CustomerAdminDto.fromCustomer(c, smallTraderName);
-        }).toList();
+        return list.stream().map(CustomerAdminDto::fromCustomer).toList();
     }
 
     public List<CustomerAdminDto> getAllCustomerSmallTrader(Long id) {
         List<Customer> list = customerRepository.findBySmallTraderId(id);
-        return list.stream().map(c -> {
-            SmallTrader smallTrader = smallTraderRepository.findById(c.getSmallTraderId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, c.getSmallTraderId()))
-            );
-            String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
-            return CustomerAdminDto.fromCustomer(c, smallTraderName);
-        }).toList();
+        return list.stream().map(CustomerAdminDto::fromCustomer).toList();
     }
 
     public Long addCustomer(CustomerAddDto customerAddDto) {
         Boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerAddDto.phoneNumber()).isPresent();
         if (isPhoneNumberExist) {
-            throw new DuplicateException(String.format(Constants.ErrorMessage.CUSTOMER_ALREADY_TAKEN, customerAddDto.phoneNumber()));
+            throw new DuplicateException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customerAddDto.phoneNumber()));
         }
 
         Boolean isEmailExist = customerRepository.findByEmail(customerAddDto.email()).isPresent();
@@ -97,6 +85,16 @@ public class CustomerServiceImpl implements CustomerService {
         String oldPhoneNumber = customer.getPhoneNumber();
         String oldEmail = customer.getEmail();
 
+        // if phone number is new, check if the new phone number exist
+        if (!customerUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerUpdateDto.phoneNumber()).isPresent();
+            if (!isPhoneNumberExist) {
+                customer.setPhoneNumber(customerUpdateDto.phoneNumber());
+            } else {
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customerUpdateDto.phoneNumber()));
+            }
+        }
+
         // if email is new, check if the new email exist
         if (!customerUpdateDto.email().equals(oldEmail)) {
             Boolean isEmailExist = customerRepository.findByEmail(customerUpdateDto.email()).isPresent();
@@ -104,16 +102,6 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.setEmail(customerUpdateDto.email());
             } else {
                 throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerUpdateDto.email()));
-            }
-        }
-
-        // if phone number is new, check if the new phone number exist
-        if (!customerUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerUpdateDto.phoneNumber()).isPresent();
-            if (!isPhoneNumberExist) {
-                customer.setPhoneNumber(customerUpdateDto.phoneNumber());
-            } else {
-                throw new FailedException(String.format(Constants.ErrorMessage.CUSTOMER_ALREADY_TAKEN, customerUpdateDto.phoneNumber()));
             }
         }
 
@@ -149,7 +137,7 @@ public class CustomerServiceImpl implements CustomerService {
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, customer.getSmallTraderId()))
         );
         String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
-        return CustomerAdminDto.fromCustomer(customer, smallTraderName);
+        return CustomerAdminDto.fromCustomer(customer);
     }
 
     public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber) {

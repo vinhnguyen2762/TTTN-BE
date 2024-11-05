@@ -15,14 +15,11 @@ public record ProducerAdminDto(
         String phoneNumber,
         String gender,
         String email,
-        String smallTraderName,
+        String remainingDebt,
         List<DebtDetailAdminDto> list
 ) {
-    public static ProducerAdminDto fromProducer(Producer producer, String smallTraderName) {
+    public static ProducerAdminDto fromProducer(Producer producer, String remainingDebt, List<DebtDetailAdminDto> list) {
         String gender = producer.getGender().name().equals("MALE") ? "Nam" : "Nữ";
-
-        List<DebtDetailAdminDto> list = producer.getDebtDetails().stream()
-                .map(DebtDetailAdminDto::fromDebtDetail).toList();
 
         return new ProducerAdminDto(
                 producer.getId(),
@@ -32,7 +29,7 @@ public record ProducerAdminDto(
                 producer.getPhoneNumber(),
                 gender,
                 producer.getEmail(),
-                smallTraderName,
+                remainingDebt,
                 list
         );
     }

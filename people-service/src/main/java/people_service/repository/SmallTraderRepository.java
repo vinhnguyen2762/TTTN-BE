@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface SmallTraderRepository extends JpaRepository<SmallTrader, Long> {
     Optional<SmallTrader> findByEmail(String email);
+    Optional<SmallTrader> findByPhoneNumber(String phoneNumber);
     Optional<SmallTrader> findById(Long id);
 
     @Query("""

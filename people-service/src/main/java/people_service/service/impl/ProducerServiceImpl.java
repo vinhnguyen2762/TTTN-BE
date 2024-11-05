@@ -6,14 +6,17 @@ import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.customer.CustomerSearchDto;
 import people_service.dto.customer.CustomerUpdateDto;
+import people_service.dto.debtDetail.DebtDetailAdminDto;
 import people_service.dto.producer.ProducerAddDto;
 import people_service.dto.producer.ProducerAdminDto;
 import people_service.dto.producer.ProducerUpdateDto;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.enums.Gender;
 import people_service.exception.DuplicateException;
+import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.Customer;
+import people_service.model.DebtDetail;
 import people_service.model.Producer;
 import people_service.model.SmallTrader;
 import people_service.repository.ProducerRepository;
@@ -39,29 +42,42 @@ public class ProducerServiceImpl implements ProducerService {
     public List<ProducerAdminDto> getAllProducerAdmin() {
         List<Producer> list = producerRepository.findAll();
         return list.stream().map(p -> {
-            SmallTrader smallTrader = smallTraderRepository.findById(p.getSmallTraderId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, p.getSmallTraderId()))
-            );
-            String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
-            return ProducerAdminDto.fromProducer(p, smallTraderName);
+            List<DebtDetail> debtDetailList = p.getDebtDetails();
+            Long remainingDebt = 0L;
+            for (DebtDetail item : debtDetailList) {
+                Long rs = item.getDebtAmount() - item.getPaidAmount();
+                remainingDebt += rs;
+            }
+            List<DebtDetailAdminDto> debtDetailAdminDtoList = p.getDebtDetails().stream()
+                    .map(DebtDetailAdminDto::fromDebtDetail).toList();
+            return ProducerAdminDto.fromProducer(p, remainingDebt.toString(), debtDetailAdminDtoList);
         }).toList();
     }
 
     public List<ProducerAdminDto> getAllProducerSmallTrader(Long id) {
-        List<Producer> list = producerRepository.findBySmallTraderId(id);
+        List<Producer> list = producerRepository.findBySmallTrader(id);
         return list.stream().map(p -> {
-            SmallTrader smallTrader = smallTraderRepository.findById(p.getSmallTraderId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, p.getSmallTraderId()))
-            );
-            String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
-            return ProducerAdminDto.fromProducer(p, smallTraderName);
+            List<DebtDetail> debtDetailList = p.getDebtDetails();
+            Long remainingDebt = 0L;
+            for (DebtDetail item : debtDetailList) {
+                Long rs = item.getDebtAmount() - item.getPaidAmount();
+                remainingDebt += rs;
+            }
+            List<DebtDetailAdminDto> debtDetailAdminDtoList = p.getDebtDetails().stream()
+                    .map(DebtDetailAdminDto::fromDebtDetail).toList();
+            return ProducerAdminDto.fromProducer(p, remainingDebt.toString(), debtDetailAdminDtoList);
         }).toList();
     }
 
     public Long addProducer(ProducerAddDto producerAddDto) {
-        Boolean isExist = producerRepository.findByEmail(producerAddDto.email()).isPresent();
-        if (isExist) {
-            throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, producerAddDto.email()));
+        Boolean isPhoneNumberExist = producerRepository.findByPhoneNumber(producerAddDto.phoneNumber()).isPresent();
+        if (isPhoneNumberExist) {
+            throw new DuplicateException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, producerAddDto.phoneNumber()));
+        }
+
+        Boolean isEmailExist = producerRepository.findByEmail(producerAddDto.email()).isPresent();
+        if (isEmailExist) {
+            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, producerAddDto.email()));
         }
 
         Gender gender = producerAddDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
@@ -88,7 +104,18 @@ public class ProducerServiceImpl implements ProducerService {
 
         Gender gender = producerUpdateDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
 
+        String oldPhoneNumber = producer.getPhoneNumber();
         String oldEmail = producer.getEmail();
+
+        // if phone number is new, check if the new phone number exist
+        if (!producerUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = producerRepository.findByPhoneNumber(producerUpdateDto.phoneNumber()).isPresent();
+            if (!isPhoneNumberExist) {
+                producer.setPhoneNumber(producerUpdateDto.phoneNumber());
+            } else {
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, producerUpdateDto.phoneNumber()));
+            }
+        }
 
         // if email is new, check if the new email exist
         if (!producerUpdateDto.email().equals(oldEmail)) {
@@ -104,8 +131,6 @@ public class ProducerServiceImpl implements ProducerService {
         producer.setLastName(producerUpdateDto.lastName());
         producer.setGender(gender);
         producer.setAddress(producerUpdateDto.address());
-        producer.setPhoneNumber((producerUpdateDto.phoneNumber()));
-        producer.setEmail((producerUpdateDto.email()));
         producerRepository.saveAndFlush(producer);
         return producer.getId();
     }
@@ -116,8 +141,21 @@ public class ProducerServiceImpl implements ProducerService {
         if (producer.getStatus() == false) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id));
         }
-        producer.setStatus(false);
-        producerRepository.saveAndFlush(producer);
+
+        List<DebtDetail> debtDetailList = producer.getDebtDetails();
+        Long remainingDebt = 0L;
+        for (DebtDetail item : debtDetailList) {
+            Long rs = item.getDebtAmount() - item.getPaidAmount();
+            remainingDebt += rs;
+        }
+
+        if (remainingDebt.equals(0L)) {
+            producer.setStatus(false);
+            producerRepository.saveAndFlush(producer);
+        }
+        else {
+            throw new FailedException(String.format(Constants.ErrorMessage.PRODUCER_CANT_DELETE, id));
+        }
         return producer.getId();
     }
 

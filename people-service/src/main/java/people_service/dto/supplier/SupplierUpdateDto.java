@@ -5,6 +5,7 @@ public record SupplierUpdateDto(
         String lastName,
         String address,
         String email,
-        String phoneNumber
+        String phoneNumber,
+        String taxId
 ) {
 }

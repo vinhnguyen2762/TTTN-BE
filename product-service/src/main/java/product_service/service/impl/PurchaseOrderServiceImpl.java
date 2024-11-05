@@ -97,18 +97,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         purchaseOrderDetailRepository.saveAll(purchaseOrderDetailList);
 
-        SupplierAdminDto supplierAdminDto = findSupplierById(purchaseOrderAdd.getSupplierId());
-        String supplierName = supplierAdminDto.firstName() + " " + supplierAdminDto.lastName();
-
-        List<PurchaseOrderDetailAdminDto> list = purchaseOrderDetailList.stream().map(pd -> {
-            Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
-            }
-            String productName = product.getName();
-            return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
-        }).toList();
         return purchaseOrderAdd.getId();
     }
 
@@ -144,18 +132,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
 
         purchaseOrderRepository.save(purchaseOrder);
 
-        SupplierAdminDto supplierAdminDto = findSupplierById(purchaseOrder.getSupplierId());
-        String supplierName = supplierAdminDto.firstName() + " " + supplierAdminDto.lastName();
-
-        List<PurchaseOrderDetailAdminDto> list = updateList.stream().map(pd -> {
-            Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
-            }
-            String productName = product.getName();
-            return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
-        }).toList();
         return purchaseOrder.getId();
     }
 

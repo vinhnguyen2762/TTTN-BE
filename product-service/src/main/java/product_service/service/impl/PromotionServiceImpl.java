@@ -102,26 +102,6 @@ public class PromotionServiceImpl implements PromotionService {
         }
         promotionDetailRepository.saveAll(promotionDetailList);
 
-        List<PromotionDetailAdminDto> list = promotionDetailList.stream().map(pd -> {
-            Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
-            }
-            String productName = product.getName();
-            Long originalPrice = product.getPrice();
-            Long discountPrice;
-            if (promotion.getType().name().equals("PERCENTAGE")) {
-                discountPrice = originalPrice -  (originalPrice * promotion.getValue()/100);
-            } else {
-                discountPrice = originalPrice - promotion.getValue();
-                if (discountPrice < 0) {
-                    throw new FailedException("Discount price is more than original price");
-                }
-            }
-            return PromotionDetailAdminDto.fromPromotionProduct(pd, productName, originalPrice.toString(), discountPrice.toString());
-        }).toList();
-
         return promotion.getId();
     }
 
@@ -160,26 +140,6 @@ public class PromotionServiceImpl implements PromotionService {
             updateList.add(promotionDetail);
         }
         promotionRepository.save(promotion);
-
-        List<PromotionDetailAdminDto> list = updateList.stream().map(pd -> {
-            Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
-            }
-            String productName = product.getName();
-            Long originalPrice = product.getPrice();
-            Long discountPrice;
-            if (promotion.getType().name().equals("PERCENTAGE")) {
-                discountPrice = originalPrice - (originalPrice * promotion.getValue()/100);
-            } else {
-                discountPrice = originalPrice - promotion.getValue();
-                if (discountPrice < 0) {
-                    throw new FailedException("Discount price is more than original price");
-                }
-            }
-            return PromotionDetailAdminDto.fromPromotionProduct(pd, productName, originalPrice.toString(), discountPrice.toString());
-        }).toList();
 
         return promotion.getId();
     }
@@ -226,7 +186,7 @@ public class PromotionServiceImpl implements PromotionService {
         } else {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_HAS_PROMOTION));
         }
-        return id;
+        return promotion.getId();
     }
 
     public List<PromotionAdminDto> getAllPromotionSmallTrader(Long id) {

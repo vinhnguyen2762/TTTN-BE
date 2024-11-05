@@ -15,13 +15,6 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
     @Query("""
             select p
             from Producer p
-            where p.status = true and p.phoneNumber = :phoneNumber
-            """)
-    Optional<Producer> findByPhoneNumberSearch(@Param("phoneNumber") String phoneNumber);
-
-    @Query("""
-            select p
-            from Producer p
             where p.status = true
             """)
     List<Producer> findAll();
@@ -31,7 +24,7 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
             from Producer p
             where p.status = true and p.smallTraderId = :id
             """)
-    List<Producer> findBySmallTraderId(@Param("id") Long id);
+    List<Producer> findBySmallTrader(@Param("id") Long id);
 
     @Query("SELECT COALESCE(COUNT(p), 0) FROM Producer p WHERE p.status = true")
     Long countProducerByStatusTrue();

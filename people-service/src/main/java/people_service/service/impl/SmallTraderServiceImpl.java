@@ -34,9 +34,13 @@ public class SmallTraderServiceImpl implements SmallTraderService {
     private final ConfirmationTokenService confirmationTokenService;
 
     public String signUpUser(SmallTrader smallTrader) {
-        boolean isUserExists = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
-        if (isUserExists) {
+        boolean isEmailExists = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
+        if (isEmailExists) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTrader.getEmail()));
+        }
+        boolean isPhoneNumberExists = smallTraderRepository.findByPhoneNumber(smallTrader.getPhoneNumber()).isPresent();
+        if (isPhoneNumberExists) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTrader.getPhoneNumber()));
         }
         String hashedPassword = hashPassword(smallTrader.getPassword());
         smallTrader.setPassword(hashedPassword);
@@ -85,6 +89,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         }
 
         String oldEmail = smallTrader.getEmail();
+        String oldPhoneNumber = smallTrader.getPhoneNumber();
 
         if (!smallTraderUpdateDto.email().equals(oldEmail)) {
             Boolean isEmailExist = smallTraderRepository.findByEmail(smallTraderUpdateDto.email()).isPresent();
@@ -92,6 +97,15 @@ public class SmallTraderServiceImpl implements SmallTraderService {
                 smallTrader.setEmail(smallTraderUpdateDto.email());
             } else {
                 throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTraderUpdateDto.email()));
+            }
+        }
+
+        if (!smallTraderUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = smallTraderRepository.findByPhoneNumber(smallTraderUpdateDto.phoneNumber()).isPresent();
+            if (!isPhoneNumberExist) {
+                smallTrader.setPhoneNumber(smallTraderUpdateDto.phoneNumber());
+            } else {
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTraderUpdateDto.phoneNumber()));
             }
         }
 
@@ -103,7 +117,6 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         smallTrader.setDateOfBirth(date);
         smallTrader.setGender(gender);
         smallTrader.setAddress(smallTraderUpdateDto.address());
-        smallTrader.setPhoneNumber(smallTraderUpdateDto.phoneNumber());
         smallTraderRepository.saveAndFlush(smallTrader);
         return SmallTraderAdminDto.fromEmployee(smallTrader);
     }

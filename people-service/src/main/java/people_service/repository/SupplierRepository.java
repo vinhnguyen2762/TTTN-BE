@@ -25,6 +25,8 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
     List<Supplier> findBySmallTraderId(@Param("id") Long id);
 
     Optional<Supplier> findByTaxId(String taxId);
+    Optional<Supplier> findByEmail(String email);
+    Optional<Supplier> findByPhoneNumber(String phoneNumber);
 
     @Query("""
             select s

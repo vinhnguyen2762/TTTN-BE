@@ -9,7 +9,8 @@ public record DebtDetailAdminDto(
         String debtAmount,
         String paidAmount,
         String debtDate,
-        String paidDate
+        String paidDate,
+        String debtRemaining
 ) {
     public static DebtDetailAdminDto fromDebtDetail(DebtDetail debtDetail) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -17,12 +18,14 @@ public record DebtDetailAdminDto(
         if (debtDetail.getPaidDate() != null) {
             paidDate = debtDetail.getPaidDate().format(formatter);
         }
+        Long debtRemaining = debtDetail.getDebtAmount() - debtDetail.getPaidAmount();
         return new DebtDetailAdminDto(
                 debtDetail.getId(),
                 debtDetail.getDebtAmount().toString(),
                 debtDetail.getPaidAmount().toString(),
                 debtDetail.getDebtDate().format(formatter),
-                paidDate
+                paidDate,
+                debtRemaining.toString()
         );
     }
 }
