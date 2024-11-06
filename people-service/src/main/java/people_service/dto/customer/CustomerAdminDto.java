@@ -11,7 +11,8 @@ public record CustomerAdminDto(
         String phoneNumber,
         String gender,
         String dateOfBirth,
-        String email
+        String email,
+        Long smallTraderId
 ) {
     public static CustomerAdminDto fromCustomer(Customer customer) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -24,7 +25,8 @@ public record CustomerAdminDto(
                 customer.getPhoneNumber(),
                 gender,
                 customer.getDateOfBirth().format(formatter),
-                customer.getEmail()
+                customer.getEmail(),
+                customer.getSmallTraderId()
         );
     }
 }
