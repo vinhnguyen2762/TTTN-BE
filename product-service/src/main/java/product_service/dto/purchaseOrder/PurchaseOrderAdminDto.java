@@ -16,6 +16,7 @@ public record PurchaseOrderAdminDto(
         String status,
         String total,
         List<PurchaseOrderDetailAdminDto> list,
+        Long smallTraderId,
         String smallTraderName
 ) {
     public static PurchaseOrderAdminDto fromPurchaseOrder(PurchaseOrder purchaseOrder, String taxId, String supplierName, List<PurchaseOrderDetailAdminDto> list, String smallTraderName) {
@@ -38,6 +39,7 @@ public record PurchaseOrderAdminDto(
                 status,
                 total.toString(),
                 list,
+                purchaseOrder.getSmallTraderId(),
                 smallTraderName
         );
     }

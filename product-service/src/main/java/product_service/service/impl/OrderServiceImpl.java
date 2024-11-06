@@ -50,6 +50,7 @@ public class OrderServiceImpl implements OrderService {
 
             SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(o.getSmallTraderId());
             String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+            String smallTraderPhoneNumber = smallTraderAdminDto.phoneNumber();
 
             String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -62,7 +63,7 @@ public class OrderServiceImpl implements OrderService {
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
             }).toList();
-            return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list);
+            return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
         }).toList();
     }
 
@@ -100,7 +101,8 @@ public class OrderServiceImpl implements OrderService {
         String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
 
         SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(orderAdd.getSmallTraderId());
-        String employeeName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+        String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+        String smallTraderPhoneNumber = smallTraderAdminDto.phoneNumber();
 
         String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -114,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
             return OrderDetailAdminDto.fromOderDetail(od, productName);
         }).toList();
 
-        return OrderAdminDto.fromOrder(orderAdd, customerName, employeeName, phoneNumber, list);
+        return OrderAdminDto.fromOrder(orderAdd, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
     }
 
     public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
@@ -150,7 +152,8 @@ public class OrderServiceImpl implements OrderService {
         String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
 
         SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(order.getSmallTraderId());
-        String employeeName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+        String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+        String smallTraderPhoneNumber = smallTraderAdminDto.phoneNumber();
 
         String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -164,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
             return OrderDetailAdminDto.fromOderDetail(od, productName);
         }).toList();
 
-        return OrderAdminDto.fromOrder(order, customerName, employeeName, phoneNumber, list);
+        return OrderAdminDto.fromOrder(order, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
     }
 
     public Long deleteOrder(Long id) {
@@ -218,6 +221,7 @@ public class OrderServiceImpl implements OrderService {
 
             SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(o.getSmallTraderId());
             String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
+            String smallTraderPhoneNumber = smallTraderAdminDto.phoneNumber();
 
             String phoneNumber = customerAdminDto.phoneNumber();
 
@@ -230,7 +234,7 @@ public class OrderServiceImpl implements OrderService {
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
             }).toList();
-            return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list);
+            return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
         }).toList();
     }
 

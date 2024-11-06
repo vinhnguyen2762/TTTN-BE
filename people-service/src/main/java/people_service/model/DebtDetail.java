@@ -24,9 +24,11 @@ public class DebtDetail {
     @JoinColumn(name = "producer_id")
     private Producer producer;
 
-    public DebtDetail(Long debtAmount, LocalDate debtDate, Producer producer) {
+    public DebtDetail(Long debtAmount, LocalDate debtDate, Long paidAmount, LocalDate paidDate, Producer producer) {
         this.debtAmount = debtAmount;
         this.debtDate = debtDate;
+        this.paidAmount = paidAmount;
+        this.paidDate = paidDate;
         this.producer = producer;
     }
 }

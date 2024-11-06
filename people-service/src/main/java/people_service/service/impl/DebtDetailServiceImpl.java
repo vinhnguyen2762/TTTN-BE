@@ -3,6 +3,7 @@ package people_service.service.impl;
 import org.springframework.stereotype.Service;
 import people_service.dto.debtDetail.DebtDetailAddDto;
 import people_service.dto.debtDetail.DebtDetailUpdateDto;
+import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.DebtDetail;
 import people_service.model.Producer;
@@ -35,11 +36,24 @@ public class DebtDetailServiceImpl implements DebtDetailService {
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCER_NOT_FOUND, id)));
 
         LocalDate debtDate = LocalDate.now();
+        LocalDate paidDate = LocalDate.now();
+
         Long debtAmount = Long.parseLong(debtDetailAddDto.debtAmount());
+        Long paidAmount = Long.parseLong(debtDetailAddDto.paidAmount());
+
+        if (paidAmount > debtAmount) {
+            throw new FailedException(Constants.ErrorMessage.PAID_MORE_THAN_DEBT);
+        }
+
+        if (paidAmount.equals(0L)) {
+            paidDate = null;
+        }
 
         DebtDetail debtDetailAdd = new DebtDetail(
                 debtAmount,
                 debtDate,
+                paidAmount,
+                paidDate,
                 producer
         );
         debtDetailRepository.saveAndFlush(debtDetailAdd);

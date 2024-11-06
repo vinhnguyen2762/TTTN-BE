@@ -16,9 +16,10 @@ public record OrderAdminDto(
         String smallTraderName,
         String total,
         String phoneNumber,
-        List<OrderDetailAdminDto> list
+        List<OrderDetailAdminDto> list,
+        String smallTraderPhoneNumber
 ) {
-    public static OrderAdminDto fromOrder(Order order, String customerName, String smallTraderName, String phoneNumber, List<OrderDetailAdminDto> list) {
+    public static OrderAdminDto fromOrder(Order order, String customerName, String smallTraderName, String phoneNumber, List<OrderDetailAdminDto> list, String smallTraderPhoneNumber) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = order.getStatus().name().equals("PENDING") ? "Chờ thanh toán" : "Đã thanh toán";
 
@@ -38,7 +39,8 @@ public record OrderAdminDto(
                 smallTraderName,
                 total.toString(),
                 phoneNumber,
-                list
+                list,
+                smallTraderPhoneNumber
         );
     }
 }
