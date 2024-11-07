@@ -44,9 +44,6 @@ public class PromotionServiceImpl implements PromotionService {
     public List<PromotionAdminDto> getAllPromotionAdmin() {
         List<Promotion> promotionList = promotionRepository.findAll();
         return promotionList.stream().map(p -> {
-            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
-            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
-
             List<PromotionDetailAdminDto> list = p.getPromotionDetailList().stream().map(pd -> {
                 Product product = productRepository.findById(pd.getProductId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
@@ -63,7 +60,7 @@ public class PromotionServiceImpl implements PromotionService {
                 }
                 return PromotionDetailAdminDto.fromPromotionProduct(pd, productName, originalPrice.toString(), discountPrice.toString());
             }).toList();
-            return PromotionAdminDto.fromPromotion(p, list, smallTraderName);
+            return PromotionAdminDto.fromPromotion(p, list);
         }).toList();
     }
 
@@ -192,9 +189,6 @@ public class PromotionServiceImpl implements PromotionService {
     public List<PromotionAdminDto> getAllPromotionSmallTrader(Long id) {
         List<Promotion> promotionList = promotionRepository.findBySmallTraderId(id);
         return promotionList.stream().map(p -> {
-            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
-            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
-
             List<PromotionDetailAdminDto> list = p.getPromotionDetailList().stream().map(pd -> {
                 Product product = productRepository.findById(pd.getProductId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
@@ -211,7 +205,7 @@ public class PromotionServiceImpl implements PromotionService {
                 }
                 return PromotionDetailAdminDto.fromPromotionProduct(pd, productName, originalPrice.toString(), discountPrice.toString());
             }).toList();
-            return PromotionAdminDto.fromPromotion(p, list, smallTraderName);
+            return PromotionAdminDto.fromPromotion(p, list);
         }).toList();
     }
 

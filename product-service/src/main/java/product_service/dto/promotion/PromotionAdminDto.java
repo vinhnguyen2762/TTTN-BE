@@ -16,9 +16,9 @@ public record PromotionAdminDto(
         String endDate,
         String status,
         List<PromotionDetailAdminDto> list,
-        String smallTraderName
+        Long smallTraderId
 ) {
-    public static PromotionAdminDto fromPromotion(Promotion promotion, List<PromotionDetailAdminDto> list, String smallTraderName) {
+    public static PromotionAdminDto fromPromotion(Promotion promotion, List<PromotionDetailAdminDto> list) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String status = promotion.getStatus().name().equals("PENDING") ? "Chờ áp dụng" : "Đang áp dụng";
         String type = promotion.getType().name().equals("PERCENTAGE") ? "Phần trăm" : "Số tiền cố định";
@@ -33,7 +33,7 @@ public record PromotionAdminDto(
                 promotion.getEndDate().format(formatter),
                 status,
                 list,
-                smallTraderName
+                promotion.getSmallTraderId()
         );
     }
 }

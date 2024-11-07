@@ -12,7 +12,8 @@ public record SupplierAdminDto(
         String address,
         String email,
         String phoneNumber,
-        String taxId
+        String taxId,
+        Long smallTraderId
 ) {
     public static SupplierAdminDto fromSupplier(Supplier supplier) {
         return new SupplierAdminDto(
@@ -22,7 +23,8 @@ public record SupplierAdminDto(
                 supplier.getAddress(),
                 supplier.getEmail(),
                 supplier.getPhoneNumber(),
-                supplier.getTaxId()
+                supplier.getTaxId(),
+                supplier.getSmallTraderId()
         );
     }
 }
