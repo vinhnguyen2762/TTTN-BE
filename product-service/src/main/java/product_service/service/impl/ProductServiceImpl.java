@@ -44,9 +44,6 @@ public class ProductServiceImpl implements ProductService {
         List<Product> list = productRepository.findAll();
         List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
         return list.stream().map(p -> {
-            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
-            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
-
             for (PromotionDetail pd : promotionDetailList) {;
                 if (pd.getProductId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
@@ -60,11 +57,11 @@ public class ProductServiceImpl implements ProductService {
                         } else {
                             discountedPrice = originalPrice - promotion.getValue();
                         }
-                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString(), smallTraderName);
+                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString());
                     }
                 }
             }
-            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString(), smallTraderName);
+            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString());
         }).toList();
     }
 
@@ -143,6 +140,7 @@ public class ProductServiceImpl implements ProductService {
         Long price = Long.parseLong(productUpdateDto.price());
         Integer quantity = Integer.parseInt(productUpdateDto.quantity());
 
+        product.setName(productUpdateDto.name());
         product.setDescription(productUpdateDto.description());
         product.setPrice(price);
         product.setQuantity(quantity);
@@ -194,9 +192,6 @@ public class ProductServiceImpl implements ProductService {
         List<Product> list = productRepository.findBySmallTraderId(id);
         List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
         return list.stream().map(p -> {
-            SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(p.getSmallTraderId());
-            String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
-
             for (PromotionDetail pd : promotionDetailList) {;
                 if (pd.getProductId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
@@ -210,11 +205,11 @@ public class ProductServiceImpl implements ProductService {
                         } else {
                             discountedPrice = originalPrice - promotion.getValue();
                         }
-                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString(), smallTraderName);
+                        return ProductAdminDto.fromProduct(p, promotionName, discountedPrice.toString());
                     }
                 }
             }
-            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString(), smallTraderName);
+            return ProductAdminDto.fromProduct(p, "Không", p.getPrice().toString());
         }).toList();
     }
 

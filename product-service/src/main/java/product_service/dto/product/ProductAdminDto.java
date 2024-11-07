@@ -15,9 +15,9 @@ public record ProductAdminDto (
         String promotionName,
         String discountedPrice,
         String imagePath,
-        String smallTraderName
+        Long smallTraderId
 ) {
-    public static ProductAdminDto fromProduct(Product product, String promotionName, String discountedPrice, String smallTraderName) {
+    public static ProductAdminDto fromProduct(Product product, String promotionName, String discountedPrice) {
 
         return new ProductAdminDto(
                 product.getId(),
@@ -28,7 +28,7 @@ public record ProductAdminDto (
                 promotionName,
                 discountedPrice,
                 product.getImagePath(),
-                smallTraderName
+                product.getSmallTraderId()
         );
     }
 }
