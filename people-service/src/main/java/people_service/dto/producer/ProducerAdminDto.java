@@ -16,7 +16,8 @@ public record ProducerAdminDto(
         String gender,
         String email,
         String remainingDebt,
-        List<DebtDetailAdminDto> list
+        List<DebtDetailAdminDto> list,
+        Long smallTraderId
 ) {
     public static ProducerAdminDto fromProducer(Producer producer, String remainingDebt, List<DebtDetailAdminDto> list) {
         String gender = producer.getGender().name().equals("MALE") ? "Nam" : "Nữ";
@@ -30,7 +31,8 @@ public record ProducerAdminDto(
                 gender,
                 producer.getEmail(),
                 remainingDebt,
-                list
+                list,
+                producer.getSmallTraderId()
         );
     }
 }
