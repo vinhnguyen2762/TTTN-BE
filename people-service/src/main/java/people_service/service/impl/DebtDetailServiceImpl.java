@@ -65,11 +65,21 @@ public class DebtDetailServiceImpl implements DebtDetailService {
         DebtDetail debtDetail = debtDetailRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.DEBT_DETAIL_NOT_FOUND, id)));
 
+        Long oldPaidAmount = debtDetail.getPaidAmount();
+
         LocalDate paidDate = LocalDate.now();
         Long paidAmount = Long.parseLong(debtDetailUpdateDto.paidAmount());
+        Long debtAmount = Long.parseLong(debtDetailUpdateDto.debtAmount());
 
+        if (paidAmount > debtAmount) {
+            throw new FailedException(Constants.ErrorMessage.PAID_MORE_THAN_DEBT);
+        }
+
+        if (!paidAmount.equals(oldPaidAmount)) {
+            debtDetail.setPaidDate(paidDate);
+        }
         debtDetail.setPaidAmount(paidAmount);
-        debtDetail.setPaidDate(paidDate);
+        debtDetail.setDebtAmount(debtAmount);
         debtDetailRepository.saveAndFlush(debtDetail);
         return debtDetail.getId();
     }
