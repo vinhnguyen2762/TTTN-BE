@@ -9,4 +9,5 @@ public interface DebtDetailService {
     public List<DebtDetailAddDto> getAllDebtDetailProducer(Long id);
     public Long addDebtDetail(Long id, DebtDetailAddDto debtDetailAddDto);
     public Long updateDebtDetail(Long id, DebtDetailUpdateDto debtDetailUpdateDto);
+    public Long deleteDebtDetail(Long id);
 }

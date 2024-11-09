@@ -87,11 +87,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         );
     }
 
-    private Long countSmallTrader() {
-        Long employeeNumber = peopleFeignClient.countSmallTraderByStatusTrue().getBody();
-        return employeeNumber;
-    }
-
     private Long countCustomer(Long id) {
         Long customerNumber = peopleFeignClient.countCustomerBySmallTraderId(id).getBody();
         return customerNumber;

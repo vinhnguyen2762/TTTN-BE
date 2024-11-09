@@ -31,4 +31,10 @@ public class DebtDetailController {
         Long rs = debtDetailService.updateDebtDetail(id, debtDetailUpdateDto);
         return ResponseEntity.ok().body(rs);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Long> deleteDebtDetail(@PathVariable Long id) {
+        Long rs = debtDetailService.deleteDebtDetail(id);
+        return ResponseEntity.ok().body(rs);
+    }
 }

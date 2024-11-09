@@ -5,6 +5,7 @@ import people_service.dto.debtDetail.DebtDetailAddDto;
 import people_service.dto.debtDetail.DebtDetailUpdateDto;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
+import people_service.model.Customer;
 import people_service.model.DebtDetail;
 import people_service.model.Producer;
 import people_service.repository.DebtDetailRepository;
@@ -70,6 +71,13 @@ public class DebtDetailServiceImpl implements DebtDetailService {
         debtDetail.setPaidAmount(paidAmount);
         debtDetail.setPaidDate(paidDate);
         debtDetailRepository.saveAndFlush(debtDetail);
+        return debtDetail.getId();
+    }
+
+    public Long deleteDebtDetail(Long id) {
+        DebtDetail debtDetail = debtDetailRepository.findById(id).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.DEBT_DETAIL_NOT_FOUND, id)));
+        debtDetailRepository.delete(debtDetail);
         return debtDetail.getId();
     }
 }
