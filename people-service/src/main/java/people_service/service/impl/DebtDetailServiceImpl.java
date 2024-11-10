@@ -55,7 +55,8 @@ public class DebtDetailServiceImpl implements DebtDetailService {
                 debtDate,
                 paidAmount,
                 paidDate,
-                producer
+                producer,
+                debtDetailAddDto.note()
         );
         debtDetailRepository.saveAndFlush(debtDetailAdd);
         return debtDetailAdd.getId();
@@ -80,6 +81,7 @@ public class DebtDetailServiceImpl implements DebtDetailService {
         }
         debtDetail.setPaidAmount(paidAmount);
         debtDetail.setDebtAmount(debtAmount);
+        debtDetail.setNote(debtDetailUpdateDto.note());
         debtDetailRepository.saveAndFlush(debtDetail);
         return debtDetail.getId();
     }

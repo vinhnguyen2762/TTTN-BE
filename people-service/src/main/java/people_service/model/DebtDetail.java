@@ -23,12 +23,14 @@ public class DebtDetail {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "producer_id")
     private Producer producer;
+    private String note;
 
-    public DebtDetail(Long debtAmount, LocalDate debtDate, Long paidAmount, LocalDate paidDate, Producer producer) {
+    public DebtDetail(Long debtAmount, LocalDate debtDate, Long paidAmount, LocalDate paidDate, Producer producer, String note) {
         this.debtAmount = debtAmount;
         this.debtDate = debtDate;
         this.paidAmount = paidAmount;
         this.paidDate = paidDate;
         this.producer = producer;
+        this.note = note;
     }
 }
