@@ -70,7 +70,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
 
     public List<SmallTraderAdminDto> getAllSmallTraderAdmin() {
         List<SmallTrader> list = smallTraderRepository.findAll();
-        return list.stream().map(SmallTraderAdminDto::fromEmployee).toList();
+        return list.stream().map(SmallTraderAdminDto::fromSmallTrader).toList();
     }
 
     public List<SmallTraderRevenueDto> getAllSmallTraderRevenue() {
@@ -118,7 +118,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         smallTrader.setGender(gender);
         smallTrader.setAddress(smallTraderUpdateDto.address());
         smallTraderRepository.saveAndFlush(smallTrader);
-        return SmallTraderAdminDto.fromEmployee(smallTrader);
+        return SmallTraderAdminDto.fromSmallTrader(smallTrader);
     }
 
     public SmallTraderAdminDto deleteSmallTrader(Long id) {
@@ -129,7 +129,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         }
         smallTrader.setStatus(false);
         smallTraderRepository.saveAndFlush(smallTrader);
-        return SmallTraderAdminDto.fromEmployee(smallTrader);
+        return SmallTraderAdminDto.fromSmallTrader(smallTrader);
     }
 
     public SmallTraderAdminDto changeAccountStatus(Long id) {
@@ -137,7 +137,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id)));
         smallTrader.setLocked(!smallTrader.getLocked());
         smallTraderRepository.saveAndFlush(smallTrader);
-        return SmallTraderAdminDto.fromEmployee(smallTrader);
+        return SmallTraderAdminDto.fromSmallTrader(smallTrader);
     }
 
     public Long changePassword(Long id, ChangePasswordRequest changePasswordRequest) {
@@ -156,7 +156,7 @@ public class SmallTraderServiceImpl implements SmallTraderService {
     public SmallTraderAdminDto findById(Long id) {
         SmallTrader smallTrader = smallTraderRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id)));
-        return SmallTraderAdminDto.fromEmployee(smallTrader);
+        return SmallTraderAdminDto.fromSmallTrader(smallTrader);
     }
 
     public Long countSmallTraderByStatusTrue() {

@@ -16,7 +16,7 @@ public record SmallTraderAdminDto(
         Boolean accountLocked,
         String role
 ) {
-    public static SmallTraderAdminDto fromEmployee(SmallTrader smallTrader) {
+    public static SmallTraderAdminDto fromSmallTrader(SmallTrader smallTrader) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         String gender = smallTrader.getGender().name().equals("MALE") ? "Nam" : "Nữ";
         return new SmallTraderAdminDto(

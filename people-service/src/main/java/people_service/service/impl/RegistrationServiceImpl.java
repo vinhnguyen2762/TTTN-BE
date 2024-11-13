@@ -29,7 +29,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailSender;
 
-    public SmallTraderAdminDto register(RegistrationRequest request) {
+    public Long register(RegistrationRequest request) {
         boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
         if (!isValidEmail) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_NOT_VALID, request.getEmail()));
@@ -50,7 +50,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         String confirmToken = employeeService.signUpUser(smallTrader);
         String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
         emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
-        return SmallTraderAdminDto.fromEmployee(smallTrader);
+        return smallTrader.getId();
     }
 
     @Transactional
