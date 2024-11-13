@@ -10,6 +10,7 @@ import product_service.dto.promotionDetail.PromotionDetailPostDto;
 import product_service.enums.PromotionStatus;
 import product_service.enums.PromotionType;
 import product_service.exception.DuplicateException;
+import product_service.exception.EmptyException;
 import product_service.exception.FailedException;
 import product_service.exception.NotFoundException;
 import product_service.model.Product;
@@ -89,8 +90,19 @@ public class PromotionServiceImpl implements PromotionService {
         promotionRepository.saveAndFlush(promotion);
 
         List<PromotionDetail> promotionDetailList = new ArrayList<>();
-        for (PromotionDetailPostDto item : promotionAddDto.list()) {
 
+        for (PromotionDetailPostDto item : promotionAddDto.list()) {
+            Product product = productRepository.findById(item.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId())));
+            if (product.getStatus() == false) {
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId()));
+            }
+            if (product.getPrice() < value) {
+                throw new EmptyException(String.format(Constants.ErrorMessage.PROMOTION_VALUE_NOT_VALID));
+            }
+        }
+
+        for (PromotionDetailPostDto item : promotionAddDto.list()) {
             PromotionDetail promotionDetail = new PromotionDetail(
                     item.productId(),
                     promotion
@@ -129,7 +141,17 @@ public class PromotionServiceImpl implements PromotionService {
         updateList.clear();
 
         for (PromotionDetailPostDto item : promotionPostDto.list()) {
+            Product product = productRepository.findById(item.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId())));
+            if (product.getStatus() == false) {
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId()));
+            }
+            if (product.getPrice() < value) {
+                throw new EmptyException(String.format(Constants.ErrorMessage.PROMOTION_VALUE_NOT_VALID));
+            }
+        }
 
+        for (PromotionDetailPostDto item : promotionPostDto.list()) {
             PromotionDetail promotionDetail = new PromotionDetail(
                     item.productId(),
                     promotion
@@ -137,7 +159,6 @@ public class PromotionServiceImpl implements PromotionService {
             updateList.add(promotionDetail);
         }
         promotionRepository.save(promotion);
-
         return promotion.getId();
     }
 

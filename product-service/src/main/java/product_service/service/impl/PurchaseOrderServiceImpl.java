@@ -152,7 +152,7 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         if (purchaseOrder.getStatus().name().equals("DELETED")) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PURCHASE_ORDER_NOT_FOUND, id));
         } else if (purchaseOrder.getStatus().name().equals("PAID")) {
-            throw new FailedException(String.format(Constants.ErrorMessage.PURCHASE_ORDER_NOT_FOUND, id));
+            throw new FailedException(String.format(Constants.ErrorMessage.PURCHASE_ORDER_ALREADY_PAID, id));
         }
         for (PurchaseOrderDetail po : purchaseOrder.getPurchaseOrderDetails()) {
             Product product = productRepository.findById(po.getProductId()).orElseThrow(
