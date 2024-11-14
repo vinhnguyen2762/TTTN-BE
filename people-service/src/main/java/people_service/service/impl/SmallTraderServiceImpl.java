@@ -163,4 +163,9 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         Long rs = smallTraderRepository.countEmployeeByStatusTrue();
         return rs;
     }
+
+    public Long testAdmin() {
+        Long rs = smallTraderRepository.findTopByRole();
+        return rs;
+    }
 }

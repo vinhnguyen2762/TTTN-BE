@@ -5,16 +5,17 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Service;
-import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.ConfirmationToken;
+import people_service.model.Customer;
 import people_service.model.SmallTrader;
 import people_service.model.RegistrationRequest;
 import people_service.service.ConfirmationTokenService;
 import people_service.service.EmailService;
 import people_service.service.RegistrationService;
+import people_service.service.SmallTraderService;
 import people_service.utils.Constants;
 
 import java.time.LocalDate;
@@ -25,7 +26,7 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
 
-    private final SmallTraderServiceImpl employeeService;
+    private final SmallTraderService smallTraderService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailSender;
 
@@ -47,10 +48,35 @@ public class RegistrationServiceImpl implements RegistrationService {
                 request.getPhoneNumber(),
                 request.getEmail(),
                 request.getPassword());
-        String confirmToken = employeeService.signUpUser(smallTrader);
+        String confirmToken = smallTraderService.signUpUser(smallTrader);
         String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
         emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
         return smallTrader.getId();
+    }
+
+    public Long registerCustomer(RegistrationRequest request) {
+        boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
+        if (!isValidEmail) {
+            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_NOT_VALID, request.getEmail()));
+        }
+
+        LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
+        Gender gender = request.getGender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
+
+//        Customer customer = new Customer(
+//                request.getFirstName(),
+//                request.getLastName(),
+//                date,
+//                gender,
+//                request.getAddress(),
+//                request.getPhoneNumber(),
+//                request.getEmail(),
+//                request.getPassword());
+//        String confirmToken = smallTraderService.signUpCustomer(smallTrader);
+//        String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
+//        emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
+//        return smallTrader.getId();
+        return null;
     }
 
     @Transactional
@@ -71,7 +97,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(confirmToken);
-        employeeService.enableAppUser(
+        smallTraderService.enableAppUser(
                 confirmationToken.getSmallTrader().getEmail());
         return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
     }

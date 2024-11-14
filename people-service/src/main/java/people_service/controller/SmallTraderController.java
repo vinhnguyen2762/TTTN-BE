@@ -67,4 +67,10 @@ public class SmallTraderController {
         Long rs = employeeService.countSmallTraderByStatusTrue();
         return ResponseEntity.ok().body(rs);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<Long> test() {
+        Long rs = employeeService.testAdmin();
+        return ResponseEntity.ok().body(rs);
+    }
 }
