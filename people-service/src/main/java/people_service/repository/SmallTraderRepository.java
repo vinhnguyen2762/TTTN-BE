@@ -1,5 +1,6 @@
 package people_service.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -27,7 +28,7 @@ public interface SmallTraderRepository extends JpaRepository<SmallTrader, Long> 
             from SmallTrader e
             where e.role = 1
             """)
-    Long findTopByRole();
+    List<Long> findIdsByRole(Pageable pageable);
 
     @Query("SELECT COALESCE(COUNT(e), 0) FROM SmallTrader e WHERE e.status = true")
     Long countEmployeeByStatusTrue();

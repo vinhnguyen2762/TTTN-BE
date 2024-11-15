@@ -8,14 +8,8 @@ import org.springframework.stereotype.Service;
 import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
-import people_service.model.ConfirmationToken;
-import people_service.model.Customer;
-import people_service.model.SmallTrader;
-import people_service.model.RegistrationRequest;
-import people_service.service.ConfirmationTokenService;
-import people_service.service.EmailService;
-import people_service.service.RegistrationService;
-import people_service.service.SmallTraderService;
+import people_service.model.*;
+import people_service.service.*;
 import people_service.utils.Constants;
 
 import java.time.LocalDate;
@@ -29,6 +23,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final SmallTraderService smallTraderService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailSender;
+    private final CustomerService customerService;
+    private final ConfirmationTokenCustomerService confirmationTokenCustomerService;
 
     public Long register(RegistrationRequest request) {
         boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
@@ -63,20 +59,22 @@ public class RegistrationServiceImpl implements RegistrationService {
         LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
         Gender gender = request.getGender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
 
-//        Customer customer = new Customer(
-//                request.getFirstName(),
-//                request.getLastName(),
-//                date,
-//                gender,
-//                request.getAddress(),
-//                request.getPhoneNumber(),
-//                request.getEmail(),
-//                request.getPassword());
-//        String confirmToken = smallTraderService.signUpCustomer(smallTrader);
-//        String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
-//        emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
-//        return smallTrader.getId();
-        return null;
+        Long firstIdRoleAdmin = smallTraderService.getIdsRoleAdmin();
+
+        Customer customer = new Customer(
+                request.getFirstName(),
+                request.getLastName(),
+                date,
+                gender,
+                request.getAddress(),
+                request.getPhoneNumber(),
+                request.getEmail(),
+                firstIdRoleAdmin);
+        customer.setPassword(request.getPassword());
+        String confirmToken = customerService.signUpCustomer(customer);
+        String link = "http://localhost:9001/api/v1/auth/confirm-customer?token=" + confirmToken;
+        emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
+        return customer.getId();
     }
 
     @Transactional
@@ -99,6 +97,29 @@ public class RegistrationServiceImpl implements RegistrationService {
         confirmationTokenService.setConfirmedAt(confirmToken);
         smallTraderService.enableAppUser(
                 confirmationToken.getSmallTrader().getEmail());
+        return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
+    }
+
+    @Transactional
+    public String confirmTokenCustomer(String confirmToken) {
+        ConfirmationTokenCustomer confirmationToken = confirmationTokenCustomerService
+                .getToken(confirmToken)
+                .orElseThrow(() ->
+                        new NotFoundException(String.format(Constants.ErrorMessage.TOKEN_NOT_FOUND, confirmToken)));
+
+        if (confirmationToken.getConfirmedAt() != null) {
+            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_CONFIRMED, confirmationToken.getCustomer().getEmail()));
+        }
+
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+        if (expiredAt.isBefore(LocalDateTime.now())) {
+            throw new FailedException(String.format(Constants.ErrorMessage.TOKEN_EXPIRED, confirmationToken.getCustomer().getEmail()));
+        }
+
+        confirmationTokenCustomerService.setConfirmedAt(confirmToken);
+        customerService.enableAppUser(
+                confirmationToken.getCustomer().getEmail());
         return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
     }
 

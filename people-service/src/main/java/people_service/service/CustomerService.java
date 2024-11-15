@@ -4,10 +4,14 @@ import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.customer.CustomerSearchDto;
 import people_service.dto.customer.CustomerUpdateDto;
+import people_service.model.Customer;
+import people_service.model.SmallTrader;
 
 import java.util.List;
 
 public interface CustomerService {
+    public String signUpCustomer(Customer customer);
+    public void enableAppUser(String email);
     public List<CustomerAdminDto> getAllCustomerAdmin();
     public List<CustomerAdminDto> getAllCustomerSmallTrader(Long id);
     public Long addCustomer(CustomerAddDto customerAddDto);

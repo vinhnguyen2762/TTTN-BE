@@ -1,6 +1,8 @@
 package people_service.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.dto.smallTrader.SmallTraderRevenueDto;
@@ -164,8 +166,10 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         return rs;
     }
 
-    public Long testAdmin() {
-        Long rs = smallTraderRepository.findTopByRole();
+    public Long getIdsRoleAdmin() {
+        Pageable pageable = PageRequest.of(0, 1); // Giới hạn chỉ 1 kết quả
+        List<Long> ids = smallTraderRepository.findIdsByRole(pageable);
+        Long rs = ids.isEmpty() ? null : ids.get(0); // Lấy giá trị đầu tiên hoặc null nếu không có
         return rs;
     }
 }

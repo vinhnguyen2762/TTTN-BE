@@ -31,8 +31,19 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
+    @PostMapping("/register-customer")
+    private ResponseEntity<Long> registerCustomer(@RequestBody RegistrationRequest request) {
+        Long rs = authService.registerCustomer(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
+    }
+
     @GetMapping("/confirm")
     private String confirm(@RequestParam("token") String token) {
         return registrationService.confirmToken(token);
+    }
+
+    @GetMapping("/confirm-customer")
+    private String confirmCustomer(@RequestParam("token") String token) {
+        return registrationService.confirmTokenCustomer(token);
     }
 }
