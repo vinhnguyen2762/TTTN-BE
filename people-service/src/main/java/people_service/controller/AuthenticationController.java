@@ -55,4 +55,10 @@ public class AuthenticationController {
         CustomerAdminDto rs = authService.checkEmailCustomer(email);
         return ResponseEntity.ok().body(rs);
     }
+
+    @GetMapping("/send-code")
+    private ResponseEntity<String> sendCode(@RequestParam("email") String email) {
+        String rs = authService.sendCodeToEmail(email);
+        return ResponseEntity.ok().body(rs);
+    }
 }

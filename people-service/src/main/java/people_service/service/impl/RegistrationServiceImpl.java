@@ -22,7 +22,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 
     private final SmallTraderService smallTraderService;
     private final ConfirmationTokenService confirmationTokenService;
-    private final EmailService emailSender;
+    private final EmailService emailService;
     private final CustomerService customerService;
     private final ConfirmationTokenCustomerService confirmationTokenCustomerService;
 
@@ -46,7 +46,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 request.getPassword());
         String confirmToken = smallTraderService.signUpUser(smallTrader);
         String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
-        emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
+        emailService.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
         return smallTrader.getId();
     }
 
@@ -73,7 +73,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         customer.setPassword(request.getPassword());
         String confirmToken = customerService.signUpCustomer(customer);
         String link = "http://localhost:9001/api/v1/auth/confirm-customer?token=" + confirmToken;
-        emailSender.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
+        emailService.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
         return customer.getId();
     }
 
