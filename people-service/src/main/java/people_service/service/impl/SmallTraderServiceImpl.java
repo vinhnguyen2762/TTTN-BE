@@ -14,8 +14,10 @@ import people_service.exception.NotFoundException;
 import people_service.model.ChangePasswordRequest;
 import people_service.model.ConfirmationToken;
 import people_service.model.SmallTrader;
+import people_service.repository.CustomerRepository;
 import people_service.repository.SmallTraderRepository;
 import people_service.service.ConfirmationTokenService;
+import people_service.service.CustomerService;
 import people_service.service.SmallTraderService;
 import people_service.utils.Constants;
 
@@ -34,12 +36,15 @@ public class SmallTraderServiceImpl implements SmallTraderService {
 
     private final SmallTraderRepository smallTraderRepository;
     private final ConfirmationTokenService confirmationTokenService;
+    private final CustomerRepository customerRepository;
 
     public String signUpUser(SmallTrader smallTrader) {
-        boolean isEmailExists = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
-        if (isEmailExists) {
+        boolean isEmailExistsSmallTrader = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
+        boolean isEmailExistsCustomer = customerRepository.findByEmail(smallTrader.getEmail()).isPresent();
+        if (isEmailExistsSmallTrader || isEmailExistsCustomer) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTrader.getEmail()));
         }
+
         boolean isPhoneNumberExists = smallTraderRepository.findByPhoneNumber(smallTrader.getPhoneNumber()).isPresent();
         if (isPhoneNumberExists) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTrader.getPhoneNumber()));
@@ -94,8 +99,9 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         String oldPhoneNumber = smallTrader.getPhoneNumber();
 
         if (!smallTraderUpdateDto.email().equals(oldEmail)) {
-            Boolean isEmailExist = smallTraderRepository.findByEmail(smallTraderUpdateDto.email()).isPresent();
-            if (!isEmailExist) {
+            boolean isEmailExistSmallTrader = smallTraderRepository.findByEmail(smallTraderUpdateDto.email()).isPresent();
+            boolean isEmailExistsCustomer = customerRepository.findByEmail(smallTrader.getEmail()).isPresent();
+            if (!isEmailExistSmallTrader && !isEmailExistsCustomer) {
                 smallTrader.setEmail(smallTraderUpdateDto.email());
             } else {
                 throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTraderUpdateDto.email()));

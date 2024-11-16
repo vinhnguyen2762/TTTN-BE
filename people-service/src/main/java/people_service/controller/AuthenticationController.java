@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
 import people_service.model.AuthenticationRequest;
 import people_service.model.RegistrationRequest;
 import people_service.service.AuthService;
 import people_service.service.RegistrationService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -45,5 +48,11 @@ public class AuthenticationController {
     @GetMapping("/confirm-customer")
     private String confirmCustomer(@RequestParam("token") String token) {
         return registrationService.confirmTokenCustomer(token);
+    }
+
+    @GetMapping("/check-email")
+    private ResponseEntity<CustomerAdminDto> checkEmail(@RequestParam("email") String email) {
+        CustomerAdminDto rs = authService.checkEmailCustomer(email);
+        return ResponseEntity.ok().body(rs);
     }
 }

@@ -14,6 +14,7 @@ public class Constants {
         public static final String PHONE_NUMBER_ALREADY_TAKEN = "Customer with phone number: %s already taken";
         public static final String CUSTOMER_NOT_FOUND = "Customer with id: %s not found";
         public static final String CUSTOMER_NOT_FOUND_PHONE_NUMBER = "Customer with phone number: %s not found";
+        public static final String CUSTOMER_NOT_FOUND_EMAIL = "Customer with email: %s not found";
         public static final String SUPPLIER_ALREADY_TAKEN = "Supplier with tax id: %s already taken";
         public static final String SUPPLIER_NOT_FOUND = "Supplier with id: %s not found";
         public static final String SUPPLIER_NOT_FOUND_TAX_ID = "Supplier with tax id: %s not found";
@@ -25,6 +26,7 @@ public class Constants {
         public static final String PRODUCER_NOT_FOUND = "Producer with id: %s not found";
         public static final String PRODUCER_CANT_DELETE = "Producer with id: %s can't be deleted because has debt not pay yet";
         public static final String PAID_MORE_THAN_DEBT = "Paid amount is more than debt amount";
+        public static final String EMAIL_ACCEPTED = "Email with value: %s is ready to use";
 
     }
 

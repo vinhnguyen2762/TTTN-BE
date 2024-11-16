@@ -3,8 +3,10 @@ package people_service.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import people_service.dto.customer.CustomerAddDto;
+import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
+import people_service.exception.AcceptedException;
 import people_service.exception.AccountLockedException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
@@ -39,9 +41,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public SmallTraderLocalStorageDto login(AuthenticationRequest request) {
-        Boolean isNoneSmallTrader = smallTraderRepository.findByEmail(request.getEmail()).isEmpty();
-        Boolean isNoneCustomer = customerRepository.findByEmail(request.getEmail()).isEmpty();
-        if (!isNoneSmallTrader) {
+        boolean isSmallTrader = smallTraderRepository.findByEmail(request.getEmail()).isPresent();
+        boolean isCustomer = customerRepository.findByEmail(request.getEmail()).isPresent();
+        if (isSmallTrader) {
             SmallTrader smallTrader = smallTraderRepository.findByEmail(request.getEmail()).orElseThrow();
             boolean isMatch = checkPassword(request.getPassword(), smallTrader.getPassword());
             if (smallTrader.getStatus() == false) {
@@ -52,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
             }
             return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader);
-        } else if (!isNoneCustomer) {
+        } else if (isCustomer) {
             Customer customer = customerRepository.findByEmail(request.getEmail()).orElseThrow();
             boolean isMatch = checkPassword(request.getPassword(), customer.getPassword());
             if (customer.getLocked() == true) {
@@ -63,6 +65,26 @@ public class AuthServiceImpl implements AuthService {
             return new SmallTraderLocalStorageDto(customer.getId(), "CUSTOMER");
         } else {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
+        }
+    }
+
+    public CustomerAdminDto checkEmailCustomer(String email) {
+        boolean isEmailExistsSmallTrader = smallTraderRepository.findByEmail(email).isPresent();
+        if (isEmailExistsSmallTrader) {
+            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, email));
+        }
+
+        boolean isEmailExistsCustomer = customerRepository.findByEmail(email).isPresent();
+        if (isEmailExistsCustomer) {
+            Customer customer = customerRepository.findByEmail(email).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, email)));
+            if (customer.getStatus() == false) {
+                throw new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, email));
+            } else {
+                return CustomerAdminDto.fromCustomer(customer);
+            }
+        } else {
+            throw new AcceptedException(String.format(Constants.ErrorMessage.EMAIL_ACCEPTED, email));
         }
     }
 }

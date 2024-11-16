@@ -42,4 +42,12 @@ public class ApiExceptionHandler {
                 e.getMessage(), locked, ZonedDateTime.now(ZoneId.of("Z")));
         return new ResponseEntity<>(exceptionDto, locked);
     }
+
+    @ExceptionHandler(value = AcceptedException.class)
+    public ResponseEntity<ExceptionDto> handlerAcceptedException(AcceptedException e) {
+        HttpStatus accepted = HttpStatus.ACCEPTED;
+        ExceptionDto exceptionDto = new ExceptionDto(
+                e.getMessage(), accepted, ZonedDateTime.now(ZoneId.of("Z")));
+        return new ResponseEntity<>(exceptionDto, accepted);
+    }
 }
