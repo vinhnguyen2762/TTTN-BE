@@ -50,4 +50,12 @@ public class ApiExceptionHandler {
                 e.getMessage(), accepted, ZonedDateTime.now(ZoneId.of("Z")));
         return new ResponseEntity<>(exceptionDto, accepted);
     }
+
+    @ExceptionHandler(value = ContinueException.class)
+    public ResponseEntity<ExceptionDto> handlerContinueException(ContinueException e) {
+        HttpStatus aContinue = HttpStatus.CONTINUE;
+        ExceptionDto exceptionDto = new ExceptionDto(
+                e.getMessage(), aContinue, ZonedDateTime.now(ZoneId.of("Z")));
+        return new ResponseEntity<>(exceptionDto, aContinue);
+    }
 }

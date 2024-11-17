@@ -27,6 +27,7 @@ public class Constants {
         public static final String PRODUCER_CANT_DELETE = "Producer with id: %s can't be deleted because has debt not pay yet";
         public static final String PAID_MORE_THAN_DEBT = "Paid amount is more than debt amount";
         public static final String EMAIL_ACCEPTED = "Email with value: %s is ready to use";
+        public static final String EMAIL_NEED_CONFIRM_TO_SIGN_UP = "Email with value: %s need confirm to sign-up";
 
     }
 

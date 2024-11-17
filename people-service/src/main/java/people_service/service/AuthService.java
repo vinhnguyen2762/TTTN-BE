@@ -11,7 +11,7 @@ public interface AuthService {
     public Long register(RegistrationRequest request);
     public Long registerCustomer(RegistrationRequest request);
     public SmallTraderLocalStorageDto login(AuthenticationRequest request);
-    public CustomerAdminDto checkEmailCustomer(String email);
+    public Long checkEmailCustomer(String email);
     public String sendCodeToEmail(String email);
 
 }

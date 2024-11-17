@@ -51,8 +51,8 @@ public class AuthenticationController {
     }
 
     @GetMapping("/check-email")
-    private ResponseEntity<CustomerAdminDto> checkEmail(@RequestParam("email") String email) {
-        CustomerAdminDto rs = authService.checkEmailCustomer(email);
+    private ResponseEntity<Long> checkEmail(@RequestParam("email") String email) {
+        Long rs = authService.checkEmailCustomer(email);
         return ResponseEntity.ok().body(rs);
     }
 

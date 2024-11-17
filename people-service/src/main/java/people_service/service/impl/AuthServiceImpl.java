@@ -74,7 +74,7 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    public CustomerAdminDto checkEmailCustomer(String email) {
+    public Long checkEmailCustomer(String email) {
         boolean isEmailExistsSmallTrader = smallTraderRepository.findByEmail(email).isPresent();
         if (isEmailExistsSmallTrader) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, email));
@@ -84,10 +84,10 @@ public class AuthServiceImpl implements AuthService {
         if (isEmailExistsCustomer) {
             Customer customer = customerRepository.findByEmail(email).orElseThrow(
                     () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, email)));
-            if (customer.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, email));
+            if (customer.getPassword() != null) {
+                throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, email));
             } else {
-                return CustomerAdminDto.fromCustomer(customer);
+                return 1L;
             }
         } else {
             throw new AcceptedException(String.format(Constants.ErrorMessage.EMAIL_ACCEPTED, email));
