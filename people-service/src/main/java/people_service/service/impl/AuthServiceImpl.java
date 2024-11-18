@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerCodeDto;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
 import people_service.exception.AcceptedException;
@@ -41,56 +42,28 @@ public class AuthServiceImpl implements AuthService {
         return rs;
     }
 
-    public Long registerCustomer(RegistrationRequest request) {
-        Long rs = registrationService.registerCustomer(request);
-        return rs;
-    }
-
     public SmallTraderLocalStorageDto login(AuthenticationRequest request) {
-        boolean isSmallTrader = smallTraderRepository.findByEmail(request.getEmail()).isPresent();
-        boolean isCustomer = customerRepository.findByEmail(request.getEmail()).isPresent();
-        if (isSmallTrader) {
-            SmallTrader smallTrader = smallTraderRepository.findByEmail(request.getEmail()).orElseThrow();
-            boolean isMatch = checkPassword(request.getPassword(), smallTrader.getPassword());
-            if (smallTrader.getStatus() == false) {
-                throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, request.getEmail()));
-            } else if (smallTrader.getLocked() == true) {
-                throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
-            } else if (!isMatch) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
-            }
-            return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader);
-        } else if (isCustomer) {
-            Customer customer = customerRepository.findByEmail(request.getEmail()).orElseThrow();
-            boolean isMatch = checkPassword(request.getPassword(), customer.getPassword());
-            if (customer.getLocked() == true) {
-                throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
-            } else if (!isMatch) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
-            }
-            return new SmallTraderLocalStorageDto(customer.getId(), "CUSTOMER");
-        } else {
+        SmallTrader smallTrader = smallTraderRepository.findByEmail(request.getEmail()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, request.getEmail()))
+        );
+        boolean isMatch = checkPassword(request.getPassword(), smallTrader.getPassword());
+        if (smallTrader.getStatus() == false) {
+            throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, request.getEmail()));
+        } else if (smallTrader.getLocked() == true) {
+            throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
+        } else if (!isMatch) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
         }
+        return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader);
     }
 
-    public Long checkEmailCustomer(String email) {
-        boolean isEmailExistsSmallTrader = smallTraderRepository.findByEmail(email).isPresent();
-        if (isEmailExistsSmallTrader) {
-            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, email));
-        }
-
-        boolean isEmailExistsCustomer = customerRepository.findByEmail(email).isPresent();
-        if (isEmailExistsCustomer) {
-            Customer customer = customerRepository.findByEmail(email).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, email)));
-            if (customer.getPassword() != null) {
-                throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, email));
-            } else {
-                return 1L;
-            }
+    public CustomerAdminDto checkCodeEmail(CustomerCodeDto customerCodeDto) {
+        if (customerCodeDto.code().equals(customerCodeDto.codeReceive())) {
+            Customer customer = customerRepository.findByEmail(customerCodeDto.email()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, customerCodeDto.email())));
+            return CustomerAdminDto.fromCustomer(customer);
         } else {
-            throw new AcceptedException(String.format(Constants.ErrorMessage.EMAIL_ACCEPTED, email));
+            throw new FailedException(String.format(Constants.ErrorMessage.VERIFY_CODE_FALSE, customerCodeDto.email()));
         }
     }
 
@@ -167,11 +140,6 @@ public class AuthServiceImpl implements AuthService {
                 "\n" +
                 "</div></div>";
     }
-
-
-
-
-
 
     private String generateCode() {
         StringBuilder otp = new StringBuilder();

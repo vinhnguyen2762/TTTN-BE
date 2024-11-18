@@ -10,8 +10,6 @@ import people_service.model.SmallTrader;
 import java.util.List;
 
 public interface CustomerService {
-    public String signUpCustomer(Customer customer);
-    public void enableAppUser(String email);
     public List<CustomerAdminDto> getAllCustomerAdmin();
     public List<CustomerAdminDto> getAllCustomerSmallTrader(Long id);
     public Long addCustomer(CustomerAddDto customerAddDto);

@@ -9,24 +9,18 @@ import people_service.dto.customer.CustomerUpdateDto;
 import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
-import people_service.model.ConfirmationTokenCustomer;
 import people_service.model.Customer;
 import people_service.model.SmallTrader;
 import people_service.repository.CustomerRepository;
 import people_service.repository.SmallTraderRepository;
-import people_service.service.ConfirmationTokenCustomerService;
 import people_service.service.CustomerService;
 import people_service.exception.DuplicateException;
 import people_service.service.client.ProductFeignClient;
 import people_service.utils.Constants;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
-
-import static people_service.utils.PasswordHashing.hashPassword;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -34,50 +28,11 @@ public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final ProductFeignClient productFeignClient;
     private final SmallTraderRepository smallTraderRepository;
-    private final ConfirmationTokenCustomerService confirmationTokenCustomerService;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, ProductFeignClient productFeignClient, SmallTraderRepository smallTraderRepository, ConfirmationTokenCustomerService confirmationTokenCustomerService) {
+    public CustomerServiceImpl(CustomerRepository customerRepository, ProductFeignClient productFeignClient, SmallTraderRepository smallTraderRepository) {
         this.customerRepository = customerRepository;
         this.productFeignClient = productFeignClient;
         this.smallTraderRepository = smallTraderRepository;
-        this.confirmationTokenCustomerService = confirmationTokenCustomerService;
-    }
-
-    public String signUpCustomer(Customer customer) {
-        // check if email is taken
-        boolean isEmailExists = customerRepository.findByEmail(customer.getEmail()).isPresent();
-        if (isEmailExists) {
-            throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customer.getEmail()));
-        }
-
-        // check if phone number is taken
-        boolean isPhoneNumberExists = customerRepository.findByPhoneNumber(customer.getPhoneNumber()).isPresent();
-        if (isPhoneNumberExists) {
-            throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customer.getPhoneNumber()));
-        }
-        String hashedPassword = hashPassword(customer.getPassword());
-        customer.setPassword(hashedPassword);
-
-        customerRepository.saveAndFlush(customer);
-
-        //create a random token
-        String confirmToken = UUID.randomUUID().toString();
-        ConfirmationTokenCustomer confirmationToken = new ConfirmationTokenCustomer(
-                confirmToken,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                customer);
-
-        //save it to database
-        confirmationTokenCustomerService.saveConfirmationToken(confirmationToken);
-
-        return confirmToken;
-    }
-
-    public void enableAppUser(String email) {
-        Customer customer = customerRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, email)));
-        customer.setLocked(false);
-        customerRepository.save(customer);
     }
 
     public List<CustomerAdminDto> getAllCustomerAdmin() {
@@ -183,7 +138,6 @@ public class CustomerServiceImpl implements CustomerService {
         SmallTrader smallTrader = smallTraderRepository.findById(customer.getSmallTraderId()).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, customer.getSmallTraderId()))
         );
-        String smallTraderName = smallTrader.getFirstName() + " " + smallTrader.getLastName();
         return CustomerAdminDto.fromCustomer(customer);
     }
 

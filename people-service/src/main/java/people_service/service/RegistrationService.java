@@ -6,7 +6,5 @@ import people_service.model.RegistrationRequest;
 
 public interface RegistrationService {
     public Long register(RegistrationRequest request);
-    public Long registerCustomer(RegistrationRequest request);
     public String confirmToken(String confirmToken);
-    public String confirmTokenCustomer(String confirmToken);
 }

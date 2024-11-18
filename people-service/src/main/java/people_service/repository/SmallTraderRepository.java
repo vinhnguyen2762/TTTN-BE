@@ -23,13 +23,6 @@ public interface SmallTraderRepository extends JpaRepository<SmallTrader, Long> 
             """)
     List<SmallTrader> findAll();
 
-    @Query("""
-            select e.id
-            from SmallTrader e
-            where e.role = 1
-            """)
-    List<Long> findIdsByRole(Pageable pageable);
-
     @Query("SELECT COALESCE(COUNT(e), 0) FROM SmallTrader e WHERE e.status = true")
     Long countEmployeeByStatusTrue();
 }

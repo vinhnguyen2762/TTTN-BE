@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerCodeDto;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
 import people_service.model.AuthenticationRequest;
@@ -34,31 +35,20 @@ public class AuthenticationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
-    @PostMapping("/register-customer")
-    private ResponseEntity<Long> registerCustomer(@RequestBody RegistrationRequest request) {
-        Long rs = authService.registerCustomer(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
-    }
-
     @GetMapping("/confirm")
     private String confirm(@RequestParam("token") String token) {
         return registrationService.confirmToken(token);
     }
 
-    @GetMapping("/confirm-customer")
-    private String confirmCustomer(@RequestParam("token") String token) {
-        return registrationService.confirmTokenCustomer(token);
-    }
-
-    @GetMapping("/check-email")
-    private ResponseEntity<Long> checkEmail(@RequestParam("email") String email) {
-        Long rs = authService.checkEmailCustomer(email);
-        return ResponseEntity.ok().body(rs);
-    }
-
     @GetMapping("/send-code")
     private ResponseEntity<String> sendCode(@RequestParam("email") String email) {
         String rs = authService.sendCodeToEmail(email);
+        return ResponseEntity.ok().body(rs);
+    }
+
+    @PostMapping("/check-code")
+    private ResponseEntity<CustomerAdminDto> checkCode(@RequestBody CustomerCodeDto customerCodeDto) {
+        CustomerAdminDto rs = authService.checkCodeEmail(customerCodeDto);
         return ResponseEntity.ok().body(rs);
     }
 }

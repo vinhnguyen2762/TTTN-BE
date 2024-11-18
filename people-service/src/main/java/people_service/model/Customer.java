@@ -24,9 +24,7 @@ public class Customer {
     private String email;
     @Column(unique = true)
     private String phoneNumber;
-    private String password;
     private Boolean status = true;
-    private Boolean locked = true;
     private Long smallTraderId;
 
     public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, Long smallTraderId) {
