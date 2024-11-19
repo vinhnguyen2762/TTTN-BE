@@ -1,6 +1,6 @@
-package people_service.dto.customer;
+package people_service.dto.smallTrader;
 
-public record CustomerCodeDto(
+public record SmallTraderCodeDto(
         String email,
         String codeReceive,
         String code

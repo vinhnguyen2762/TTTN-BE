@@ -2,12 +2,10 @@ package people_service.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
-import people_service.dto.customer.CustomerCodeDto;
-import people_service.dto.smallTrader.SmallTraderAdminDto;
+import people_service.dto.smallTrader.SmallTraderCodeDto;
+import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
-import people_service.exception.AcceptedException;
 import people_service.exception.AccountLockedException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
@@ -25,6 +23,7 @@ import people_service.utils.Constants;
 import java.security.SecureRandom;
 
 import static people_service.utils.PasswordHashing.checkPassword;
+import static people_service.utils.PasswordHashing.hashPassword;
 
 @Service
 @RequiredArgsConstructor
@@ -57,13 +56,13 @@ public class AuthServiceImpl implements AuthService {
         return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader);
     }
 
-    public CustomerAdminDto checkCodeEmail(CustomerCodeDto customerCodeDto) {
-        if (customerCodeDto.code().equals(customerCodeDto.codeReceive())) {
-            Customer customer = customerRepository.findByEmail(customerCodeDto.email()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND_EMAIL, customerCodeDto.email())));
-            return CustomerAdminDto.fromCustomer(customer);
+    public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto) {
+        if (smallTraderCodeDto.code().equals(smallTraderCodeDto.codeReceive())) {
+            SmallTrader smallTrader = smallTraderRepository.findByEmail(smallTraderCodeDto.email()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, smallTraderCodeDto.email())));
+            return smallTrader.getId();
         } else {
-            throw new FailedException(String.format(Constants.ErrorMessage.VERIFY_CODE_FALSE, customerCodeDto.email()));
+            throw new FailedException(String.format(Constants.ErrorMessage.VERIFY_CODE_FALSE, smallTraderCodeDto.email()));
         }
     }
 
@@ -71,6 +70,14 @@ public class AuthServiceImpl implements AuthService {
         String code = generateCode();
         emailService.sendMessageWithAttachment(email, buildEmailCode("Verify your email", code));
         return code;
+    }
+
+    public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
+        SmallTrader smallTrader = smallTraderRepository.findById(smallTraderForgetPasswordDto.id()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND_ID, smallTraderForgetPasswordDto.id())));
+        smallTrader.setPassword(hashPassword(smallTraderForgetPasswordDto.newPassword()));
+        smallTraderRepository.saveAndFlush(smallTrader);
+        return smallTrader.getId();
     }
 
     private String buildEmailCode(String header, String code) {

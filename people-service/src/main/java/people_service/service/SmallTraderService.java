@@ -19,5 +19,4 @@ public interface SmallTraderService {
     public Long changePassword(Long id, ChangePasswordRequest changePasswordRequest);
     public SmallTraderAdminDto findById(Long id);
     public Long countSmallTraderByStatusTrue();
-    public Long getIdsRoleAdmin();
 }

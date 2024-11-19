@@ -172,10 +172,4 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         return rs;
     }
 
-    public Long getIdsRoleAdmin() {
-        Pageable pageable = PageRequest.of(0, 1); // Giới hạn chỉ 1 kết quả
-        List<Long> ids = smallTraderRepository.findIdsByRole(pageable);
-        Long rs = ids.isEmpty() ? null : ids.get(0); // Lấy giá trị đầu tiên hoặc null nếu không có
-        return rs;
-    }
 }
