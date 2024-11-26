@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import product_service.dto.smallTrader.SmallTraderAdminDto;
 import product_service.dto.product.*;
 import product_service.exception.DuplicateException;
+import product_service.exception.FailedException;
 import product_service.exception.NotFoundException;
 import product_service.model.Product;
 import product_service.model.Promotion;
@@ -112,7 +113,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Long addProduct(ProductAddDto productAddDto) {
-        Boolean isExist = productRepository.findByName(productAddDto.name()).isPresent();
+        Boolean isExist = productRepository.findByNameSmallTraderId(productAddDto.smallTraderId(), productAddDto.name()).isPresent();
         if (isExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_TAKEN, productAddDto.name()));
         }
@@ -130,18 +131,29 @@ public class ProductServiceImpl implements ProductService {
         return productAdd.getId();
     }
 
-    public Long updateProduct(Long id, ProductUpdateDto productUpdateDto) {
+    public Long updateProduct(Long id, ProductAddDto productAddDto) {
         Product product = productRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id)));
         if (product.getStatus() == false) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id));
         }
 
-        Long price = Long.parseLong(productUpdateDto.price());
-        Integer quantity = Integer.parseInt(productUpdateDto.quantity());
+        String oldName = product.getName();
 
-        product.setName(productUpdateDto.name());
-        product.setDescription(productUpdateDto.description());
+        // if name is new, check if name exist
+        if (!productAddDto.name().equals(oldName)) {
+            Boolean isNameExist = productRepository.findByNameSmallTraderId(productAddDto.smallTraderId(), productAddDto.name()).isPresent();
+            if (!isNameExist) {
+                product.setName(productAddDto.name());
+            } else {
+                throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_TAKEN, productAddDto.name()));
+            }
+        }
+
+        Long price = Long.parseLong(productAddDto.price());
+        Integer quantity = Integer.parseInt(productAddDto.quantity());
+
+        product.setDescription(productAddDto.description());
         product.setPrice(price);
         product.setQuantity(quantity);
         productRepository.saveAndFlush(product);

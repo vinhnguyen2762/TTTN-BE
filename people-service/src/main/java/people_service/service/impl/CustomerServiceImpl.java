@@ -52,8 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         boolean isEmailExistsCustomer = customerRepository.findByEmail(customerAddDto.email()).isPresent();
-        boolean isEmailExistsSmallTrader = smallTraderRepository.findByEmail(customerAddDto.email()).isPresent();
-        if (isEmailExistsCustomer || isEmailExistsSmallTrader) {
+        if (isEmailExistsCustomer) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerAddDto.email()));
         }
 
@@ -99,8 +98,7 @@ public class CustomerServiceImpl implements CustomerService {
         // if email is new, check if the new email exist
         if (!customerUpdateDto.email().equals(oldEmail)) {
             boolean isEmailExistsCustomer = customerRepository.findByEmail(customerUpdateDto.email()).isPresent();
-            boolean isEmailExistsSmallTrader = smallTraderRepository.findByEmail(customerUpdateDto.email()).isPresent();
-            if (!isEmailExistsCustomer && !isEmailExistsSmallTrader) {
+            if (!isEmailExistsCustomer) {
                 customer.setEmail(customerUpdateDto.email());
             } else {
                 throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerUpdateDto.email()));
@@ -135,9 +133,6 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerAdminDto findById(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id)));
-        SmallTrader smallTrader = smallTraderRepository.findById(customer.getSmallTraderId()).orElseThrow(
-                () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, customer.getSmallTraderId()))
-        );
         return CustomerAdminDto.fromCustomer(customer);
     }
 

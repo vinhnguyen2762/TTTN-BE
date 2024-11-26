@@ -10,7 +10,7 @@ public interface ProductService {
     public List<ProductNoPromotionDto> getAllProductNoPromotion();
     public List<ProductNoPromotionDto> getAllProductNoPromotionSmallTrader(Long id);
     public Long addProduct(ProductAddDto productAddDto);
-    public Long updateProduct(Long id, ProductUpdateDto productUpdateDto);
+    public Long updateProduct(Long id, ProductAddDto productAddDto);
     public Long deleteProduct(Long id);
     public Long uploadImageById(Long id, MultipartFile file);
     public ProductSearchDto findByName(String name);

@@ -6,10 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
 import product_service.dto.order.OrderUpdateDto;
-import product_service.dto.product.ProductAdminDto;
-import product_service.dto.product.ProductUpdateDto;
-import product_service.dto.revenue.RevenueRequest;
-import product_service.dto.revenue.RevenueResponse;
 import product_service.service.OrderService;
 
 import java.util.List;
