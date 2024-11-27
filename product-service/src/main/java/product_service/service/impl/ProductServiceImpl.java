@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
         List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
         return list.stream().map(p -> {
             for (PromotionDetail pd : promotionDetailList) {;
-                if (pd.getProductId() == p.getId()) {
+                if (pd.getProduct().getId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
                     if (promotion.getStatus().name().equals("ACTIVE") && !promotion.getEndDate().isBefore(today)) {
@@ -74,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         for (Product p : list) {
             Boolean noContain = false;
             for (PromotionDetail pd : promotionDetailList) {
-                if (pd.getProductId() == p.getId()) {
+                if (pd.getProduct().getId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
                     if (!promotion.getStatus().name().equals("DELETED") && !promotion.getEndDate().isBefore(today)) {
@@ -97,7 +97,7 @@ public class ProductServiceImpl implements ProductService {
         for (Product p : list) {
             Boolean noContain = false;
             for (PromotionDetail pd : promotionDetailList) {
-                if (pd.getProductId() == p.getId()) {
+                if (pd.getProduct().getId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
                     if (!promotion.getStatus().name().equals("DELETED") && !promotion.getEndDate().isBefore(today)) {
@@ -205,7 +205,7 @@ public class ProductServiceImpl implements ProductService {
         List<PromotionDetail> promotionDetailList = promotionDetailRepository.findAll();
         return list.stream().map(p -> {
             for (PromotionDetail pd : promotionDetailList) {;
-                if (pd.getProductId() == p.getId()) {
+                if (pd.getProduct().getId() == p.getId()) {
                     Promotion promotion = promotionRepository.findById(pd.getPromotion().getId()).orElseThrow(
                             () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, pd.getPromotion().getId())));
                     if (promotion.getStatus().name().equals("ACTIVE") && !promotion.getEndDate().isBefore(today)) {

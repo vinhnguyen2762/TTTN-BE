@@ -6,6 +6,8 @@ import people_service.enums.Gender;
 import people_service.enums.SmallTraderRole;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "small_trader")
@@ -29,6 +31,10 @@ public class SmallTrader {
     private String password;
     private SmallTraderRole role = SmallTraderRole.USER;
     private Boolean locked = false;
+    @OneToOne(mappedBy = "smallTrader")
+    private ConfirmationToken confirmationToken;
+    @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Producer> producerList = new ArrayList<>();
 
     public SmallTrader(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, String password) {
         this.firstName = firstName;

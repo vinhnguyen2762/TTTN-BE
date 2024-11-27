@@ -54,10 +54,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             String supplierName = supplierAdminDto.firstName() + " " + supplierAdminDto.lastName();
 
             List<PurchaseOrderDetailAdminDto> list = p.getPurchaseOrderDetails().stream().map(pd -> {
-                Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
+                Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
                 if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
                 }
                 String productName = product.getName();
                 return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
@@ -86,9 +86,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             Long supplyPrice = Long.parseLong(purchaseOrderDetailPostDto.supplyPrice());
             Integer quantity = Integer.parseInt(purchaseOrderDetailPostDto.quantity());
 
+            Product product = productRepository.findById(purchaseOrderDetailPostDto.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, purchaseOrderDetailPostDto.productId())));
+
             PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail(
                     supplyPrice,
-                    purchaseOrderDetailPostDto.productId(),
+                    product,
                     quantity,
                     purchaseOrderAdd
             );
@@ -121,9 +124,12 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             Long supplyPrice = Long.parseLong(purchaseOrderDetailPostDto.supplyPrice());
             Integer quantity = Integer.parseInt(purchaseOrderDetailPostDto.quantity());
 
+            Product product = productRepository.findById(purchaseOrderDetailPostDto.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, purchaseOrderDetailPostDto.productId())));
+
             PurchaseOrderDetail purchaseOrderDetail = new PurchaseOrderDetail(
                     supplyPrice,
-                    purchaseOrderDetailPostDto.productId(),
+                    product,
                     quantity,
                     purchaseOrder
             );
@@ -155,10 +161,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             throw new FailedException(String.format(Constants.ErrorMessage.PURCHASE_ORDER_ALREADY_PAID, id));
         }
         for (PurchaseOrderDetail po : purchaseOrder.getPurchaseOrderDetails()) {
-            Product product = productRepository.findById(po.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, po.getProductId())));
+            Product product = productRepository.findById(po.getProduct().getId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, po.getProduct().getId())));
             if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, po.getProductId()));
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, po.getProduct().getId()));
             }
             int quantity = product.getQuantity() + po.getQuantity();
             product.setQuantity(quantity);
@@ -178,10 +184,10 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             String supplierName = supplierAdminDto.firstName() + " " + supplierAdminDto.lastName();
 
             List<PurchaseOrderDetailAdminDto> list = p.getPurchaseOrderDetails().stream().map(pd -> {
-                Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
+                Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
                 if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
                 }
                 String productName = product.getName();
                 return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);

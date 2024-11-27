@@ -15,7 +15,7 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
     @Query("""
             select c
             from ConfirmationToken c
-            where c.smallTraderId = :id
+            where c.smallTrader.id = :id
             """)
     Optional<ConfirmationToken> findBySmallTraderId(@Param("id") Long id);
 }

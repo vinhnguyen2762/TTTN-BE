@@ -22,7 +22,7 @@ public interface ProducerRepository extends JpaRepository<Producer, Long> {
     @Query("""
             select p
             from Producer p
-            where p.status = true and p.smallTraderId = :id
+            where p.status = true and p.smallTrader.id = :id
             """)
     List<Producer> findBySmallTrader(@Param("id") Long id);
 

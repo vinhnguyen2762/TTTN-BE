@@ -55,10 +55,10 @@ public class OrderServiceImpl implements OrderService {
             String phoneNumber = customerAdminDto.phoneNumber();
 
             List<OrderDetailAdminDto> list = o.getOrderDetails().stream().map(od -> {
-                Product product = productRepository.findById(od.getProductId()).orElseThrow(
-                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
+                Product product = productRepository.findById(od.getProduct().getId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId())));
                 if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId()));
                 }
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
@@ -68,7 +68,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-    public OrderAdminDto addOrder(OrderAddDto orderAddDto) {
+    public Long addOrder(OrderAddDto orderAddDto) {
         if (orderAddDto.list().isEmpty()) {
             throw new EmptyException("List order detail is null");
         }
@@ -86,9 +86,12 @@ public class OrderServiceImpl implements OrderService {
             Long price = Long.parseLong(orderDetailPostDto.price());
             Integer quantity = Integer.parseInt(orderDetailPostDto.quantity());
 
+            Product product = productRepository.findById(orderDetailPostDto.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, orderDetailPostDto.productId())));
+
             OrderDetail orderDetail = new OrderDetail(
                     orderAdd,
-                    orderDetailPostDto.productId(),
+                    product,
                     price,
                     quantity
             );
@@ -97,29 +100,10 @@ public class OrderServiceImpl implements OrderService {
 
         orderDetailRepository.saveAll(orderDetailList);
 
-        CustomerAdminDto customerAdminDto = findCustomerById(orderAdd.getCustomerId());
-        String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
-
-        SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(orderAdd.getSmallTraderId());
-        String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
-        String smallTraderPhoneNumber = smallTraderAdminDto.phoneNumber();
-
-        String phoneNumber = customerAdminDto.phoneNumber();
-
-        List<OrderDetailAdminDto> list = orderDetailList.stream().map(od -> {
-            Product product = productRepository.findById(od.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
-            }
-            String productName = product.getName();
-            return OrderDetailAdminDto.fromOderDetail(od, productName);
-        }).toList();
-
-        return OrderAdminDto.fromOrder(orderAdd, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
+        return orderAdd.getId();
     }
 
-    public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
+    public Long updateOrder(Long id, OrderUpdateDto orderUpdateDto) {
         if (orderUpdateDto.list().isEmpty()) {
             throw new EmptyException("List order detail is null");
         }
@@ -137,9 +121,12 @@ public class OrderServiceImpl implements OrderService {
             Long price = Long.parseLong(orderDetailPostDto.price());;
             Integer quantity = Integer.parseInt(orderDetailPostDto.quantity());
 
+            Product product = productRepository.findById(orderDetailPostDto.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, orderDetailPostDto.productId())));
+
             OrderDetail orderDetail = new OrderDetail(
                     order,
-                    orderDetailPostDto.productId(),
+                    product,
                     price,
                     quantity
             );
@@ -148,26 +135,7 @@ public class OrderServiceImpl implements OrderService {
 
         orderRepository.save(order);
 
-        CustomerAdminDto customerAdminDto = findCustomerById(order.getCustomerId());
-        String customerName = customerAdminDto.firstName() + " " + customerAdminDto.lastName();
-
-        SmallTraderAdminDto smallTraderAdminDto = findSmallTraderById(order.getSmallTraderId());
-        String smallTraderName = smallTraderAdminDto.firstName() + " " + smallTraderAdminDto.lastName();
-        String smallTraderPhoneNumber = smallTraderAdminDto.phoneNumber();
-
-        String phoneNumber = customerAdminDto.phoneNumber();
-
-        List<OrderDetailAdminDto> list = updateList.stream().map(od -> {
-            Product product = productRepository.findById(od.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
-            }
-            String productName = product.getName();
-            return OrderDetailAdminDto.fromOderDetail(od, productName);
-        }).toList();
-
-        return OrderAdminDto.fromOrder(order, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
+        return order.getId();
     }
 
     public Long deleteOrder(Long id) {
@@ -190,14 +158,14 @@ public class OrderServiceImpl implements OrderService {
             throw new FailedException(String.format(Constants.ErrorMessage.ORDER_ALREADY_PAID, id));
         }
         for (OrderDetail o : order.getOrderDetails()) {
-            Product product = productRepository.findById(o.getProductId()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, o.getProductId())));
+            Product product = productRepository.findById(o.getProduct().getId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, o.getProduct().getId())));
             if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, o.getProductId()));
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, o.getProduct().getId()));
             }
             int quantity = product.getQuantity() - o.getQuantity();
             if (quantity < 0) {
-                throw new EmptyException(String.format(Constants.ErrorMessage.PRODUCT_NOT_ENOUGH, o.getProductId()));
+                throw new EmptyException(String.format(Constants.ErrorMessage.PRODUCT_NOT_ENOUGH, o.getProduct().getId()));
             } else {
                 product.setQuantity(quantity);
             }
@@ -226,10 +194,10 @@ public class OrderServiceImpl implements OrderService {
             String phoneNumber = customerAdminDto.phoneNumber();
 
             List<OrderDetailAdminDto> list = o.getOrderDetails().stream().map(od -> {
-                Product product = productRepository.findById(od.getProductId()).orElseThrow(
-                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId())));
+                Product product = productRepository.findById(od.getProduct().getId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId())));
                 if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProductId()));
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId()));
                 }
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);

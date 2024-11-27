@@ -12,7 +12,7 @@ public record PurchaseOrderDetailAdminDto(
     public static PurchaseOrderDetailAdminDto fromPurchaseOrderDetail(PurchaseOrderDetail purchaseOrderDetail, String productName) {
         return new PurchaseOrderDetailAdminDto(
                 purchaseOrderDetail.getId(),
-                purchaseOrderDetail.getProductId(),
+                purchaseOrderDetail.getProduct().getId(),
                 productName,
                 purchaseOrderDetail.getSupplyPrice().toString(),
                 purchaseOrderDetail.getQuantity().toString()

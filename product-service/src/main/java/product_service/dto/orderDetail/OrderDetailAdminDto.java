@@ -16,7 +16,7 @@ public record OrderDetailAdminDto (
 
         return new OrderDetailAdminDto(
                 orderDetail.getId(),
-                orderDetail.getProductId(),
+                orderDetail.getProduct().getId(),
                 productName,
                 orderDetail.getPrice().toString(),
                 orderDetail.getQuantity().toString()

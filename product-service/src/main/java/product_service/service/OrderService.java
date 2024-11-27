@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface OrderService {
     public List<OrderAdminDto> getAllOrderAdmin();
-    public OrderAdminDto addOrder(OrderAddDto orderAddDto);
-    public OrderAdminDto updateOrder(Long id, OrderUpdateDto orderUpdateDto);
+    public Long addOrder(OrderAddDto orderAddDto);
+    public Long updateOrder(Long id, OrderUpdateDto orderUpdateDto);
     public Long deleteOrder(Long id);
     public Long payOrder(Long id);
     public Boolean checkCustomerHasOrder(Long id);

@@ -11,7 +11,7 @@ public record PromotionDetailAdminDto(
     public static PromotionDetailAdminDto fromPromotionProduct(
             PromotionDetail promotionDetail, String productName, String originalPrice, String discountedPrice) {
         return new PromotionDetailAdminDto(
-                promotionDetail.getProductId(),
+                promotionDetail.getProduct().getId(),
                 productName,
                 originalPrice,
                 discountedPrice

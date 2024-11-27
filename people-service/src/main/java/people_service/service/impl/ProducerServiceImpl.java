@@ -81,6 +81,8 @@ public class ProducerServiceImpl implements ProducerService {
         }
 
         Gender gender = producerAddDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
+        SmallTrader smallTrader = smallTraderRepository.findById(producerAddDto.smallTraderId()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, producerAddDto.smallTraderId())));
 
         Producer producerAdd = new Producer(
                 producerAddDto.firstName(),
@@ -89,7 +91,7 @@ public class ProducerServiceImpl implements ProducerService {
                 producerAddDto.address(),
                 producerAddDto.phoneNumber(),
                 producerAddDto.email(),
-                producerAddDto.smallTraderId()
+                smallTrader
         );
         producerRepository.saveAndFlush(producerAdd);
         return producerAdd.getId();

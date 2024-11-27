@@ -14,14 +14,16 @@ public class PromotionDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "promotion_id")
     private Promotion promotion;
 
-    public PromotionDetail(Long productId, Promotion promotion) {
-        this.productId = productId;
+    public PromotionDetail(Product product, Promotion promotion) {
+        this.product = product;
         this.promotion = promotion;
     }
 }

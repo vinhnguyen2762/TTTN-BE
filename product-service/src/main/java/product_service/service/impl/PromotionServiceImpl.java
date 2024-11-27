@@ -46,10 +46,10 @@ public class PromotionServiceImpl implements PromotionService {
         List<Promotion> promotionList = promotionRepository.findAll();
         return promotionList.stream().map(p -> {
             List<PromotionDetailAdminDto> list = p.getPromotionDetailList().stream().map(pd -> {
-                Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
+                Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
                 if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
                 }
                 String productName = product.getName();
                 Long originalPrice = product.getPrice();
@@ -103,8 +103,10 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
         for (PromotionDetailPostDto item : promotionAddDto.list()) {
+            Product product = productRepository.findById(item.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId())));
             PromotionDetail promotionDetail = new PromotionDetail(
-                    item.productId(),
+                    product,
                     promotion
             );
             promotionDetailList.add(promotionDetail);
@@ -152,8 +154,10 @@ public class PromotionServiceImpl implements PromotionService {
         }
 
         for (PromotionDetailPostDto item : promotionPostDto.list()) {
+            Product product = productRepository.findById(item.productId()).orElseThrow(
+                    () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId())));
             PromotionDetail promotionDetail = new PromotionDetail(
-                    item.productId(),
+                    product,
                     promotion
             );
             updateList.add(promotionDetail);
@@ -189,7 +193,7 @@ public class PromotionServiceImpl implements PromotionService {
         List<PromotionDetail> promotionDetailList = promotion.getPromotionDetailList();
         Boolean canActive = true;
         for (PromotionDetail pd : promotionDetailList) {
-            List<PromotionDetail> listFound = promotionDetailRepository.findByProductId(pd.getProductId());
+            List<PromotionDetail> listFound = promotionDetailRepository.findByProductId(pd.getProduct().getId());
             for (PromotionDetail pd1 : listFound) {
                 Promotion promotionCheck = promotionRepository.findById(pd1.getPromotion().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id)));
@@ -211,10 +215,10 @@ public class PromotionServiceImpl implements PromotionService {
         List<Promotion> promotionList = promotionRepository.findBySmallTraderId(id);
         return promotionList.stream().map(p -> {
             List<PromotionDetailAdminDto> list = p.getPromotionDetailList().stream().map(pd -> {
-                Product product = productRepository.findById(pd.getProductId()).orElseThrow(
-                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId())));
+                Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
+                        () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
                 if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProductId()));
+                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
                 }
                 String productName = product.getName();
                 Long originalPrice = product.getPrice();

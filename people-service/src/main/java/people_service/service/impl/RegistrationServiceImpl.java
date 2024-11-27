@@ -68,9 +68,9 @@ public class RegistrationServiceImpl implements RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(confirmToken);
-        SmallTrader smallTrader = smallTraderRepository.findById(confirmationToken.getSmallTraderId()).orElseThrow();
+        //SmallTrader smallTrader = smallTraderRepository.findById(confirmationToken.getSmallTraderId()).orElseThrow();
 
-        smallTraderService.enableAppUser(smallTrader.getEmail());
+        smallTraderService.enableAppUser(confirmationToken.getSmallTrader().getEmail());
         return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
     }
 

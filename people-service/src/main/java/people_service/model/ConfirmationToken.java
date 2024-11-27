@@ -22,13 +22,14 @@ public class ConfirmationToken {
     @Column(nullable = false)
     private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
-    @Column(nullable = false)
-    private Long smallTraderId;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "small_trader_id", referencedColumnName = "id")
+    private SmallTrader smallTrader;
 
-    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, Long smallTraderId) {
+    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, SmallTrader smallTrader) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.smallTraderId = smallTraderId;
+        this.smallTrader = smallTrader;
     }
 }

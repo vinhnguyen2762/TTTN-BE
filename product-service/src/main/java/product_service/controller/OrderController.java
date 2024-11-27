@@ -33,15 +33,15 @@ public class OrderController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<OrderAdminDto> addOder(@RequestBody OrderAddDto orderAddDto) {
-        OrderAdminDto order = orderService.addOrder(orderAddDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+    public ResponseEntity<Long> addOder(@RequestBody OrderAddDto orderAddDto) {
+        Long rs = orderService.addOrder(orderAddDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(rs);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<OrderAdminDto> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDto orderUpdateDto) {
-        OrderAdminDto orderAdminDto = orderService.updateOrder(id, orderUpdateDto);
-        return ResponseEntity.ok().body(orderAdminDto);
+    public ResponseEntity<Long> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDto orderUpdateDto) {
+        Long rs = orderService.updateOrder(id, orderUpdateDto);
+        return ResponseEntity.ok().body(rs);
     }
 
     @DeleteMapping("/delete/{id}")

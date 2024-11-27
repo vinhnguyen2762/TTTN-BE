@@ -27,18 +27,20 @@ public class Producer {
     private String email;
     @Column(unique = true)
     private String phoneNumber;
-    private Long smallTraderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "small_trader_id")
+    private SmallTrader smallTrader;
     private Boolean status = true;
     @OneToMany(mappedBy = "producer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<DebtDetail> debtDetails = new ArrayList<>();
 
-    public Producer(String firstName, String lastName, Gender gender, String address, String phoneNumber, String email, Long smallTraderId) {
+    public Producer(String firstName, String lastName, Gender gender, String address, String phoneNumber, String email, SmallTrader smallTrader) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.smallTraderId = smallTraderId;
+        this.smallTrader = smallTrader;
     }
 }

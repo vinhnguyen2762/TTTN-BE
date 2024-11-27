@@ -39,10 +39,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "WHERE YEAR(o.orderDate) = :year AND MONTH(o.orderDate) = :month AND o.status = 'PAID' AND o.smallTraderId = :id")
     Long findRevenueByMonthAndYear(@Param("year") Integer year, @Param("month") Integer month, @Param("id") Long id);
 
-    @Query("SELECT od.productId, COALESCE(SUM(od.quantity * od.price), 0) AS revenue " +
+    @Query("SELECT od.product.id, COALESCE(SUM(od.quantity * od.price), 0) AS revenue " +
             "FROM Order o JOIN o.orderDetails od " +
             "WHERE YEAR(o.orderDate) = :year AND MONTH(o.orderDate) = :month AND o.status = 'PAID' AND o.smallTraderId = :id " +
-            "GROUP BY od.productId " +
+            "GROUP BY od.product.id " +
             "ORDER BY revenue DESC")
     List<Object[]> findTop5ProductsByRevenue(@Param("year") Integer year, @Param("month") Integer month, @Param("id") Long id);
 

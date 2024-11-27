@@ -15,15 +15,17 @@ public class PurchaseOrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long supplyPrice;
-    private Long productId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
     private Integer quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "purchase_oder_id")
     private PurchaseOrder purchaseOrder;
 
-    public PurchaseOrderDetail(Long supplyPrice, Long productId, Integer quantity, PurchaseOrder purchaseOrder) {
+    public PurchaseOrderDetail(Long supplyPrice, Product product, Integer quantity, PurchaseOrder purchaseOrder) {
         this.supplyPrice = supplyPrice;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
         this.purchaseOrder = purchaseOrder;
     }

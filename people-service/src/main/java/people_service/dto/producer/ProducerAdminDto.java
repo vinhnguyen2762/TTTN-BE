@@ -32,7 +32,7 @@ public record ProducerAdminDto(
                 producer.getEmail(),
                 remainingDebt,
                 list,
-                producer.getSmallTraderId()
+                producer.getSmallTrader().getId()
         );
     }
 }

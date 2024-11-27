@@ -69,8 +69,8 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 confirmToken,
                 LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(1),
-                smallTrader.getId());
+                LocalDateTime.now().plusMinutes(15),
+                smallTrader);
 
         //save it to database
         confirmationTokenService.saveConfirmationToken(confirmationToken);
