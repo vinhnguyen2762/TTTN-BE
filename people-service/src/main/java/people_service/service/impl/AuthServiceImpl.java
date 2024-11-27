@@ -80,6 +80,21 @@ public class AuthServiceImpl implements AuthService {
         return smallTrader.getId();
     }
 
+    public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
+        SmallTrader smallTrader = smallTraderRepository.findById(smallTraderForgetPasswordDto.id()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, smallTraderForgetPasswordDto.id()))
+        );
+        boolean isMatch = checkPassword(smallTraderForgetPasswordDto.newPassword(), smallTrader.getPassword());
+        if (smallTrader.getStatus() == false) {
+            throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, smallTrader.getEmail()));
+        } else if (smallTrader.getLocked() == true) {
+            throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, smallTrader.getEmail()));
+        } else if (!isMatch) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
+        }
+        return smallTrader.getId();
+    }
+
     private String buildEmailCode(String header, String code) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +

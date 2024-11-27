@@ -22,15 +22,13 @@ public class ConfirmationToken {
     @Column(nullable = false)
     private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
+    @Column(nullable = false)
+    private Long smallTraderId;
 
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "employee_id")
-    private SmallTrader smallTrader;
-
-    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, SmallTrader smallTrader) {
+    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, Long smallTraderId) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.smallTrader = smallTrader;
+        this.smallTraderId = smallTraderId;
     }
 }

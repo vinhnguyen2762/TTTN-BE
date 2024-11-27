@@ -55,4 +55,10 @@ public class AuthenticationController {
         Long rs = authService.changeForgetPassword(smallTraderForgetPasswordDto);
         return ResponseEntity.ok().body(rs);
     }
+
+    @PostMapping("/confirm-password")
+    private ResponseEntity<Long> confirmPassword(@RequestBody SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
+        Long rs = authService.confirmPassword(smallTraderForgetPasswordDto);
+        return ResponseEntity.ok().body(rs);
+    }
 }

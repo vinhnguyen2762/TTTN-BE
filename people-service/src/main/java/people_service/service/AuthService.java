@@ -13,5 +13,5 @@ public interface AuthService {
     public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto);
     public String sendCodeToEmail(String email);
     public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
-
+    public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
 }

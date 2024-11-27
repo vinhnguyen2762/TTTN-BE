@@ -9,6 +9,7 @@ import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.*;
+import people_service.repository.SmallTraderRepository;
 import people_service.service.*;
 import people_service.utils.Constants;
 
@@ -23,6 +24,7 @@ public class RegistrationServiceImpl implements RegistrationService {
     private final SmallTraderService smallTraderService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailService;
+    private final SmallTraderRepository smallTraderRepository;
 
     public Long register(RegistrationRequest request) {
         boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
@@ -56,18 +58,19 @@ public class RegistrationServiceImpl implements RegistrationService {
                         new NotFoundException(String.format(Constants.ErrorMessage.TOKEN_NOT_FOUND, confirmToken)));
 
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_CONFIRMED, confirmationToken.getSmallTrader().getEmail()));
+            return "Your email is already confirmed";
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new FailedException(String.format(Constants.ErrorMessage.TOKEN_EXPIRED, confirmationToken.getSmallTrader().getEmail()));
+            return "Your token is expired";
         }
 
         confirmationTokenService.setConfirmedAt(confirmToken);
-        smallTraderService.enableAppUser(
-                confirmationToken.getSmallTrader().getEmail());
+        SmallTrader smallTrader = smallTraderRepository.findById(confirmationToken.getSmallTraderId()).orElseThrow();
+
+        smallTraderService.enableAppUser(smallTrader.getEmail());
         return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
     }
 
