@@ -5,12 +5,10 @@ import org.springframework.stereotype.Service;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.customer.CustomerSearchDto;
-import people_service.dto.customer.CustomerUpdateDto;
 import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.Customer;
-import people_service.model.SmallTrader;
 import people_service.repository.CustomerRepository;
 import people_service.repository.SmallTraderRepository;
 import people_service.service.CustomerService;
@@ -46,12 +44,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public Long addCustomer(CustomerAddDto customerAddDto) {
-        boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerAddDto.phoneNumber()).isPresent();
+        boolean isPhoneNumberExist = customerRepository.findByPhoneNumberSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.phoneNumber()).isPresent();
         if (isPhoneNumberExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customerAddDto.phoneNumber()));
         }
 
-        boolean isEmailExistsCustomer = customerRepository.findByEmail(customerAddDto.email()).isPresent();
+        boolean isEmailExistsCustomer = customerRepository.findByEmailSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.email()).isPresent();
         if (isEmailExistsCustomer) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerAddDto.email()));
         }
@@ -72,44 +70,44 @@ public class CustomerServiceImpl implements CustomerService {
         return customerAdd.getId();
     }
 
-    public Long updateCustomer(Long id, CustomerUpdateDto customerUpdateDto) {
+    public Long updateCustomer(Long id, CustomerAddDto customerAddDto) {
         Customer customer = customerRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id)));
         if (customer.getStatus() == false) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id));
         }
 
-        LocalDate date = LocalDate.parse(customerUpdateDto.dateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
-        Gender gender = customerUpdateDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
+        LocalDate date = LocalDate.parse(customerAddDto.dateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
+        Gender gender = customerAddDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
 
         String oldPhoneNumber = customer.getPhoneNumber();
         String oldEmail = customer.getEmail();
 
         // if phone number is new, check if the new phone number exist
-        if (!customerUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerUpdateDto.phoneNumber()).isPresent();
+        if (!customerAddDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = customerRepository.findByPhoneNumberSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.phoneNumber()).isPresent();
             if (!isPhoneNumberExist) {
-                customer.setPhoneNumber(customerUpdateDto.phoneNumber());
+                customer.setPhoneNumber(customerAddDto.phoneNumber());
             } else {
-                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customerUpdateDto.phoneNumber()));
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customerAddDto.phoneNumber()));
             }
         }
 
         // if email is new, check if the new email exist
-        if (!customerUpdateDto.email().equals(oldEmail)) {
-            boolean isEmailExistsCustomer = customerRepository.findByEmail(customerUpdateDto.email()).isPresent();
+        if (!customerAddDto.email().equals(oldEmail)) {
+            boolean isEmailExistsCustomer = customerRepository.findByEmailSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.email()).isPresent();
             if (!isEmailExistsCustomer) {
-                customer.setEmail(customerUpdateDto.email());
+                customer.setEmail(customerAddDto.email());
             } else {
-                throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerUpdateDto.email()));
+                throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerAddDto.email()));
             }
         }
 
-        customer.setFirstName(customerUpdateDto.firstName());
-        customer.setLastName(customerUpdateDto.lastName());
+        customer.setFirstName(customerAddDto.firstName());
+        customer.setLastName(customerAddDto.lastName());
         customer.setDateOfBirth(date);
         customer.setGender(gender);
-        customer.setAddress(customerUpdateDto.address());
+        customer.setAddress(customerAddDto.address());
         customerRepository.saveAndFlush(customer);
         return customer.getId();
     }

@@ -10,7 +10,7 @@ public interface ProducerService {
     public List<ProducerAdminDto> getAllProducerAdmin();
     public List<ProducerAdminDto> getAllProducerSmallTrader(Long id);
     public Long addProducer(ProducerAddDto producerAddDto);
-    public Long updateProducer(Long id, ProducerUpdateDto producerUpdateDto);
+    public Long updateProducer(Long id, ProducerAddDto producerAddDto);
     public Long deleteProducer(Long id);
     public Long countProducerByStatusTrue();
 }

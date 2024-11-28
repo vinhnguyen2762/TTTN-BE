@@ -20,9 +20,7 @@ public class Customer {
     private LocalDate dateOfBirth;
     private Gender gender;
     private String address;
-    @Column(unique = true)
     private String email;
-    @Column(unique = true)
     private String phoneNumber;
     private Boolean status = true;
     private Long smallTraderId;

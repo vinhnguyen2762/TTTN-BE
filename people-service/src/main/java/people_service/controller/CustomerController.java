@@ -1,14 +1,11 @@
 package people_service.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.customer.CustomerSearchDto;
-import people_service.dto.customer.CustomerUpdateDto;
-import people_service.model.Customer;
 import people_service.service.CustomerService;
 
 import java.util.List;
@@ -42,8 +39,8 @@ public class CustomerController {
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<Long> updateCustomer(@PathVariable Long id, @RequestBody CustomerUpdateDto customerUpdateDto) {
-        Long rs = customerService.updateCustomer(id, customerUpdateDto);
+    public ResponseEntity<Long> updateCustomer(@PathVariable Long id, @RequestBody CustomerAddDto customerAddDto) {
+        Long rs = customerService.updateCustomer(id, customerAddDto);
         return ResponseEntity.ok().body(rs);
     }
 

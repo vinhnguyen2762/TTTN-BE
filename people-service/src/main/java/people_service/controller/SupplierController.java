@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.*;
 import people_service.dto.supplier.SupplierAddDto;
 import people_service.dto.supplier.SupplierAdminDto;
 import people_service.dto.supplier.SupplierSearchDto;
-import people_service.dto.supplier.SupplierUpdateDto;
 import people_service.service.SupplierService;
 
 import java.util.List;
@@ -40,8 +39,8 @@ public class SupplierController {
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<Long> updateSupplier(@PathVariable Long id, @RequestBody SupplierUpdateDto supplierUpdateDto) {
-        Long rs = supplierService.updateSupplier(id, supplierUpdateDto);
+    public ResponseEntity<Long> updateSupplier(@PathVariable Long id, @RequestBody SupplierAddDto supplierAddDto) {
+        Long rs = supplierService.updateSupplier(id, supplierAddDto);
         return ResponseEntity.ok().body(rs);
     }
 

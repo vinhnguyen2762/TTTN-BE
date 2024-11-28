@@ -39,8 +39,8 @@ public class ProducerController {
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<Long> updateProducer(@PathVariable Long id, @RequestBody ProducerUpdateDto producerUpdateDto) {
-        Long rs = producerService.updateProducer(id, producerUpdateDto);
+    public ResponseEntity<Long> updateProducer(@PathVariable Long id, @RequestBody ProducerAddDto producerAddDto) {
+        Long rs = producerService.updateProducer(id, producerAddDto);
         return ResponseEntity.ok().body(rs);
     }
 

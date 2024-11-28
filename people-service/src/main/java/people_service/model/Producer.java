@@ -23,9 +23,7 @@ public class Producer {
     private String lastName;
     private Gender gender;
     private String address;
-    @Column(unique = true)
     private String email;
-    @Column(unique = true)
     private String phoneNumber;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "small_trader_id")

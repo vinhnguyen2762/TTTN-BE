@@ -4,12 +4,10 @@ import org.springframework.stereotype.Service;
 import people_service.dto.supplier.SupplierAddDto;
 import people_service.dto.supplier.SupplierAdminDto;
 import people_service.dto.supplier.SupplierSearchDto;
-import people_service.dto.supplier.SupplierUpdateDto;
 import people_service.exception.AccountLockedException;
 import people_service.exception.DuplicateException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
-import people_service.model.SmallTrader;
 import people_service.model.Supplier;
 import people_service.repository.SmallTraderRepository;
 import people_service.repository.SupplierRepository;
@@ -41,17 +39,17 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     public Long addSupplier(SupplierAddDto supplierAddDto) {
-        Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierAddDto.taxId()).isPresent();
+        Boolean isTaxIdExist = supplierRepository.findByTaxIdSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.taxId()).isPresent();
         if (isTaxIdExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierAddDto.taxId()));
         }
 
-        Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumber(supplierAddDto.phoneNumber()).isPresent();
+        Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumberSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.phoneNumber()).isPresent();
         if (isPhoneNumberExist) {
             throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, supplierAddDto.phoneNumber()));
         }
 
-        Boolean isEmailExist = supplierRepository.findByEmail(supplierAddDto.email()).isPresent();
+        Boolean isEmailExist = supplierRepository.findByEmailSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.email()).isPresent();
         if (isEmailExist) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierAddDto.email()));
         }
@@ -68,7 +66,7 @@ public class SupplierServiceImpl implements SupplierService {
         return supplierAdd.getId();
     }
 
-    public Long updateSupplier(Long id, SupplierUpdateDto supplierUpdateDto) {
+    public Long updateSupplier(Long id, SupplierAddDto supplierAddDto) {
         Supplier supplier = supplierRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SUPPLIER_NOT_FOUND, id)));
         if (supplier.getStatus() == false) {
@@ -79,38 +77,38 @@ public class SupplierServiceImpl implements SupplierService {
         String oldPhoneNumber = supplier.getPhoneNumber();
         String oldEmail = supplier.getEmail();
 
-        if (!supplierUpdateDto.taxId().equals(oldTaxId)) {
-            Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierUpdateDto.taxId()).isPresent();
+        if (!supplierAddDto.taxId().equals(oldTaxId)) {
+            Boolean isTaxIdExist = supplierRepository.findByTaxIdSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.taxId()).isPresent();
             if (!isTaxIdExist) {
-                supplier.setTaxId(supplierUpdateDto.taxId());
+                supplier.setTaxId(supplierAddDto.taxId());
             } else {
-                throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierUpdateDto.taxId()));
+                throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierAddDto.taxId()));
             }
         }
 
         // if phone number is new, check if the new phone number exist
-        if (!supplierUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumber(supplierUpdateDto.phoneNumber()).isPresent();
+        if (!supplierAddDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumberSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.phoneNumber()).isPresent();
             if (!isPhoneNumberExist) {
-                supplier.setPhoneNumber(supplierUpdateDto.phoneNumber());
+                supplier.setPhoneNumber(supplierAddDto.phoneNumber());
             } else {
-                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, supplierUpdateDto.phoneNumber()));
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, supplierAddDto.phoneNumber()));
             }
         }
 
         // if email is new, check if the new email exist
-        if (!supplierUpdateDto.email().equals(oldEmail)) {
-            Boolean isEmailExist = supplierRepository.findByEmail(supplierUpdateDto.email()).isPresent();
+        if (!supplierAddDto.email().equals(oldEmail)) {
+            Boolean isEmailExist = supplierRepository.findByEmailSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.email()).isPresent();
             if (!isEmailExist) {
-                supplier.setEmail(supplierUpdateDto.email());
+                supplier.setEmail(supplierAddDto.email());
             } else {
-                throw new AccountLockedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierUpdateDto.email()));
+                throw new AccountLockedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierAddDto.email()));
             }
         }
 
-        supplier.setFirstName(supplierUpdateDto.firstName());
-        supplier.setLastName(supplierUpdateDto.lastName());
-        supplier.setAddress(supplierUpdateDto.address());
+        supplier.setFirstName(supplierAddDto.firstName());
+        supplier.setLastName(supplierAddDto.lastName());
+        supplier.setAddress(supplierAddDto.address());
         supplierRepository.saveAndFlush(supplier);
         return supplier.getId();
     }

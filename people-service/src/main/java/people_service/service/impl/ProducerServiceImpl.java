@@ -2,20 +2,14 @@ package people_service.service.impl;
 
 
 import org.springframework.stereotype.Service;
-import people_service.dto.customer.CustomerAddDto;
-import people_service.dto.customer.CustomerAdminDto;
-import people_service.dto.customer.CustomerSearchDto;
-import people_service.dto.customer.CustomerUpdateDto;
 import people_service.dto.debtDetail.DebtDetailAdminDto;
 import people_service.dto.producer.ProducerAddDto;
 import people_service.dto.producer.ProducerAdminDto;
 import people_service.dto.producer.ProducerUpdateDto;
-import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.enums.Gender;
 import people_service.exception.DuplicateException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
-import people_service.model.Customer;
 import people_service.model.DebtDetail;
 import people_service.model.Producer;
 import people_service.model.SmallTrader;
@@ -24,8 +18,6 @@ import people_service.repository.SmallTraderRepository;
 import people_service.service.ProducerService;
 import people_service.utils.Constants;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -70,12 +62,12 @@ public class ProducerServiceImpl implements ProducerService {
     }
 
     public Long addProducer(ProducerAddDto producerAddDto) {
-        Boolean isPhoneNumberExist = producerRepository.findByPhoneNumber(producerAddDto.phoneNumber()).isPresent();
+        boolean isPhoneNumberExist = producerRepository.findByPhoneNumberSmallTraderId(producerAddDto.smallTraderId(), producerAddDto.phoneNumber()).isPresent();
         if (isPhoneNumberExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, producerAddDto.phoneNumber()));
         }
 
-        Boolean isEmailExist = producerRepository.findByEmail(producerAddDto.email()).isPresent();
+        boolean isEmailExist = producerRepository.findByEmailSmallTraderId(producerAddDto.smallTraderId(), producerAddDto.email()).isPresent();
         if (isEmailExist) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, producerAddDto.email()));
         }
@@ -97,42 +89,42 @@ public class ProducerServiceImpl implements ProducerService {
         return producerAdd.getId();
     }
 
-    public Long updateProducer(Long id, ProducerUpdateDto producerUpdateDto) {
+    public Long updateProducer(Long id, ProducerAddDto producerAddDto) {
         Producer producer = producerRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id)));
         if (producer.getStatus() == false) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, id));
         }
 
-        Gender gender = producerUpdateDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
+        Gender gender = producerAddDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
 
         String oldPhoneNumber = producer.getPhoneNumber();
         String oldEmail = producer.getEmail();
 
         // if phone number is new, check if the new phone number exist
-        if (!producerUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = producerRepository.findByPhoneNumber(producerUpdateDto.phoneNumber()).isPresent();
+        if (!producerAddDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = producerRepository.findByPhoneNumberSmallTraderId(producerAddDto.smallTraderId(), producerAddDto.phoneNumber()).isPresent();
             if (!isPhoneNumberExist) {
-                producer.setPhoneNumber(producerUpdateDto.phoneNumber());
+                producer.setPhoneNumber(producerAddDto.phoneNumber());
             } else {
-                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, producerUpdateDto.phoneNumber()));
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, producerAddDto.phoneNumber()));
             }
         }
 
         // if email is new, check if the new email exist
-        if (!producerUpdateDto.email().equals(oldEmail)) {
-            Boolean isEmailExist = producerRepository.findByEmail(producerUpdateDto.email()).isPresent();
+        if (!producerAddDto.email().equals(oldEmail)) {
+            Boolean isEmailExist = producerRepository.findByEmailSmallTraderId(producerAddDto.smallTraderId(), producerAddDto.email()).isPresent();
             if (!isEmailExist) {
-                producer.setEmail(producerUpdateDto.email());
+                producer.setEmail(producerAddDto.email());
             } else {
-                throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, producerUpdateDto.email()));
+                throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, producerAddDto.email()));
             }
         }
 
-        producer.setFirstName(producerUpdateDto.firstName());
-        producer.setLastName(producerUpdateDto.lastName());
+        producer.setFirstName(producerAddDto.firstName());
+        producer.setLastName(producerAddDto.lastName());
         producer.setGender(gender);
-        producer.setAddress(producerUpdateDto.address());
+        producer.setAddress(producerAddDto.address());
         producerRepository.saveAndFlush(producer);
         return producer.getId();
     }

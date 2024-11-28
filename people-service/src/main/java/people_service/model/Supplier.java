@@ -19,7 +19,6 @@ public class Supplier {
     private String address;
     private String email;
     private String phoneNumber;
-    @Column(unique = true)
     private String taxId;
     private Boolean status = true;
     private Long smallTraderId;
