@@ -32,5 +32,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             from Product p
             where p.smallTraderId = :id and p.name = :name
             """)
-    Optional<Product> findByNameSmallTraderId(@Param("id") Long id, String name);
+    Optional<Product> findByNameSmallTraderId(@Param("id") Long id, @Param("name") String name);
 }

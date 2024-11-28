@@ -41,9 +41,9 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     public Long addSupplier(SupplierAddDto supplierAddDto) {
-        Boolean isEmailExist = supplierRepository.findByEmail(supplierAddDto.email()).isPresent();
-        if (isEmailExist) {
-            throw new NotFoundException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierAddDto.email()));
+        Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierAddDto.taxId()).isPresent();
+        if (isTaxIdExist) {
+            throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierAddDto.taxId()));
         }
 
         Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumber(supplierAddDto.phoneNumber()).isPresent();
@@ -51,9 +51,9 @@ public class SupplierServiceImpl implements SupplierService {
             throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, supplierAddDto.phoneNumber()));
         }
 
-        Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierAddDto.taxId()).isPresent();
-        if (isTaxIdExist) {
-            throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierAddDto.taxId()));
+        Boolean isEmailExist = supplierRepository.findByEmail(supplierAddDto.email()).isPresent();
+        if (isEmailExist) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierAddDto.email()));
         }
 
         Supplier supplierAdd = new Supplier(
@@ -79,13 +79,12 @@ public class SupplierServiceImpl implements SupplierService {
         String oldPhoneNumber = supplier.getPhoneNumber();
         String oldEmail = supplier.getEmail();
 
-        // if email is new, check if the new email exist
-        if (!supplierUpdateDto.email().equals(oldEmail)) {
-            Boolean isEmailExist = supplierRepository.findByEmail(supplierUpdateDto.email()).isPresent();
-            if (!isEmailExist) {
-                supplier.setEmail(supplierUpdateDto.email());
+        if (!supplierUpdateDto.taxId().equals(oldTaxId)) {
+            Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierUpdateDto.taxId()).isPresent();
+            if (!isTaxIdExist) {
+                supplier.setTaxId(supplierUpdateDto.taxId());
             } else {
-                throw new AccountLockedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierUpdateDto.email()));
+                throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierUpdateDto.taxId()));
             }
         }
 
@@ -99,12 +98,13 @@ public class SupplierServiceImpl implements SupplierService {
             }
         }
 
-        if (!supplierUpdateDto.taxId().equals(oldTaxId)) {
-            Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierUpdateDto.taxId()).isPresent();
-            if (!isTaxIdExist) {
-                supplier.setTaxId(supplierUpdateDto.taxId());
+        // if email is new, check if the new email exist
+        if (!supplierUpdateDto.email().equals(oldEmail)) {
+            Boolean isEmailExist = supplierRepository.findByEmail(supplierUpdateDto.email()).isPresent();
+            if (!isEmailExist) {
+                supplier.setEmail(supplierUpdateDto.email());
             } else {
-                throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierUpdateDto.taxId()));
+                throw new AccountLockedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierUpdateDto.email()));
             }
         }
 

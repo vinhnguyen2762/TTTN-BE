@@ -40,6 +40,11 @@ public class SmallTraderServiceImpl implements SmallTraderService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
     public String signUpUser(SmallTrader smallTrader) {
+        boolean isPhoneNumberExists = smallTraderRepository.findByPhoneNumber(smallTrader.getPhoneNumber()).isPresent();
+        if (isPhoneNumberExists) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTrader.getPhoneNumber()));
+        }
+
         boolean isEmailExists = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
         if (isEmailExists) {
             SmallTrader smallTraderFound = smallTraderRepository.findByEmail(smallTrader.getEmail()).orElseThrow();
@@ -52,11 +57,6 @@ public class SmallTraderServiceImpl implements SmallTraderService {
                 confirmationTokenRepository.delete(tokenFound);
                 smallTraderRepository.delete(smallTraderFound);
             }
-        }
-
-        boolean isPhoneNumberExists = smallTraderRepository.findByPhoneNumber(smallTrader.getPhoneNumber()).isPresent();
-        if (isPhoneNumberExists) {
-            throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTrader.getPhoneNumber()));
         }
 
         String hashedPassword = hashPassword(smallTrader.getPassword());
@@ -108,6 +108,15 @@ public class SmallTraderServiceImpl implements SmallTraderService {
         String oldEmail = smallTrader.getEmail();
         String oldPhoneNumber = smallTrader.getPhoneNumber();
 
+        if (!smallTraderUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
+            Boolean isPhoneNumberExist = smallTraderRepository.findByPhoneNumber(smallTraderUpdateDto.phoneNumber()).isPresent();
+            if (!isPhoneNumberExist) {
+                smallTrader.setPhoneNumber(smallTraderUpdateDto.phoneNumber());
+            } else {
+                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTraderUpdateDto.phoneNumber()));
+            }
+        }
+
         if (!smallTraderUpdateDto.email().equals(oldEmail)) {
             boolean isEmailExistSmallTrader = smallTraderRepository.findByEmail(smallTraderUpdateDto.email()).isPresent();
             boolean isEmailExistsCustomer = customerRepository.findByEmail(smallTrader.getEmail()).isPresent();
@@ -115,15 +124,6 @@ public class SmallTraderServiceImpl implements SmallTraderService {
                 smallTrader.setEmail(smallTraderUpdateDto.email());
             } else {
                 throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTraderUpdateDto.email()));
-            }
-        }
-
-        if (!smallTraderUpdateDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = smallTraderRepository.findByPhoneNumber(smallTraderUpdateDto.phoneNumber()).isPresent();
-            if (!isPhoneNumberExist) {
-                smallTrader.setPhoneNumber(smallTraderUpdateDto.phoneNumber());
-            } else {
-                throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTraderUpdateDto.phoneNumber()));
             }
         }
 

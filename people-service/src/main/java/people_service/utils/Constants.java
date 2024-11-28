@@ -10,7 +10,7 @@ public class Constants {
         public static final String EMAIL_ALREADY_TAKEN = "Email with value: %s already taken";
         public static final String FAILED_TO_SEND_EMAIL = "Failed to send email to: %s";
         public static final String EMAIL_NOT_VALID = "Email with value: %s is not valid";
-        public static final String PHONE_NUMBER_ALREADY_TAKEN = "Customer with phone number: %s already taken";
+        public static final String PHONE_NUMBER_ALREADY_TAKEN = "Phone number: %s already taken";
         public static final String CUSTOMER_NOT_FOUND = "Customer with id: %s not found";
         public static final String CUSTOMER_NOT_FOUND_PHONE_NUMBER = "Customer with phone number: %s not found";
         public static final String SUPPLIER_ALREADY_TAKEN = "Supplier with tax id: %s already taken";
