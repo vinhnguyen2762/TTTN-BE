@@ -1,2 +1,5 @@
 # Bỏ qua thư mục .idea của IntelliJ IDEA
 .idea/
+
+# Ignore application.yml in all services
+**/application.yml
