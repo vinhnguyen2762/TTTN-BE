@@ -34,3 +34,6 @@ build/
 
 ### Dockerfile ###
 Dockerfile
+
+### application.yml
+/application.yml
