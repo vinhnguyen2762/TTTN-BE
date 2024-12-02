@@ -8,10 +8,12 @@ import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
 import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
+import people_service.dto.token.TokenDto;
 import people_service.model.AuthenticationRequest;
 import people_service.model.RegistrationRequest;
 import people_service.service.AuthService;
 import people_service.service.RegistrationService;
+import people_service.service.impl.JwtBlacklistService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -25,6 +27,12 @@ public class AuthenticationController {
     public ResponseEntity<SmallTraderLocalStorageDto> authenticate(@RequestBody AuthenticationRequest request) {
         SmallTraderLocalStorageDto rs = authService.login(request);
         return ResponseEntity.ok(rs);
+    }
+
+    @PostMapping("/log-out")
+    public ResponseEntity<Void> logout(@RequestBody TokenDto tokenDto) {
+        JwtBlacklistService.blacklistToken(tokenDto.token());
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/register")
@@ -59,6 +67,12 @@ public class AuthenticationController {
     @PostMapping("/confirm-password")
     private ResponseEntity<Long> confirmPassword(@RequestBody SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
         Long rs = authService.confirmPassword(smallTraderForgetPasswordDto);
+        return ResponseEntity.ok().body(rs);
+    }
+
+    @PostMapping("/check-token")
+    private ResponseEntity<Long> checkToken(@RequestBody TokenDto tokenDto) {
+        Long rs = authService.checkJWT(tokenDto);
         return ResponseEntity.ok().body(rs);
     }
 }

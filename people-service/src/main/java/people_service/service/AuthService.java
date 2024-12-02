@@ -4,6 +4,7 @@ import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
 import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
+import people_service.dto.token.TokenDto;
 import people_service.model.AuthenticationRequest;
 import people_service.model.RegistrationRequest;
 
@@ -14,4 +15,5 @@ public interface AuthService {
     public String sendCodeToEmail(String email);
     public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
     public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
+    public Long checkJWT(TokenDto tokenDto);
 }

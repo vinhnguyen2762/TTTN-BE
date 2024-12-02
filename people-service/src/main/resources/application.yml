@@ -28,4 +28,6 @@ spring:
                     starttls:
                         enable: true
         username: ahihi1230zx@gmail.com
-
+security:
+    jwt:
+        secret-key: "A2C7EA17F982FC8BA215538981A92"

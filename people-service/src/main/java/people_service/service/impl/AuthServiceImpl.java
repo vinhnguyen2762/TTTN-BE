@@ -1,16 +1,21 @@
 package people_service.service.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
 import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
+import people_service.dto.token.TokenDto;
 import people_service.exception.AccountLockedException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.AuthenticationRequest;
-import people_service.model.Customer;
 import people_service.model.SmallTrader;
 import people_service.model.RegistrationRequest;
 import people_service.repository.CustomerRepository;
@@ -20,7 +25,9 @@ import people_service.service.EmailService;
 import people_service.service.RegistrationService;
 import people_service.utils.Constants;
 
+import javax.management.relation.Role;
 import java.security.SecureRandom;
+import java.util.Date;
 
 import static people_service.utils.PasswordHashing.checkPassword;
 import static people_service.utils.PasswordHashing.hashPassword;
@@ -31,10 +38,12 @@ public class AuthServiceImpl implements AuthService {
 
     private final RegistrationService registrationService;
     private final SmallTraderRepository smallTraderRepository;
-    private final CustomerRepository customerRepository;
     private final EmailService emailService;
     private static final int OTP_LENGTH = 6;
     private final SecureRandom secureRandom = new SecureRandom();
+
+    @Value("${security.jwt.secret-key}")
+    private String secretKey;
 
     public Long register(RegistrationRequest request) {
         Long rs = registrationService.register(request);
@@ -53,7 +62,8 @@ public class AuthServiceImpl implements AuthService {
         } else if (!isMatch) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
         }
-        return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader);
+        String token = generateJwt(smallTrader.getId(), smallTrader.getRole().toString());
+        return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader, token);
     }
 
     public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto) {
@@ -93,6 +103,50 @@ public class AuthServiceImpl implements AuthService {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
         }
         return smallTrader.getId();
+    }
+
+    public Long checkJWT(TokenDto tokenDto) {
+        try {
+            // kiểm tra xem token có trong blacklist hay không
+            if (JwtBlacklistService.isTokenBlacklisted(tokenDto.token())) {
+                return 0L;
+            }
+
+            // 1. Thuật toán phải giống như khi tạo token
+            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+
+            // 2. Tạo đối tượng xác thực
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("auth0") // Xác minh claim `iss`
+                    .build();
+
+            // 3. Xác thực token, nếu đúng return 1;
+            verifier.verify(tokenDto.token());
+            return 1L;
+        } catch (JWTVerificationException exception) {
+            // Xử lý lỗi xác thực
+            return 0L;
+        }
+    }
+
+    private String generateJwt(Long id, String role) {
+        // Lấy thời gian hiện tại
+        Date now = new Date();
+
+        // Cộng thêm 1 ngày (24 giờ) vào thời gian hiện tại
+        Date expiryDate = new Date(now.getTime() + 86400000);
+        // 1. Chọn thuật toán ký (HMAC với secret key)
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+
+        // 2. Tạo token
+        String token = JWT.create()
+                .withIssuer("auth0") // Thêm claim `iss` (issuer - nơi phát hành)\
+                .withClaim("id", id) // Claim id
+                .withClaim("role", role) // Claim role
+                .withExpiresAt(expiryDate)
+                .sign(algorithm); // Ký token
+
+        return token;
     }
 
     private String buildEmailCode(String header, String code) {
