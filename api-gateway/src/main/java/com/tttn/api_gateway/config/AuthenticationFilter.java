@@ -35,6 +35,9 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("Enter authentication filter");
         // get token form authorization header
+        if (exchange.getRequest().getPath().toString().equals("/api/v1/auth/authenticate")) {
+            return chain.filter(exchange);
+        }
         List<String> authHeaders = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
         if (CollectionUtils.isEmpty(authHeaders)) {
             return unauthenticated(exchange.getResponse());
