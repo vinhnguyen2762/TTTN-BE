@@ -1,6 +1,7 @@
 package people_service.service;
 
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.email.EmailDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
 import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
@@ -12,7 +13,7 @@ public interface AuthService {
     public Long register(RegistrationRequest request);
     public SmallTraderLocalStorageDto login(AuthenticationRequest request);
     public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto);
-    public String sendCodeToEmail(String email);
+    public String sendCodeToEmail(EmailDto email);
     public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
     public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
     public Long checkJWT(TokenDto tokenDto);

@@ -26,6 +26,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private final IdentityTokenService identityTokenService;
     private final ObjectMapper objectMapper;
 
+    private static final List<String> EXCLUDED_APIS = List.of(
+            "/api/v1/auth/authenticate",
+            "/api/v1/auth/register",
+            "/api/v1/auth/confirm",
+            "/api/v1/auth/send-code",
+            "/api/v1/auth/check-code",
+            "/api/v1/auth/forget-password"
+    );
+
     public AuthenticationFilter(IdentityTokenService identityTokenService, ObjectMapper objectMapper) {
         this.identityTokenService = identityTokenService;
         this.objectMapper = objectMapper;
@@ -34,10 +43,13 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         log.info("Enter authentication filter");
-        // get token form authorization header
-        if (exchange.getRequest().getPath().toString().equals("/api/v1/auth/authenticate")) {
+
+        // take path from request
+        String requestPath = exchange.getRequest().getPath().toString();
+        if (isExcludedPath(requestPath)) {
             return chain.filter(exchange);
         }
+        // get token form authorization header
         List<String> authHeaders = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION);
         if (CollectionUtils.isEmpty(authHeaders)) {
             return unauthenticated(exchange.getResponse());
@@ -75,6 +87,10 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         response.getHeaders().add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
         return response.writeWith(Mono.just(response.bufferFactory().wrap(body.getBytes())));
+    }
+
+    private boolean isExcludedPath(String requestPath) {
+        return EXCLUDED_APIS.stream().anyMatch(requestPath::matches);
     }
 
 }

@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import people_service.dto.email.EmailDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
 import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
 import people_service.dto.smallTrader.SmallTraderLocalStorageDto;
@@ -76,9 +77,9 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
-    public String sendCodeToEmail(String email) {
+    public String sendCodeToEmail(EmailDto email) {
         String code = generateCode();
-        emailService.sendMessageWithAttachment(email, buildEmailCode("Verify your email", code));
+        emailService.sendMessageWithAttachment(email.email(), buildEmailCode("Verify your email", code));
         return code;
     }
 
