@@ -1,6 +1,7 @@
 package people_service.service.impl;
 
 import org.springframework.stereotype.Service;
+import people_service.exception.FailedException;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +12,9 @@ public class JwtBlacklistService {
 
     // Thêm token vào blacklist khi người dùng đăng xuất
     public static void blacklistToken(String token) {
+        if (token == null || token.trim().isEmpty()) {
+            throw new FailedException("Token can not null");
+        }
         blacklistedTokens.add(token);
     }
 

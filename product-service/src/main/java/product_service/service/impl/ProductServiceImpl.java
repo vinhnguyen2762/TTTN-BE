@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
                 result.add(p);
             }
         }
-        return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName())).toList();
+        return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName(), p.getPrice().toString())).toList();
     }
 
     public List<ProductNoPromotionDto> getAllProductNoPromotionSmallTrader(Long id) {
@@ -109,7 +109,7 @@ public class ProductServiceImpl implements ProductService {
                 result.add(p);
             }
         }
-        return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName())).toList();
+        return result.stream().map(p -> new ProductNoPromotionDto(p.getId(), p.getName(), p.getPrice().toString())).toList();
     }
 
     public Long addProduct(ProductAddDto productAddDto) {
