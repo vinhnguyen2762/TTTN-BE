@@ -77,6 +77,18 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    public Long checkEmail(EmailDto email) {
+        SmallTrader smallTrader = smallTraderRepository.findByEmail(email.email()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, email.email()))
+        );
+        if (smallTrader.getStatus() == false) {
+            throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, email.email()));
+        } else if (smallTrader.getLocked() == true) {
+            throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, email.email()));
+        }
+        return smallTrader.getId();
+    }
+
     public String sendCodeToEmail(EmailDto email) {
         String code = generateCode();
         emailService.sendMessageWithAttachment(email.email(), buildEmailCode("Verify your email", code));

@@ -13,6 +13,7 @@ public interface AuthService {
     public Long register(RegistrationRequest request);
     public SmallTraderLocalStorageDto login(AuthenticationRequest request);
     public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto);
+    public Long checkEmail(EmailDto email);
     public String sendCodeToEmail(EmailDto email);
     public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
     public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);

@@ -59,6 +59,12 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(rs);
     }
 
+    @PostMapping("/check-email")
+    private ResponseEntity<Long> checkEmail(@RequestBody EmailDto emailDto) {
+        Long rs = authService.checkEmail(emailDto);
+        return ResponseEntity.ok().body(rs);
+    }
+
     @PostMapping("/forget-password")
     private ResponseEntity<Long> forgetPassword(@RequestBody SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
         Long rs = authService.changeForgetPassword(smallTraderForgetPasswordDto);

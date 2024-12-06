@@ -32,6 +32,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             "/api/v1/auth/confirm",
             "/api/v1/auth/send-code",
             "/api/v1/auth/check-code",
+            "/api/v1/auth/check-email",
             "/api/v1/auth/forget-password"
     );
 
