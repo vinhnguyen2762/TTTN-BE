@@ -21,15 +21,17 @@ public class Supplier {
     private String phoneNumber;
     private String taxId;
     private Boolean status = true;
-    private Long smallTraderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "small_trader_id")
+    private SmallTrader smallTrader;
 
-    public Supplier(String firstName, String lastName, String address, String email, String phoneNumber, String taxId, Long smallTraderId) {
+    public Supplier(String firstName, String lastName, String address, String email, String phoneNumber, String taxId, SmallTrader smallTrader) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.taxId = taxId;
-        this.smallTraderId = smallTraderId;
+        this.smallTrader = smallTrader;
     }
 }

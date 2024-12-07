@@ -23,9 +23,11 @@ public class Customer {
     private String email;
     private String phoneNumber;
     private Boolean status = true;
-    private Long smallTraderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "small_trader_id")
+    private SmallTrader smallTrader;
 
-    public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, Long smallTraderId) {
+    public Customer(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, SmallTrader smallTrader) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
@@ -33,6 +35,6 @@ public class Customer {
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.smallTraderId = smallTraderId;
+        this.smallTrader = smallTrader;
     }
 }

@@ -8,6 +8,7 @@ import people_service.exception.AccountLockedException;
 import people_service.exception.DuplicateException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
+import people_service.model.SmallTrader;
 import people_service.model.Supplier;
 import people_service.repository.SmallTraderRepository;
 import people_service.repository.SupplierRepository;
@@ -54,6 +55,9 @@ public class SupplierServiceImpl implements SupplierService {
             throw new NotFoundException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierAddDto.email()));
         }
 
+        SmallTrader smallTrader = smallTraderRepository.findById(supplierAddDto.smallTraderId()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, supplierAddDto.smallTraderId())));
+
         Supplier supplierAdd = new Supplier(
                 supplierAddDto.firstName(),
                 supplierAddDto.lastName(),
@@ -61,7 +65,7 @@ public class SupplierServiceImpl implements SupplierService {
                 supplierAddDto.email(),
                 supplierAddDto.phoneNumber(),
                 supplierAddDto.taxId(),
-                supplierAddDto.smallTraderId());
+                smallTrader);
         supplierRepository.saveAndFlush(supplierAdd);
         return supplierAdd.getId();
     }

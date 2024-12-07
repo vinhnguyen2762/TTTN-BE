@@ -26,7 +26,7 @@ public record CustomerAdminDto(
                 gender,
                 customer.getDateOfBirth().format(formatter),
                 customer.getEmail(),
-                customer.getSmallTraderId()
+                customer.getSmallTrader().getId()
         );
     }
 }

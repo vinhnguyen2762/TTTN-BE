@@ -9,6 +9,7 @@ import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.Customer;
+import people_service.model.SmallTrader;
 import people_service.repository.CustomerRepository;
 import people_service.repository.SmallTraderRepository;
 import people_service.service.CustomerService;
@@ -56,6 +57,8 @@ public class CustomerServiceImpl implements CustomerService {
 
         LocalDate date = LocalDate.parse(customerAddDto.dateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
         Gender gender = customerAddDto.gender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
+        SmallTrader smallTrader = smallTraderRepository.findById(customerAddDto.smallTraderId()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.SMALL_TRADER_NOT_FOUND, customerAddDto.smallTraderId())));
 
         Customer customerAdd = new Customer(
                 customerAddDto.firstName(),
@@ -65,7 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
                 customerAddDto.address(),
                 customerAddDto.phoneNumber(),
                 customerAddDto.email(),
-                customerAddDto.smallTraderId());
+                smallTrader);
         customerRepository.saveAndFlush(customerAdd);
         return customerAdd.getId();
     }

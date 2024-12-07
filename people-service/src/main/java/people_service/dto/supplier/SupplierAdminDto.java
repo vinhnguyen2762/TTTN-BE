@@ -24,7 +24,7 @@ public record SupplierAdminDto(
                 supplier.getEmail(),
                 supplier.getPhoneNumber(),
                 supplier.getTaxId(),
-                supplier.getSmallTraderId()
+                supplier.getSmallTrader().getId()
         );
     }
 }
