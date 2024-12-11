@@ -24,6 +24,7 @@ public class SmallTrader {
     private LocalDate dateOfBirth;
     private Gender gender;
     private String address;
+    @Column(unique = true)
     private String phoneNumber;
     @Column(unique = true)
     private String email;
