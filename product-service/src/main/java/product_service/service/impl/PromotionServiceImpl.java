@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import product_service.dto.smallTrader.SmallTraderAdminDto;
 import product_service.dto.promotion.PromotionAddDto;
 import product_service.dto.promotion.PromotionAdminDto;
-import product_service.dto.promotion.PromotionPostDto;
 import product_service.dto.promotionDetail.PromotionDetailAdminDto;
 import product_service.dto.promotionDetail.PromotionDetailPostDto;
 import product_service.enums.PromotionStatus;
@@ -66,6 +65,11 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     public Long addPromotion(PromotionAddDto promotionAddDto) {
+        Boolean isExist = promotionRepository.findByNameSmallTraderId(promotionAddDto.smallTraderId(), promotionAddDto.name()).isPresent();
+        if (isExist) {
+            throw new DuplicateException(String.format(Constants.ErrorMessage.PROMOTION_ALREADY_TAKEN, promotionAddDto.name()));
+        }
+
         LocalDate today = LocalDate.now();
         LocalDate startDate = LocalDate.parse(promotionAddDto.startDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate endDate = LocalDate.parse(promotionAddDto.endDate(), DateTimeFormatter.ISO_LOCAL_DATE);
@@ -116,24 +120,36 @@ public class PromotionServiceImpl implements PromotionService {
         return promotion.getId();
     }
 
-    public Long updatePromotion(Long id, PromotionPostDto promotionPostDto) {
+    public Long updatePromotion(Long id, PromotionAddDto promotionAddDto) {
         Promotion promotion = promotionRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id)));
         if (promotion.getStatus().name().equals("DELETED")) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.PROMOTION_NOT_FOUND, id));
         }
 
-        PromotionType type = promotionPostDto.type().equals("Phần trăm") ? PromotionType.PERCENTAGE : PromotionType.FIXED_AMOUNT;
-        Long value = Long.parseLong(promotionPostDto.value());
+        String oldName = promotion.getName();
 
-        LocalDate startDate = LocalDate.parse(promotionPostDto.startDate(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalDate endDate = LocalDate.parse(promotionPostDto.endDate(), DateTimeFormatter.ISO_LOCAL_DATE);
+        // if name is new, check if name exist
+        if (!promotionAddDto.name().equals(oldName)) {
+            Boolean isExist = promotionRepository.findByNameSmallTraderId(promotionAddDto.smallTraderId(), promotionAddDto.name()).isPresent();
+            if (!isExist) {
+                promotion.setName(promotionAddDto.name());
+            } else {
+                throw new DuplicateException(String.format(Constants.ErrorMessage.PROMOTION_ALREADY_TAKEN, promotionAddDto.name()));
+            }
+        }
+
+        PromotionType type = promotionAddDto.type().equals("Phần trăm") ? PromotionType.PERCENTAGE : PromotionType.FIXED_AMOUNT;
+        Long value = Long.parseLong(promotionAddDto.value());
+
+        LocalDate startDate = LocalDate.parse(promotionAddDto.startDate(), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate endDate = LocalDate.parse(promotionAddDto.endDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         if (startDate.isAfter(endDate)) {
             throw new FailedException(("Start date is after end date"));
         }
 
-        promotion.setName(promotionPostDto.name());
-        promotion.setDescription(promotionPostDto.description());
+        promotion.setName(promotionAddDto.name());
+        promotion.setDescription(promotionAddDto.description());
         promotion.setType(type);
         promotion.setValue(value);
         promotion.setStartDate(startDate);
@@ -142,7 +158,7 @@ public class PromotionServiceImpl implements PromotionService {
         List<PromotionDetail> updateList = promotion.getPromotionDetailList();
         updateList.clear();
 
-        for (PromotionDetailPostDto item : promotionPostDto.list()) {
+        for (PromotionDetailPostDto item : promotionAddDto.list()) {
             Product product = productRepository.findById(item.productId()).orElseThrow(
                     () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId())));
             if (product.getStatus() == false) {
@@ -153,7 +169,7 @@ public class PromotionServiceImpl implements PromotionService {
             }
         }
 
-        for (PromotionDetailPostDto item : promotionPostDto.list()) {
+        for (PromotionDetailPostDto item : promotionAddDto.list()) {
             Product product = productRepository.findById(item.productId()).orElseThrow(
                     () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId())));
             PromotionDetail promotionDetail = new PromotionDetail(

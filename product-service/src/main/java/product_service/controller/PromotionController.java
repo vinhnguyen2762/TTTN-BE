@@ -3,13 +3,8 @@ package product_service.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import product_service.dto.order.OrderAddDto;
-import product_service.dto.order.OrderAdminDto;
-import product_service.dto.order.OrderUpdateDto;
-import product_service.dto.product.ProductAdminDto;
 import product_service.dto.promotion.PromotionAddDto;
 import product_service.dto.promotion.PromotionAdminDto;
-import product_service.dto.promotion.PromotionPostDto;
 import product_service.service.PromotionService;
 
 import java.util.List;
@@ -42,8 +37,8 @@ public class PromotionController {
     }
 
     @PutMapping ("/update/{id}")
-    public ResponseEntity<Long> updateOrder(@PathVariable Long id, @RequestBody PromotionPostDto promotionPostDto) {
-        Long rs = promotionService.updatePromotion(id, promotionPostDto);
+    public ResponseEntity<Long> updateOrder(@PathVariable Long id, @RequestBody PromotionAddDto promotionAddDto) {
+        Long rs = promotionService.updatePromotion(id, promotionAddDto);
         return ResponseEntity.ok().body(rs);
     }
 

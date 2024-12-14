@@ -13,6 +13,7 @@ public class Constants {
         public static final String ORDER_ALREADY_PAID = "Order with id: %s already paid";
         public static final String PURCHASE_ORDER_ALREADY_PAID = "Purchase order with id: %s already paid";
         public static final String PROMOTION_NOT_FOUND = "Promotion with id: %s not found";
+        public static final String PROMOTION_ALREADY_TAKEN = "Promotion with name: %s already taken";
         public static final String PRODUCT_ALREADY_HAS_PROMOTION = "Some product already has promotion";
         public static final String PROMOTION_VALUE_NOT_VALID = "Promotion value is more than product price";
 
