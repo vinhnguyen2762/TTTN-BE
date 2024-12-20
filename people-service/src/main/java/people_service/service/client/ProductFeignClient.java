@@ -9,4 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ProductFeignClient {
     @GetMapping("/order/customer/{id}")
     ResponseEntity<Boolean> checkCustomerHasOrder(@PathVariable Long id);
+
+    @GetMapping("/purchase-order/supplier/{id}")
+    ResponseEntity<Boolean> checkSupplierHasPurchaseOrder(@PathVariable Long id);
 }

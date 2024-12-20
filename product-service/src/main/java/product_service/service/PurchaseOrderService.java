@@ -13,4 +13,5 @@ public interface PurchaseOrderService {
     public Long deletePurchaseOrder(Long id);
     public Long payPurchaseOrder(Long id);
     public List<PurchaseOrderAdminDto> getAllPurchaseOrderSmallTraderId(Long id);
+    public Boolean checkSupplierHasPurchaseOrder(Long id);
 }

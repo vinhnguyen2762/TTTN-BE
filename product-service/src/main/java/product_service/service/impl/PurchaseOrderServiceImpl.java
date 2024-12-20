@@ -56,9 +56,6 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             List<PurchaseOrderDetailAdminDto> list = p.getPurchaseOrderDetails().stream().map(pd -> {
                 Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
-                if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
-                }
                 String productName = product.getName();
                 return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
             }).toList();
@@ -186,14 +183,16 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
             List<PurchaseOrderDetailAdminDto> list = p.getPurchaseOrderDetails().stream().map(pd -> {
                 Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
-                if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
-                }
                 String productName = product.getName();
                 return PurchaseOrderDetailAdminDto.fromPurchaseOrderDetail(pd, productName);
             }).toList();
             return PurchaseOrderAdminDto.fromPurchaseOrder(p, supplierAdminDto.taxId(),supplierName, list, smallTraderName);
         }).toList();
+    }
+    @Override
+    public Boolean checkSupplierHasPurchaseOrder(Long id) {
+        List<PurchaseOrder> rs = purchaseOrderRepository.findBySupplierId(id);
+        return rs.isEmpty() ? false : true;
     }
 
     private SupplierAdminDto findSupplierById(Long id) {

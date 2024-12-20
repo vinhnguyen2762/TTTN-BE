@@ -59,4 +59,10 @@ public class PurchaseOrderController {
         Long payId = purchaseOrderService.payPurchaseOrder(id);
         return ResponseEntity.ok().body(payId);
     }
+
+    @GetMapping("/supplier/{id}")
+    public ResponseEntity<Boolean> checkSupplierHasPurchaseOrder(@PathVariable Long id) {
+        Boolean rs = purchaseOrderService.checkSupplierHasPurchaseOrder(id);
+        return ResponseEntity.ok().body(rs);
+    }
 }

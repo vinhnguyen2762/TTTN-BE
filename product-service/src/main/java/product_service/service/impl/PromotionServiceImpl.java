@@ -47,9 +47,6 @@ public class PromotionServiceImpl implements PromotionService {
             List<PromotionDetailAdminDto> list = p.getPromotionDetailList().stream().map(pd -> {
                 Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
-                if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
-                }
                 String productName = product.getName();
                 Long originalPrice = product.getPrice();
                 Long discountPrice;
@@ -91,7 +88,6 @@ public class PromotionServiceImpl implements PromotionService {
                 endDate,
                 promotionAddDto.smallTraderId()
         );
-        promotionRepository.saveAndFlush(promotion);
 
         List<PromotionDetail> promotionDetailList = new ArrayList<>();
 
@@ -101,7 +97,7 @@ public class PromotionServiceImpl implements PromotionService {
             if (product.getStatus() == false) {
                 throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, item.productId()));
             }
-            if (product.getPrice() < value) {
+            if (!promotionAddDto.type().equals("Phần trăm") && product.getPrice() < value) {
                 throw new EmptyException(String.format(Constants.ErrorMessage.PROMOTION_VALUE_NOT_VALID));
             }
         }
@@ -115,6 +111,7 @@ public class PromotionServiceImpl implements PromotionService {
             );
             promotionDetailList.add(promotionDetail);
         }
+        promotionRepository.saveAndFlush(promotion);
         promotionDetailRepository.saveAll(promotionDetailList);
 
         return promotion.getId();
@@ -233,9 +230,6 @@ public class PromotionServiceImpl implements PromotionService {
             List<PromotionDetailAdminDto> list = p.getPromotionDetailList().stream().map(pd -> {
                 Product product = productRepository.findById(pd.getProduct().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId())));
-                if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, pd.getProduct().getId()));
-                }
                 String productName = product.getName();
                 Long originalPrice = product.getPrice();
                 Long discountPrice;

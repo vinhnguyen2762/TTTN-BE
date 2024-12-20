@@ -13,6 +13,7 @@ import people_service.model.Supplier;
 import people_service.repository.SmallTraderRepository;
 import people_service.repository.SupplierRepository;
 import people_service.service.SupplierService;
+import people_service.service.client.ProductFeignClient;
 import people_service.utils.Constants;
 
 import java.util.List;
@@ -22,10 +23,12 @@ public class SupplierServiceImpl implements SupplierService {
 
     private final SupplierRepository supplierRepository;
     private final SmallTraderRepository smallTraderRepository;
+    private final ProductFeignClient productFeignClient;
 
-    public SupplierServiceImpl(SupplierRepository supplierRepository, SmallTraderRepository smallTraderRepository) {
+    public SupplierServiceImpl(SupplierRepository supplierRepository, SmallTraderRepository smallTraderRepository, ProductFeignClient productFeignClient) {
         this.supplierRepository = supplierRepository;
         this.smallTraderRepository = smallTraderRepository;
+        this.productFeignClient = productFeignClient;
     }
 
     public List<SupplierAdminDto> getAllSupplierAdmin() {
@@ -123,8 +126,13 @@ public class SupplierServiceImpl implements SupplierService {
         if (supplier.getStatus() == false) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.SUPPLIER_NOT_FOUND, id));
         }
-        supplier.setStatus(false);
-        supplierRepository.saveAndFlush(supplier);
+        if (checkSupplierHasPurchaseOrder(id)) {
+            supplier.setStatus(false);
+            supplierRepository.saveAndFlush(supplier);
+        }
+        else {
+            supplierRepository.delete(supplier);
+        }
         return supplier.getId();
     }
 
@@ -146,6 +154,11 @@ public class SupplierServiceImpl implements SupplierService {
 
     public Long countSupplierSmallTrader(Long id) {
         Long rs = supplierRepository.countSupplierSmallTrader(id);
+        return rs;
+    }
+
+    private Boolean checkSupplierHasPurchaseOrder(Long id) {
+        Boolean rs = productFeignClient.checkSupplierHasPurchaseOrder(id).getBody();
         return rs;
     }
 }

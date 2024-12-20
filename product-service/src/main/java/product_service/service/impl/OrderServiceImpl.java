@@ -57,9 +57,6 @@ public class OrderServiceImpl implements OrderService {
             List<OrderDetailAdminDto> list = o.getOrderDetails().stream().map(od -> {
                 Product product = productRepository.findById(od.getProduct().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId())));
-                if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId()));
-                }
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
             }).toList();
@@ -196,9 +193,6 @@ public class OrderServiceImpl implements OrderService {
             List<OrderDetailAdminDto> list = o.getOrderDetails().stream().map(od -> {
                 Product product = productRepository.findById(od.getProduct().getId()).orElseThrow(
                         () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId())));
-                if (product.getStatus() == false) {
-                    throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, od.getProduct().getId()));
-                }
                 String productName = product.getName();
                 return OrderDetailAdminDto.fromOderDetail(od, productName);
             }).toList();
