@@ -23,26 +23,10 @@ public interface SupplierRepository extends JpaRepository<Supplier, Long> {
             where s.status = true and s.smallTrader.id = :id
             """)
     List<Supplier> findBySmallTraderId(@Param("id") Long id);
+    Optional<Supplier> findByTaxId(String taxId);
+    Optional<Supplier> findByEmail(String email);
 
-    @Query("""
-            select s
-            from Supplier s
-            where s.smallTrader.id = :id and s.taxId = :taxId
-            """)
-    Optional<Supplier> findByTaxIdSmallTraderId(@Param("id") Long id, @Param("taxId") String taxId);
-    @Query("""
-            select s
-            from Supplier s
-            where s.smallTrader.id = :id and s.email = :email
-            """)
-    Optional<Supplier> findByEmailSmallTraderId(@Param("id") Long id, @Param("email") String email);
-
-    @Query("""
-            select s
-            from Supplier s
-            where s.smallTrader.id = :id and s.phoneNumber = :phoneNumber
-            """)
-    Optional<Supplier> findByPhoneNumberSmallTraderId(@Param("id") Long id, @Param("phoneNumber") String phoneNumber);
+    Optional<Supplier> findByPhoneNumber(String phoneNumber);
 
     @Query("""
             select s

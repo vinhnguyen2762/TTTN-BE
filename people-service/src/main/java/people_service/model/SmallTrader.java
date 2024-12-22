@@ -40,6 +40,8 @@ public class SmallTrader {
     private List<Supplier> supplierList = new ArrayList<>();
     @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Customer> customerList = new ArrayList<>();
+    @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Employee> employeeList = new ArrayList<>();
 
     public SmallTrader(String firstName, String lastName, LocalDate dateOfBirth, Gender gender, String address, String phoneNumber, String email, String password) {
         this.firstName = firstName;

@@ -43,17 +43,17 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     public Long addSupplier(SupplierAddDto supplierAddDto) {
-        Boolean isTaxIdExist = supplierRepository.findByTaxIdSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.taxId()).isPresent();
+        Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierAddDto.taxId()).isPresent();
         if (isTaxIdExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.SUPPLIER_ALREADY_TAKEN, supplierAddDto.taxId()));
         }
 
-        Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumberSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.phoneNumber()).isPresent();
+        Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumber(supplierAddDto.phoneNumber()).isPresent();
         if (isPhoneNumberExist) {
             throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, supplierAddDto.phoneNumber()));
         }
 
-        Boolean isEmailExist = supplierRepository.findByEmailSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.email()).isPresent();
+        Boolean isEmailExist = supplierRepository.findByEmail(supplierAddDto.email()).isPresent();
         if (isEmailExist) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, supplierAddDto.email()));
         }
@@ -85,7 +85,7 @@ public class SupplierServiceImpl implements SupplierService {
         String oldEmail = supplier.getEmail();
 
         if (!supplierAddDto.taxId().equals(oldTaxId)) {
-            Boolean isTaxIdExist = supplierRepository.findByTaxIdSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.taxId()).isPresent();
+            Boolean isTaxIdExist = supplierRepository.findByTaxId(supplierAddDto.taxId()).isPresent();
             if (!isTaxIdExist) {
                 supplier.setTaxId(supplierAddDto.taxId());
             } else {
@@ -95,7 +95,7 @@ public class SupplierServiceImpl implements SupplierService {
 
         // if phone number is new, check if the new phone number exist
         if (!supplierAddDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumberSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.phoneNumber()).isPresent();
+            Boolean isPhoneNumberExist = supplierRepository.findByPhoneNumber(supplierAddDto.phoneNumber()).isPresent();
             if (!isPhoneNumberExist) {
                 supplier.setPhoneNumber(supplierAddDto.phoneNumber());
             } else {
@@ -105,7 +105,7 @@ public class SupplierServiceImpl implements SupplierService {
 
         // if email is new, check if the new email exist
         if (!supplierAddDto.email().equals(oldEmail)) {
-            Boolean isEmailExist = supplierRepository.findByEmailSmallTraderId(supplierAddDto.smallTraderId(), supplierAddDto.email()).isPresent();
+            Boolean isEmailExist = supplierRepository.findByEmail(supplierAddDto.email()).isPresent();
             if (!isEmailExist) {
                 supplier.setEmail(supplierAddDto.email());
             } else {

@@ -1,6 +1,6 @@
-package people_service.dto.customer;
+package people_service.dto.employee;
 
-public record CustomerRegisterDto(
+public record EmployeeAddDto(
         String firstName,
         String lastName,
         String dateOfBirth,
@@ -8,6 +8,6 @@ public record CustomerRegisterDto(
         String address,
         String phoneNumber,
         String email,
-        String password
+        Long smallTraderId
 ) {
 }

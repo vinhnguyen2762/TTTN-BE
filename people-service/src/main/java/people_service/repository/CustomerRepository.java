@@ -10,19 +10,7 @@ import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findByEmail(String email);
-    @Query("""
-            select c
-            from Customer c
-            where c.smallTrader.id = :id and c.email = :email
-            """)
-    Optional<Customer> findByEmailSmallTraderId(@Param("id") Long id, @Param("email") String email);
-
-    @Query("""
-            select c
-            from Customer c
-            where c.smallTrader.id = :id and c.phoneNumber = :phoneNumber
-            """)
-    Optional<Customer> findByPhoneNumberSmallTraderId(@Param("id") Long id, @Param("phoneNumber") String phoneNumber);
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
 
     @Query("""
             select c

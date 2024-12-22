@@ -17,9 +17,11 @@ import people_service.exception.AccountLockedException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.AuthenticationRequest;
+import people_service.model.Employee;
 import people_service.model.SmallTrader;
 import people_service.model.RegistrationRequest;
 import people_service.repository.CustomerRepository;
+import people_service.repository.EmployeeRepository;
 import people_service.repository.SmallTraderRepository;
 import people_service.service.AuthService;
 import people_service.service.EmailService;
@@ -39,6 +41,7 @@ public class AuthServiceImpl implements AuthService {
 
     private final RegistrationService registrationService;
     private final SmallTraderRepository smallTraderRepository;
+    private final EmployeeRepository employeeRepository;
     private final EmailService emailService;
     private static final int OTP_LENGTH = 6;
     private final SecureRandom secureRandom = new SecureRandom();
@@ -52,19 +55,42 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public SmallTraderLocalStorageDto login(AuthenticationRequest request) {
-        SmallTrader smallTrader = smallTraderRepository.findByEmail(request.getEmail()).orElseThrow(
-                () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, request.getEmail()))
-        );
-        boolean isMatch = checkPassword(request.getPassword(), smallTrader.getPassword());
-        if (smallTrader.getStatus() == false) {
-            throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, request.getEmail()));
-        } else if (smallTrader.getLocked() == true) {
-            throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
-        } else if (!isMatch) {
-            throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
+        boolean isExistSmallTrader = smallTraderRepository.findByEmail(request.getEmail()).isPresent();
+        boolean isExistEmployee = employeeRepository.findByEmail(request.getEmail()).isPresent();
+
+        if (!isExistSmallTrader && !isExistEmployee) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, request.getEmail()));
         }
-        String token = generateJwt(smallTrader.getId(), smallTrader.getRole().toString());
-        return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader, token);
+
+        // if user is small trader
+        if (isExistSmallTrader) {
+            SmallTrader smallTrader = smallTraderRepository.findByEmail(request.getEmail()).orElseThrow();
+            boolean isMatch = checkPassword(request.getPassword(), smallTrader.getPassword());
+            if (smallTrader.getStatus() == false) {
+                throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, request.getEmail()));
+            } else if (smallTrader.getLocked() == true) {
+                throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
+            } else if (!isMatch) {
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
+            }
+            String token = generateJwt(smallTrader.getId(), smallTrader.getRole().toString());
+            return SmallTraderLocalStorageDto.fromSmallTrader(smallTrader.getId(), token, smallTrader.getRole().name());
+        }
+
+        // if user is employee
+        else {
+            Employee employee = employeeRepository.findByEmail(request.getEmail()).orElseThrow();
+            boolean isMatch = checkPassword(request.getPassword(), employee.getPassword());
+            if (employee.getStatus() == false) {
+                throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, request.getEmail()));
+            } else if (employee.getLocked() == true) {
+                throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, request.getEmail()));
+            } else if (!isMatch) {
+                throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
+            }
+            String token = generateJwt(employee.getId(), employee.getRole().toString());
+            return SmallTraderLocalStorageDto.fromSmallTrader(employee.getId(), token, employee.getRole().name());
+        }
     }
 
     public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto) {
@@ -78,15 +104,34 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public Long checkEmail(EmailDto email) {
-        SmallTrader smallTrader = smallTraderRepository.findByEmail(email.email()).orElseThrow(
-                () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, email.email()))
-        );
-        if (smallTrader.getStatus() == false) {
-            throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, email.email()));
-        } else if (smallTrader.getLocked() == true) {
-            throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, email.email()));
+        boolean isExistSmallTrader = smallTraderRepository.findByEmail(email.email()).isPresent();
+        boolean isExistEmployee = employeeRepository.findByEmail(email.email()).isPresent();
+
+        if (!isExistSmallTrader && !isExistEmployee) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, email.email()));
         }
-        return smallTrader.getId();
+
+        // if user is small trader
+        if (isExistSmallTrader) {
+            SmallTrader smallTrader = smallTraderRepository.findByEmail(email.email()).orElseThrow();
+            if (smallTrader.getStatus() == false) {
+                throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, email.email()));
+            } else if (smallTrader.getLocked() == true) {
+                throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, email.email()));
+            }
+            return smallTrader.getId();
+        }
+
+        // if user is employee
+        else {
+            Employee employee = employeeRepository.findByEmail(email.email()).orElseThrow();
+            if (employee.getStatus() == false) {
+                throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, email.email()));
+            } else if (employee.getLocked() == true) {
+                throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, email.email()));
+            }
+            return employee.getId();
+        }
     }
 
     public String sendCodeToEmail(EmailDto email) {

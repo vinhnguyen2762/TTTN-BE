@@ -4,12 +4,14 @@ import people_service.model.SmallTrader;
 
 public record SmallTraderLocalStorageDto(
         Long id,
-        String token
+        String token,
+        String role
 ) {
-    public static SmallTraderLocalStorageDto fromSmallTrader(SmallTrader smallTrader, String token) {
+    public static SmallTraderLocalStorageDto fromSmallTrader(Long id, String token, String role) {
         return new SmallTraderLocalStorageDto(
-                smallTrader.getId(),
-                token
+                id,
+                token,
+                role
         );
     }
 }

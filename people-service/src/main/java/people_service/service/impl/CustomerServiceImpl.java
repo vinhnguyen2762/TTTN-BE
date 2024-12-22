@@ -45,12 +45,12 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     public Long addCustomer(CustomerAddDto customerAddDto) {
-        boolean isPhoneNumberExist = customerRepository.findByPhoneNumberSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.phoneNumber()).isPresent();
+        boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerAddDto.phoneNumber()).isPresent();
         if (isPhoneNumberExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, customerAddDto.phoneNumber()));
         }
 
-        boolean isEmailExistsCustomer = customerRepository.findByEmailSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.email()).isPresent();
+        boolean isEmailExistsCustomer = customerRepository.findByEmail(customerAddDto.email()).isPresent();
         if (isEmailExistsCustomer) {
             throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, customerAddDto.email()));
         }
@@ -88,7 +88,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         // if phone number is new, check if the new phone number exist
         if (!customerAddDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = customerRepository.findByPhoneNumberSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.phoneNumber()).isPresent();
+            Boolean isPhoneNumberExist = customerRepository.findByPhoneNumber(customerAddDto.phoneNumber()).isPresent();
             if (!isPhoneNumberExist) {
                 customer.setPhoneNumber(customerAddDto.phoneNumber());
             } else {
@@ -98,7 +98,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         // if email is new, check if the new email exist
         if (!customerAddDto.email().equals(oldEmail)) {
-            boolean isEmailExistsCustomer = customerRepository.findByEmailSmallTraderId(customerAddDto.smallTraderId(), customerAddDto.email()).isPresent();
+            boolean isEmailExistsCustomer = customerRepository.findByEmail(customerAddDto.email()).isPresent();
             if (!isEmailExistsCustomer) {
                 customer.setEmail(customerAddDto.email());
             } else {
