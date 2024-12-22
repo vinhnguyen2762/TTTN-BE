@@ -43,9 +43,6 @@ public class StatisticsServiceImpl implements StatisticsService {
             Long revenue = (Long) item[1];
             Product product = productRepository.findById(id).orElseThrow(
                     () -> new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id)));
-            if (product.getStatus() == false) {
-                throw new NotFoundException(String.format(Constants.ErrorMessage.PRODUCT_NOT_FOUND, id));
-            }
             String productName = product.getName();
             RevenueProduct revenueProduct = new RevenueProduct(
                     id,
