@@ -84,8 +84,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // if phone number is new, check if the new phone number exist
         if (!employeeAddDto.phoneNumber().equals(oldPhoneNumber)) {
-            Boolean isPhoneNumberExist = employeeRepository.findByPhoneNumber(employeeAddDto.phoneNumber()).isPresent();
-            if (!isPhoneNumberExist) {
+            Boolean isPhoneNumberExistEmployee = employeeRepository.findByPhoneNumber(employeeAddDto.phoneNumber()).isPresent();
+            Boolean isPhoneNumberExistSmallTrader = smallTraderRepository.findByPhoneNumber(employeeAddDto.phoneNumber()).isPresent();
+            if (!isPhoneNumberExistEmployee && !isPhoneNumberExistSmallTrader) {
                 employee.setPhoneNumber(employeeAddDto.phoneNumber());
             } else {
                 throw new FailedException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, employeeAddDto.phoneNumber()));
@@ -96,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (!employeeAddDto.email().equals(oldEmail)) {
             boolean isEmailExistsCustomer = employeeRepository.findByEmail(employeeAddDto.email()).isPresent();
             boolean isExistSmallTrader = smallTraderRepository.findByEmail(employeeAddDto.email()).isPresent();
-            if (!isEmailExistsCustomer || isExistSmallTrader) {
+            if (!isEmailExistsCustomer && !isExistSmallTrader) {
                 employee.setEmail(employeeAddDto.email());
             } else {
                 throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, employeeAddDto.email()));
