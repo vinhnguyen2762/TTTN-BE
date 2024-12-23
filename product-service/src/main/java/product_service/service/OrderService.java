@@ -2,6 +2,7 @@ package product_service.service;
 
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
+import product_service.dto.order.OrderDebt;
 import product_service.dto.order.OrderUpdateDto;
 import product_service.dto.purchaseOrder.PurchaseOrderAdminDto;
 import product_service.dto.revenue.RevenueRequest;
@@ -17,4 +18,5 @@ public interface OrderService {
     public Long payOrder(Long id);
     public Boolean checkCustomerHasOrder(Long id);
     public List<OrderAdminDto> getAllOrderSmallTraderId(Long id);
+    public List<OrderDebt> getCustomerDebtOrder(Long id);
 }

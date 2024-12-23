@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
+import product_service.dto.order.OrderDebt;
 import product_service.dto.order.OrderUpdateDto;
 import product_service.service.OrderService;
 
@@ -59,6 +60,12 @@ public class OrderController {
     @GetMapping("/customer/{id}")
     public ResponseEntity<Boolean> checkCustomerHasOrder(@PathVariable Long id) {
         Boolean rs = orderService.checkCustomerHasOrder(id);
+        return ResponseEntity.ok().body(rs);
+    }
+
+    @GetMapping("/customer/debt/{id}")
+    public ResponseEntity<List<OrderDebt>> getCustomerOrderDebt(@PathVariable Long id) {
+        List<OrderDebt> rs = orderService.getCustomerDebtOrder(id);
         return ResponseEntity.ok().body(rs);
     }
 }

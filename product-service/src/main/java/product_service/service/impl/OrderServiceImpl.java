@@ -2,6 +2,7 @@ package product_service.service.impl;
 
 import org.springframework.stereotype.Service;
 import product_service.dto.customer.CustomerAdminDto;
+import product_service.dto.order.OrderDebt;
 import product_service.dto.smallTrader.SmallTraderAdminDto;
 import product_service.dto.order.OrderAddDto;
 import product_service.dto.order.OrderAdminDto;
@@ -202,6 +203,11 @@ public class OrderServiceImpl implements OrderService {
             }).toList();
             return OrderAdminDto.fromOrder(o, customerName, smallTraderName, phoneNumber, list, smallTraderPhoneNumber);
         }).toList();
+    }
+
+    public List<OrderDebt> getCustomerDebtOrder(Long id) {
+        List<Order> list = orderRepository.customerDebtOrder(id);
+        return list.stream().map(OrderDebt::fromOrder).toList();
     }
 
     private SmallTraderAdminDto findSmallTraderById(Long id) {

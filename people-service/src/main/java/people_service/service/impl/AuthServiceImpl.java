@@ -163,6 +163,21 @@ public class AuthServiceImpl implements AuthService {
         return smallTrader.getId();
     }
 
+    public Long confirmPasswordEmployee(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
+        Employee employee = employeeRepository.findById(smallTraderForgetPasswordDto.id()).orElseThrow(
+                () -> new NotFoundException(String.format(Constants.ErrorMessage.EMPLOYEE_NOT_FOUND, smallTraderForgetPasswordDto.id()))
+        );
+        boolean isMatch = checkPassword(smallTraderForgetPasswordDto.newPassword(), employee.getPassword());
+        if (employee.getStatus() == false) {
+            throw new FailedException(String.format(Constants.ErrorMessage.USER_NOT_EXIST, employee.getEmail()));
+        } else if (employee.getLocked() == true) {
+            throw new AccountLockedException(String.format(Constants.ErrorMessage.ACCOUNT_IS_LOCKED, employee.getEmail()));
+        } else if (!isMatch) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.PASSWORD_NOT_CORRECT));
+        }
+        return employee.getId();
+    }
+
     public Long checkJWT(TokenDto tokenDto) {
         try {
             // kiểm tra xem token có trong blacklist hay không

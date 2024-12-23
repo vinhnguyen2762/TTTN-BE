@@ -55,4 +55,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             AND o.smallTraderId = :id
             """)
     Long countOrdersByStatusAndMonth(@Param("year") Integer year, @Param("month") Integer month, @Param("id") Long id);
+
+    @Query("""
+            select o
+            from Order o
+            left join fetch o.orderDetails
+            where o.customerId = :id and o.status = 'PENDING'
+            """)
+    List<Order> customerDebtOrder(@Param("id") Long id);
 }

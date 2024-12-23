@@ -14,6 +14,7 @@ public record EmployeeAdminDto(
         String gender,
         String dateOfBirth,
         String email,
+        Boolean accountLocked,
         Long smallTraderId
 ) {
     public static EmployeeAdminDto fromEmployee(Employee employee) {
@@ -28,6 +29,7 @@ public record EmployeeAdminDto(
                 gender,
                 employee.getDateOfBirth().format(formatter),
                 employee.getEmail(),
+                employee.getLocked(),
                 employee.getSmallTrader().getId()
         );
     }

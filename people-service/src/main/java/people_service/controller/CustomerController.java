@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerDebtDto;
 import people_service.dto.customer.CustomerSearchDto;
 import people_service.service.CustomerService;
 
@@ -29,6 +30,12 @@ public class CustomerController {
     @GetMapping("/get-all/{id}")
     public ResponseEntity<List<CustomerAdminDto>> getAllCustomerAdmin(@PathVariable Long id) {
         List<CustomerAdminDto> list = customerService.getAllCustomerSmallTrader(id);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping("/get-all/debt/{id}")
+    public ResponseEntity<List<CustomerDebtDto>> getAllCustomerDebt(@PathVariable Long id) {
+        List<CustomerDebtDto> list = customerService.getAllCustomerDebt(id);
         return ResponseEntity.ok().body(list);
     }
 

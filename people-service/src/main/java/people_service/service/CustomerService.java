@@ -2,6 +2,7 @@ package people_service.service;
 
 import people_service.dto.customer.CustomerAddDto;
 import people_service.dto.customer.CustomerAdminDto;
+import people_service.dto.customer.CustomerDebtDto;
 import people_service.dto.customer.CustomerSearchDto;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface CustomerService {
     public CustomerAdminDto findById(Long id);
     public CustomerSearchDto findByPhoneNumberSearch(String phoneNumber);
     public Long countCustomerSmallTrader(Long id);
+    public List<CustomerDebtDto> getAllCustomerDebt(Long id);
+
 }

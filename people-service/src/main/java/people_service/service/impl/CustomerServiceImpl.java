@@ -2,9 +2,7 @@ package people_service.service.impl;
 
 
 import org.springframework.stereotype.Service;
-import people_service.dto.customer.CustomerAddDto;
-import people_service.dto.customer.CustomerAdminDto;
-import people_service.dto.customer.CustomerSearchDto;
+import people_service.dto.customer.*;
 import people_service.enums.Gender;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
@@ -152,8 +150,22 @@ public class CustomerServiceImpl implements CustomerService {
         return rs;
     }
 
+
+    public List<CustomerDebtDto> getAllCustomerDebt(Long id) {
+        List<Customer> list = customerRepository.findBySmallTraderId(id);
+        return list.stream().map(c -> {
+            List<CustomerOrderDebtDto> rs = getCustomerOrderDebt(c.getId());
+            return CustomerDebtDto.fromCustomer(c, rs);
+        }).toList();
+    }
+
     private Boolean checkCustomerHasOrder(Long id) {
         Boolean rs = productFeignClient.checkCustomerHasOrder(id).getBody();
+        return rs;
+    }
+
+    private List<CustomerOrderDebtDto> getCustomerOrderDebt(Long id) {
+        List<CustomerOrderDebtDto> rs = productFeignClient.getCustomerOrderDebt(id).getBody();
         return rs;
     }
 

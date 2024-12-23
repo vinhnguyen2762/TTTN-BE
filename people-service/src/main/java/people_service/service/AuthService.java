@@ -17,5 +17,6 @@ public interface AuthService {
     public String sendCodeToEmail(EmailDto email);
     public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
     public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
+    public Long confirmPasswordEmployee(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto);
     public Long checkJWT(TokenDto tokenDto);
 }

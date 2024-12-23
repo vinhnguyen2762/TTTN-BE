@@ -77,6 +77,12 @@ public class AuthenticationController {
         return ResponseEntity.ok().body(rs);
     }
 
+    @PostMapping("/confirm-password/employee")
+    private ResponseEntity<Long> confirmPasswordEmployee(@RequestBody SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
+        Long rs = authService.confirmPasswordEmployee(smallTraderForgetPasswordDto);
+        return ResponseEntity.ok().body(rs);
+    }
+
     @PostMapping("/check-token")
     private ResponseEntity<Long> checkToken(@RequestBody TokenDto tokenDto) {
         Long rs = authService.checkJWT(tokenDto);

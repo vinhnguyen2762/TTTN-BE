@@ -35,8 +35,8 @@ public class SmallTrader {
     @OneToOne(mappedBy = "smallTrader")
     private ConfirmationToken confirmationToken;
     @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Producer> producerList = new ArrayList<>();
-    @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<Producer> producerList = new ArrayList<>();
+//    @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Supplier> supplierList = new ArrayList<>();
     @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Customer> customerList = new ArrayList<>();
