@@ -19,4 +19,5 @@ public interface OrderService {
     public Boolean checkCustomerHasOrder(Long id);
     public List<OrderAdminDto> getAllOrderSmallTraderId(Long id);
     public List<OrderDebt> getCustomerDebtOrder(Long id);
+    public OrderAdminDto getById(Long id);
 }

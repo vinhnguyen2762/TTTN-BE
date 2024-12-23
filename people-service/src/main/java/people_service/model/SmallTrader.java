@@ -32,8 +32,8 @@ public class SmallTrader {
     private String password;
     private SmallTraderRole role = SmallTraderRole.USER;
     private Boolean locked = false;
-    @OneToOne(mappedBy = "smallTrader")
-    private ConfirmationToken confirmationToken;
+//    @OneToOne(mappedBy = "smallTrader")
+//    private ConfirmationToken confirmationToken;
     @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 //    private List<Producer> producerList = new ArrayList<>();
 //    @OneToMany(mappedBy = "smallTrader", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

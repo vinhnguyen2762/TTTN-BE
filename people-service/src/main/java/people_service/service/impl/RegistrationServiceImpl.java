@@ -22,56 +22,58 @@ import java.time.format.DateTimeFormatter;
 public class RegistrationServiceImpl implements RegistrationService {
 
     private final SmallTraderService smallTraderService;
-    private final ConfirmationTokenService confirmationTokenService;
+//    private final ConfirmationTokenService confirmationTokenService;
     private final EmailService emailService;
     private final SmallTraderRepository smallTraderRepository;
 
     public Long register(RegistrationRequest request) {
-        boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
-        if (!isValidEmail) {
-            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_NOT_VALID, request.getEmail()));
-        }
-
-        LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
-        Gender gender = request.getGender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
-
-        SmallTrader smallTrader = new SmallTrader(
-                request.getFirstName(),
-                request.getLastName(),
-                date,
-                gender,
-                request.getAddress(),
-                request.getPhoneNumber(),
-                request.getEmail(),
-                request.getPassword());
-        String confirmToken = smallTraderService.signUpUser(smallTrader);
-        String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
-        emailService.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
-        return smallTrader.getId();
+//        boolean isValidEmail = EmailValidator.getInstance().isValid(request.getEmail());
+//        if (!isValidEmail) {
+//            throw new FailedException(String.format(Constants.ErrorMessage.EMAIL_NOT_VALID, request.getEmail()));
+//        }
+//
+//        LocalDate date = LocalDate.parse(request.getDateOfBirth(), DateTimeFormatter.ISO_LOCAL_DATE);
+//        Gender gender = request.getGender().equals("Nam") ? Gender.MALE : Gender.FEMALE;
+//
+//        SmallTrader smallTrader = new SmallTrader(
+//                request.getFirstName(),
+//                request.getLastName(),
+//                date,
+//                gender,
+//                request.getAddress(),
+//                request.getPhoneNumber(),
+//                request.getEmail(),
+//                request.getPassword());
+//        String confirmToken = smallTraderService.signUpUser(smallTrader);
+//        String link = "http://localhost:9001/api/v1/auth/confirm?token=" + confirmToken;
+//        emailService.sendMessageWithAttachment(request.getEmail(), buildEmail(request.getLastName(), link));
+//        return smallTrader.getId();
+        return null;
     }
 
     @Transactional
     public String confirmToken(String confirmToken) {
-        ConfirmationToken confirmationToken = confirmationTokenService
-                .getToken(confirmToken)
-                .orElseThrow(() ->
-                        new NotFoundException(String.format(Constants.ErrorMessage.TOKEN_NOT_FOUND, confirmToken)));
-
-        if (confirmationToken.getConfirmedAt() != null) {
-            return "Your email is already confirmed";
-        }
-
-        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
-
-        if (expiredAt.isBefore(LocalDateTime.now())) {
-            return "Your token is expired";
-        }
-
-        confirmationTokenService.setConfirmedAt(confirmToken);
-        //SmallTrader smallTrader = smallTraderRepository.findById(confirmationToken.getSmallTraderId()).orElseThrow();
-
-        smallTraderService.enableAppUser(confirmationToken.getSmallTrader().getEmail());
-        return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
+//        ConfirmationToken confirmationToken = confirmationTokenService
+//                .getToken(confirmToken)
+//                .orElseThrow(() ->
+//                        new NotFoundException(String.format(Constants.ErrorMessage.TOKEN_NOT_FOUND, confirmToken)));
+//
+//        if (confirmationToken.getConfirmedAt() != null) {
+//            return "Your email is already confirmed";
+//        }
+//
+//        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+//
+//        if (expiredAt.isBefore(LocalDateTime.now())) {
+//            return "Your token is expired";
+//        }
+//
+//        confirmationTokenService.setConfirmedAt(confirmToken);
+//        //SmallTrader smallTrader = smallTraderRepository.findById(confirmationToken.getSmallTraderId()).orElseThrow();
+//
+//        smallTraderService.enableAppUser(confirmationToken.getSmallTrader().getEmail());
+//        return "Congratulation! Your email is confirmed. Now you can end this tab and log in to the app.";
+        return null;
     }
 
     private String buildEmail(String name, String link) {

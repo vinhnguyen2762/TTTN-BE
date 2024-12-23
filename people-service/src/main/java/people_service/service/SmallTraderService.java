@@ -9,7 +9,7 @@ import people_service.model.SmallTrader;
 import java.util.List;
 
 public interface SmallTraderService {
-    public String signUpUser(SmallTrader smallTrader);
+//    public String signUpUser(SmallTrader smallTrader);
     public void enableAppUser(String email);
     public List<SmallTraderAdminDto> getAllSmallTraderAdmin();
     public List<SmallTraderRevenueDto> getAllSmallTraderRevenue();

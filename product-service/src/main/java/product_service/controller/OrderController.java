@@ -68,4 +68,10 @@ public class OrderController {
         List<OrderDebt> rs = orderService.getCustomerDebtOrder(id);
         return ResponseEntity.ok().body(rs);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderAdminDto> getById(@PathVariable Long id) {
+        OrderAdminDto rs = orderService.getById(id);
+        return ResponseEntity.ok().body(rs);
+    }
 }

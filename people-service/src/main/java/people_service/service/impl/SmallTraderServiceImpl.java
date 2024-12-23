@@ -1,8 +1,6 @@
 package people_service.service.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import people_service.dto.smallTrader.SmallTraderAdminDto;
 import people_service.dto.smallTrader.SmallTraderRevenueDto;
@@ -12,20 +10,15 @@ import people_service.exception.DuplicateException;
 import people_service.exception.FailedException;
 import people_service.exception.NotFoundException;
 import people_service.model.ChangePasswordRequest;
-import people_service.model.ConfirmationToken;
 import people_service.model.SmallTrader;
-import people_service.repository.ConfirmationTokenRepository;
 import people_service.repository.CustomerRepository;
 import people_service.repository.SmallTraderRepository;
-import people_service.service.ConfirmationTokenService;
 import people_service.service.SmallTraderService;
 import people_service.utils.Constants;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 
 import static people_service.utils.PasswordHashing.checkPassword;
 import static people_service.utils.PasswordHashing.hashPassword;
@@ -35,48 +28,48 @@ import static people_service.utils.PasswordHashing.hashPassword;
 public class SmallTraderServiceImpl implements SmallTraderService {
 
     private final SmallTraderRepository smallTraderRepository;
-    private final ConfirmationTokenService confirmationTokenService;
+//    private final ConfirmationTokenService confirmationTokenService;
     private final CustomerRepository customerRepository;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+//    private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    public String signUpUser(SmallTrader smallTrader) {
-        boolean isPhoneNumberExists = smallTraderRepository.findByPhoneNumber(smallTrader.getPhoneNumber()).isPresent();
-        if (isPhoneNumberExists) {
-            throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTrader.getPhoneNumber()));
-        }
-
-        boolean isEmailExists = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
-        if (isEmailExists) {
-            SmallTrader smallTraderFound = smallTraderRepository.findByEmail(smallTrader.getEmail()).orElseThrow();
-            ConfirmationToken tokenFound = confirmationTokenRepository.findBySmallTraderId(smallTraderFound.getId()).orElseThrow();
-            if (tokenFound.getConfirmedAt() != null) {
-                throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTrader.getEmail()));
-            }
-
-            else {
-                confirmationTokenRepository.delete(tokenFound);
-                smallTraderRepository.delete(smallTraderFound);
-            }
-        }
-
-        String hashedPassword = hashPassword(smallTrader.getPassword());
-        smallTrader.setPassword(hashedPassword);
-
-        smallTraderRepository.saveAndFlush(smallTrader);
-
-        //create a random token
-        String confirmToken = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                confirmToken,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                smallTrader);
-
-        //save it to database
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        return confirmToken;
-    }
+//    public String signUpUser(SmallTrader smallTrader) {
+//        boolean isPhoneNumberExists = smallTraderRepository.findByPhoneNumber(smallTrader.getPhoneNumber()).isPresent();
+//        if (isPhoneNumberExists) {
+//            throw new NotFoundException(String.format(Constants.ErrorMessage.PHONE_NUMBER_ALREADY_TAKEN, smallTrader.getPhoneNumber()));
+//        }
+//
+//        boolean isEmailExists = smallTraderRepository.findByEmail(smallTrader.getEmail()).isPresent();
+//        if (isEmailExists) {
+//            SmallTrader smallTraderFound = smallTraderRepository.findByEmail(smallTrader.getEmail()).orElseThrow();
+//            ConfirmationToken tokenFound = confirmationTokenRepository.findBySmallTraderId(smallTraderFound.getId()).orElseThrow();
+//            if (tokenFound.getConfirmedAt() != null) {
+//                throw new DuplicateException(String.format(Constants.ErrorMessage.EMAIL_ALREADY_TAKEN, smallTrader.getEmail()));
+//            }
+//
+//            else {
+//                confirmationTokenRepository.delete(tokenFound);
+//                smallTraderRepository.delete(smallTraderFound);
+//            }
+//        }
+//
+//        String hashedPassword = hashPassword(smallTrader.getPassword());
+//        smallTrader.setPassword(hashedPassword);
+//
+//        smallTraderRepository.saveAndFlush(smallTrader);
+//
+//        //create a random token
+//        String confirmToken = UUID.randomUUID().toString();
+//        ConfirmationToken confirmationToken = new ConfirmationToken(
+//                confirmToken,
+//                LocalDateTime.now(),
+//                LocalDateTime.now().plusMinutes(15),
+//                smallTrader);
+//
+//        //save it to database
+//        confirmationTokenService.saveConfirmationToken(confirmationToken);
+//
+//        return confirmToken;
+//    }
 
     public void enableAppUser(String email) {
         SmallTrader smallTrader = smallTraderRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, email)));
