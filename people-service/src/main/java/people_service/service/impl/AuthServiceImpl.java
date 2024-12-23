@@ -8,6 +8,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import people_service.dto.changePasswordDto.ChangPasswordDto;
 import people_service.dto.email.EmailDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
 import people_service.dto.smallTrader.SmallTraderForgetPasswordDto;
@@ -95,9 +96,16 @@ public class AuthServiceImpl implements AuthService {
 
     public Long checkCodeEmail(SmallTraderCodeDto smallTraderCodeDto) {
         if (smallTraderCodeDto.code().equals(smallTraderCodeDto.codeReceive())) {
-            SmallTrader smallTrader = smallTraderRepository.findByEmail(smallTraderCodeDto.email()).orElseThrow(
-                    () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, smallTraderCodeDto.email())));
-            return smallTrader.getId();
+            boolean isExistSmallTrader = smallTraderRepository.findByEmail(smallTraderCodeDto.email()).isPresent();
+            boolean isExistEmployee = employeeRepository.findByEmail(smallTraderCodeDto.email()).isPresent();
+
+            if (isExistSmallTrader) {
+                SmallTrader smallTrader = smallTraderRepository.findByEmail(smallTraderCodeDto.email()).orElseThrow();
+                return smallTrader.getId();
+            } else {
+                Employee employee = employeeRepository.findByEmail(smallTraderCodeDto.email()).orElseThrow();
+                return employee.getId();
+            }
         } else {
             throw new FailedException(String.format(Constants.ErrorMessage.VERIFY_CODE_FALSE, smallTraderCodeDto.email()));
         }
@@ -140,12 +148,29 @@ public class AuthServiceImpl implements AuthService {
         return code;
     }
 
-    public Long changeForgetPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
-        SmallTrader smallTrader = smallTraderRepository.findById(smallTraderForgetPasswordDto.id()).orElseThrow(
-                () -> new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND_ID, smallTraderForgetPasswordDto.id())));
-        smallTrader.setPassword(hashPassword(smallTraderForgetPasswordDto.newPassword()));
-        smallTraderRepository.saveAndFlush(smallTrader);
-        return smallTrader.getId();
+    public Long changeForgetPassword(ChangPasswordDto smallTraderForgetPasswordDto) {
+        boolean isExistSmallTrader = smallTraderRepository.findByEmail(smallTraderForgetPasswordDto.email()).isPresent();
+        boolean isExistEmployee = employeeRepository.findByEmail(smallTraderForgetPasswordDto.email()).isPresent();
+
+        if (!isExistSmallTrader && !isExistEmployee) {
+            throw new NotFoundException(String.format(Constants.ErrorMessage.USER_NOT_FOUND, smallTraderForgetPasswordDto.email()));
+        }
+        // if user is small trader
+        if (isExistSmallTrader) {
+            SmallTrader smallTrader = smallTraderRepository.findByEmail(smallTraderForgetPasswordDto.email()).orElseThrow();
+            smallTrader.setPassword(hashPassword(smallTraderForgetPasswordDto.password()));
+            smallTraderRepository.saveAndFlush(smallTrader);
+            return smallTrader.getId();
+        }
+
+        // if user is employee
+        else {
+            Employee employee = employeeRepository.findByEmail(smallTraderForgetPasswordDto.email()).orElseThrow();
+            employee.setPassword(hashPassword(smallTraderForgetPasswordDto.password()));
+            employeeRepository.saveAndFlush(employee);
+            return employee.getId();
+        }
+
     }
 
     public Long confirmPassword(SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {

@@ -21,7 +21,7 @@ public class Constants {
         public static final String PASSWORD_NOT_CORRECT = "Password is not correct";
         public static final String DEBT_DETAIL_NOT_FOUND = "Debt detail with id: %s not found";
         public static final String PRODUCER_NOT_FOUND = "Producer with id: %s not found";
-        public static final String PRODUCER_CANT_DELETE = "Producer with id: %s can't be deleted because has debt not pay yet";
+        public static final String CUSTOMER_CANT_DELETE = "Customer with id: %s can't be deleted because has debt not pay yet";
         public static final String PAID_MORE_THAN_DEBT = "Paid amount is more than debt amount";
         public static final String VERIFY_CODE_FALSE = "Verify code send to email: %s is not true";
         public static final String EMPLOYEE_NOT_FOUND = "Employee with id: %s not found";

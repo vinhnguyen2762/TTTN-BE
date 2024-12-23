@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import people_service.dto.changePasswordDto.ChangPasswordDto;
 import people_service.dto.customer.CustomerAdminDto;
 import people_service.dto.email.EmailDto;
 import people_service.dto.smallTrader.SmallTraderCodeDto;
@@ -66,7 +67,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forget-password")
-    private ResponseEntity<Long> forgetPassword(@RequestBody SmallTraderForgetPasswordDto smallTraderForgetPasswordDto) {
+    private ResponseEntity<Long> forgetPassword(@RequestBody ChangPasswordDto smallTraderForgetPasswordDto) {
         Long rs = authService.changeForgetPassword(smallTraderForgetPasswordDto);
         return ResponseEntity.ok().body(rs);
     }

@@ -119,6 +119,13 @@ public class CustomerServiceImpl implements CustomerService {
         if (customer.getStatus() == false) {
             throw new NotFoundException(String.format(Constants.ErrorMessage.CUSTOMER_NOT_FOUND, id));
         }
+
+        List<CustomerOrderDebtDto> rs = getCustomerOrderDebt(customer.getId());
+
+        if (!rs.isEmpty()) {
+            throw new FailedException(String.format(Constants.ErrorMessage.CUSTOMER_CANT_DELETE, id));
+        }
+
         if (checkCustomerHasOrder(id)) {
             customer.setStatus(false);
             customerRepository.saveAndFlush(customer);
