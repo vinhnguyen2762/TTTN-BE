@@ -113,7 +113,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Long addProduct(ProductAddDto productAddDto) {
-        Boolean isExist = productRepository.findByNameSmallTraderId(productAddDto.smallTraderId(), productAddDto.name()).isPresent();
+        Boolean isExist = productRepository.findByName(productAddDto.name()).isPresent();
         if (isExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PRODUCT_ALREADY_TAKEN, productAddDto.name()));
         }
@@ -142,7 +142,7 @@ public class ProductServiceImpl implements ProductService {
 
         // if name is new, check if name exist
         if (!productAddDto.name().equals(oldName)) {
-            Boolean isNameExist = productRepository.findByNameSmallTraderId(productAddDto.smallTraderId(), productAddDto.name()).isPresent();
+            Boolean isNameExist = productRepository.findByName(productAddDto.name()).isPresent();
             if (!isNameExist) {
                 product.setName(productAddDto.name());
             } else {

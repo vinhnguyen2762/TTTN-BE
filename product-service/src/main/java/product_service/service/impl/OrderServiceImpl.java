@@ -168,6 +168,10 @@ public class OrderServiceImpl implements OrderService {
             }
             productRepository.saveAndFlush(product);
         }
+
+        LocalDate paidDate = LocalDate.now();
+
+        order.setPaidDate(paidDate);
         order.setStatus(OrderStatus.PAID);
         orderRepository.saveAndFlush(order);
         return id;

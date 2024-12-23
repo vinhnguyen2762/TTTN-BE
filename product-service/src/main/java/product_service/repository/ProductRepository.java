@@ -27,10 +27,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Long countProductsByStatusTrue(@Param("id") Long id);
 
     Optional<Product> findByName(String name);
-    @Query("""
-            select p
-            from Product p
-            where p.smallTraderId = :id and p.name = :name
-            """)
-    Optional<Product> findByNameSmallTraderId(@Param("id") Long id, @Param("name") String name);
+
 }

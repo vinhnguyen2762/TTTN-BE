@@ -9,6 +9,7 @@ import java.util.List;
 public record OrderAdminDto(
         Long id,
         String orderDate,
+        String paidDate,
         String status,
         Long customerId,
         String customerName,
@@ -29,9 +30,15 @@ public record OrderAdminDto(
                     return price * quantity;
                 }).sum();
 
+        String paidDate = "---";
+        if (order.getPaidDate() != null) {
+            paidDate = order.getPaidDate().format(formatter);
+        }
+
         return new OrderAdminDto(
                 order.getId(),
                 order.getOrderDate().format(formatter),
+                paidDate,
                 status,
                 order.getCustomerId(),
                 customerName,

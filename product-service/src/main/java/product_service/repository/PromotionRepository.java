@@ -26,13 +26,8 @@ public interface PromotionRepository extends JpaRepository<Promotion, Long> {
             """)
     List<Promotion> findBySmallTraderId(@Param("id") Long id);
 
-    @Query("""
-            select p
-            from Promotion p
-            left join fetch p.promotionDetailList
-            where p.smallTraderId = :id and p.name = :name
-            """)
-    Optional<Promotion> findByNameSmallTraderId(@Param("id") Long id, @Param("name") String name);
+
+    Optional<Promotion> findByName(String name);
 
     @Query("""
             select p

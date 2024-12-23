@@ -62,7 +62,7 @@ public class PromotionServiceImpl implements PromotionService {
     }
 
     public Long addPromotion(PromotionAddDto promotionAddDto) {
-        Boolean isExist = promotionRepository.findByNameSmallTraderId(promotionAddDto.smallTraderId(), promotionAddDto.name()).isPresent();
+        Boolean isExist = promotionRepository.findByName(promotionAddDto.name()).isPresent();
         if (isExist) {
             throw new DuplicateException(String.format(Constants.ErrorMessage.PROMOTION_ALREADY_TAKEN, promotionAddDto.name()));
         }
@@ -128,7 +128,7 @@ public class PromotionServiceImpl implements PromotionService {
 
         // if name is new, check if name exist
         if (!promotionAddDto.name().equals(oldName)) {
-            Boolean isExist = promotionRepository.findByNameSmallTraderId(promotionAddDto.smallTraderId(), promotionAddDto.name()).isPresent();
+            Boolean isExist = promotionRepository.findByName(promotionAddDto.name()).isPresent();
             if (!isExist) {
                 promotion.setName(promotionAddDto.name());
             } else {

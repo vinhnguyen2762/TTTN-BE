@@ -24,7 +24,7 @@ public class Order {
     private OrderStatus status = OrderStatus.PENDING;
     private Long customerId;
     private Long smallTraderId;
-
+    private LocalDate paidDate = null;
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetails = new ArrayList<>();
 
